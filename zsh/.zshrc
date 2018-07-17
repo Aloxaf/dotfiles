@@ -114,16 +114,15 @@ XDG_CACHE_HOME=/tmp
 # find-the-command
 # source /usr/share/doc/find-the-command/ftc.zsh
 
-# make tldr colorful
 alias h="tldr"
 alias ec="emacsclient -n -c -a ''"
-alias p="proxychains -q"
+alias p="proxychains -q -f ~/.config/proxychains/8877.conf"
 alias p8080="proxychains -q -f ~/.config/proxychains/8080.conf"
 alias cat="ccat"
-alias pwsh="TERM=xterm pwsh"
+# alias pwsh="TERM=xterm pwsh"
 alias checksec="checksec --file"
 alias amd="env DRI_PRIME=1"
-alias bro="2>/dev/null bro"
+# alias bro="2>/dev/null bro"
 alias trid="LC_ALL=C trid"
 alias c='tput reset'
 alias del='trash'
