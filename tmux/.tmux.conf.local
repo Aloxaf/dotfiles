@@ -158,7 +158,7 @@ tmux_conf_theme_right_separator_sub=''  #   PowerlineSymbols.otf font
 #     - #{username}
 #     - #{username_ssh}
 tmux_conf_theme_status_left=' ❐ #S | ↑#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} '
-tmux_conf_theme_status_right='#{prefix}#{pairing} #{?battery_status, #{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} '
+tmux_conf_theme_status_right='#{prefix}#{pairing} #{?battery_status, #{battery_status},}#{?battery_vbar, #{battery_vbar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} '
 
 # status left style
 tmux_conf_theme_status_left_fg='#000000,#e4e4e4,#e4e4e4'  # black, white , white
@@ -197,7 +197,7 @@ tmux_conf_battery_bar_symbol_empty='◻'
 # battery bar length (in number of symbols), possible values are:
 #   - auto
 #   - a number, e.g. 5
-tmux_conf_battery_bar_length='1'
+tmux_conf_battery_bar_length='auto'
 
 # battery bar palette, possible values are:
 #   - gradient (default)
@@ -222,10 +222,10 @@ tmux_conf_battery_vbar_palette='gradient'
 
 # symbols used to indicate whether battery is charging or discharging
 # tmux_conf_battery_status_charging='↑'       # U+2191
-tmux_conf_battery_status_discharging='↓'    # U+2193
-tmux_conf_battery_status_charging='⚡ '    # U+26A1
-# tmux_conf_battery_status_charging='🔌 '    # U+1F50C
-# tmux_conf_battery_status_discharging='🔋 ' # U+1F50B
+# tmux_conf_battery_status_discharging='↓'    # U+2193
+# tmux_conf_battery_status_charging='⚡ '    # U+26A1
+tmux_conf_battery_status_charging='🔌 '    # U+1F50C
+tmux_conf_battery_status_discharging='🔋 ' # U+1F50B
 
 # clock style
 tmux_conf_theme_clock_colour='#00afff'  # light blue

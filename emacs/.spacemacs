@@ -33,7 +33,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(javascript
+   '(html
+     shell-scripts
+     javascript
      python
      ;; (python :variables
      ;;         python-enable-yapf-format-on-save t)
@@ -428,7 +430,7 @@ It should only modify the values of Spacemacs settings."
    ;; %z - mnemonics of buffer, terminal, and keyboard coding systems
    ;; %Z - like %z, but including the end-of-line format
    ;; (default "%I@%S")
-   dotspacemacs-frame-title-format "-     ⃢    —     ⃢    - %b@%m"
+   dotspacemacs-frame-title-format "%b@%m"
 
    ;; Format specification for setting the icon title format
    ;; (default nil - same as frame-title-format)
@@ -494,6 +496,10 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  (setq configuration-layer-elpa-archives
+        '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+          ("org-cn"   . "http://elpa.emacs-china.org/org/")
+          ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
   (setq-default dotspacemacs-default-font '("Hack"
                                             :size 18
                                             :weight normal
@@ -564,7 +570,7 @@ before packages are loaded."
   (setq fci-rule-color "#2aa198")
   (setq fci-rule-image-format 'xpm)
 
-  (xwidget-browser-init)
+  ;; (xwidget-browser-init)
 
   ;; pandoc导出的markdown, 修正格式 ``` {.python} -> ```python
   (defun org-pandoc-export-to-markdown-advice1 (&optional a s v b e)
@@ -612,7 +618,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (json-navigator hierarchy json-mode json-snatcher json-reformat company-tern dash-functional yasnippet-snippets yapfify ws-butler wolfram-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toc-org thrift tern symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company scad-mode restart-emacs rainbow-delimiters racket-mode qml-mode pyvenv pytest pyenv-mode py-isort powershell popwin pkgbuild-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lsp-javascript-typescript lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode julia-mode js2-refactor js-doc indent-guide importmagic impatient-mode hungry-delete hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md ggtags geiser fuzzy font-lock+ flycheck-rtags flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig ebuild-mode dumb-jump dotenv-mode disaster diminish define-word cython-mode counsel-projectile counsel-gtags company-statistics company-rtags company-quickhelp company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent add-node-modules-path ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path yasnippet-snippets yapfify ws-butler wolfram-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toc-org thrift symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company scad-mode restart-emacs rainbow-delimiters racket-mode qml-mode pyvenv pytest pyenv-mode py-isort powershell popwin pkgbuild-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode julia-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic hungry-delete htmlize hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser fuzzy font-lock+ flycheck-rtags flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig ebuild-mode dumb-jump dotenv-mode disaster diminish define-word cython-mode counsel-projectile company-tern company-statistics company-shell company-rtags company-quickhelp company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
