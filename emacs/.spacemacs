@@ -33,7 +33,10 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(html
+   '(yaml
+     rust
+     php
+     html
      shell-scripts
      javascript
      python
@@ -67,7 +70,7 @@ This function should only modify configuration layer settings."
      markdown
      neotree
      org
-     ;;pandoc
+     pandoc
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -75,7 +78,7 @@ This function should only modify configuration layer settings."
      racket
      scheme
      syntax-checking
-     ;; version-control
+     version-control
      windows-scripts
      )
 
@@ -497,9 +500,9 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq configuration-layer-elpa-archives
-        '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-          ("org-cn"   . "http://elpa.emacs-china.org/org/")
-          ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+          ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
   (setq-default dotspacemacs-default-font '("Hack"
                                             :size 18
                                             :weight normal
@@ -521,6 +524,36 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+
+  ;; 关掉SB功能, 自动转义单引号
+  (setq-default sp-escape-quotes-after-inser nil)
+
+  (add-hook 'shell-mode-hook
+            '(lambda ()
+               (message "xxxx")
+               (setq sh-basic-offset 0)
+               (setq tab-width 4)
+               (electric-indent-mode 0)
+               (setq indent-line-function 'insert-tab)))
+  (global-set-key (kbd "<backtab>") 'un-indent-by-removing-4-spaces)
+  (defun un-indent-by-removing-4-spaces ()
+    "remove 4 spaces from beginning of of line"
+    (interactive)
+    (save-excursion
+      (save-match-data
+        (beginning-of-line)
+        ;; get rid of tabs at beginning of line
+        (when (looking-at "^\\s-+")
+          (untabify (match-beginning 0) (match-end 0)))
+        (when (looking-at "^    ")
+          (replace-match "")))))
+
+  ;; (setq sh-basic-offset 0)
+    ;; (setq tab-width 4)
+    ;; (electric-indent-mode 0)
+
+    ;; (setq indent-line-function 'insert-tab)
+  ;; (add-to-list 'spacemacs-indent-sensitive-modes 'shell-script-mode)
 
   (require 'helm)
   (require 'tramp)
@@ -573,30 +606,40 @@ before packages are loaded."
   ;; (xwidget-browser-init)
 
   ;; pandoc导出的markdown, 修正格式 ``` {.python} -> ```python
-  (defun org-pandoc-export-to-markdown-advice1 (&optional a s v b e)
-    (message "start")
-    (delete-file (replace-regexp-in-string "\\.[^.]+$" ".md"
-                                           buffer-file-name)))
-  (defun org-pandoc-export-to-markdown-advice2 (&optional a s v b e)
-    ;; (message (replace-regexp-in-string "\\.[^.]+$" ".md" buffer-file-name))
-    (message "end")
-    (make-thread
-     (lambda ()
-       (let ((mdfile
-              (replace-regexp-in-string "\\.[^.]+$" ".md" buffer-file-name)))
-         (while (not (file-exists-p mdfile))
-           (sleep-for 0.5))
-         (call-process "sed" nil "Messages" nil
-                       "-E" "-i"
-                       "s/``` \\{\\.(.*)\\}/```\\1/g;/^(date|tags|title)/s/'//g;s/\\\\'/'/g;s/\\\\_/_/g;s/\\\\\"/\"/g"
-                       mdfile))
-       ))
-    )
+  ;; (defun org-pandoc-export-to-markdown-advice1 (&optional a s v b e)
+  ;;   (message "start")
+  ;;   (delete-file (replace-regexp-in-string "\\.[^.]+$" ".md"
+  ;;                                          buffer-file-name)))
+  ;; (defun org-pandoc-export-to-markdown-advice2 (&optional a s v b e)
+  ;;   ;; (message (replace-regexp-in-string "\\.[^.]+$" ".md" buffer-file-name))
+  ;;   (message "end")
+  ;;   (make-thread
+  ;;    (lambda ()
+  ;;      (let ((mdfile
+  ;;             (replace-regexp-in-string "\\.[^.]+$" ".md" buffer-file-name)))
+  ;;        (while (not (file-exists-p mdfile))
+  ;;          (sleep-for 0.5))
+  ;;        (call-process "sed" nil "Messages" nil
+  ;;                      "-E" "-i"
+  ;;                      "s/``` \\{\\.(.*)\\}/```\\1/g;/^(date|tags|title)/s/'//g;s/\\\\'/'/g;s/\\\\_/_/g;s/\\\\\"/\"/g"
+  ;;                      mdfile))
+  ;;      ))
+  ;;   )
 
-  (advice-add 'org-pandoc-export-to-markdown
-              :before #'org-pandoc-export-to-markdown-advice1)
-  (advice-add 'org-pandoc-export-to-markdown
-              :after #'org-pandoc-export-to-markdown-advice2)
+  ;; (advice-add 'org-pandoc-export-to-markdown
+  ;;             :before #'org-pandoc-export-to-markdown-advice1)
+  ;; (advice-add 'org-pandoc-export-to-markdown
+  ;;             :after #'org-pandoc-export-to-markdown-advice2)
+
+  ;; 干掉org导出html时出现的小方块
+  ;; https://github.com/alpaker/Fill-Column-Indicator/issues/45
+  (defun fci-mode-override-advice (&rest args))
+  (advice-add 'org-html-fontify-code :around
+              (lambda (fun &rest args)
+                (advice-add 'fci-mode :override #'fci-mode-override-advice)
+                (let ((result  (apply fun args)))
+                  (advice-remove 'fci-mode #'fci-mode-override-advice)
+                  result)))
 
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font)
@@ -618,7 +661,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path yasnippet-snippets yapfify ws-butler wolfram-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toc-org thrift symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company scad-mode restart-emacs rainbow-delimiters racket-mode qml-mode pyvenv pytest pyenv-mode py-isort powershell popwin pkgbuild-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode julia-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic hungry-delete htmlize hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser fuzzy font-lock+ flycheck-rtags flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig ebuild-mode dumb-jump dotenv-mode disaster diminish define-word cython-mode counsel-projectile company-tern company-statistics company-shell company-rtags company-quickhelp company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (thrift iedit htmlize magit yasnippet-snippets yapfify yaml-mode ws-butler wolfram-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toml-mode toc-org tagedit symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company slim-mode scss-mode scad-mode sass-mode restart-emacs rainbow-delimiters racket-mode racer qml-mode pyvenv pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pkgbuild-mode pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ ghub gh-md geiser fuzzy font-lock+ flycheck-rust flycheck-rtags flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig ebuild-mode dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish diff-hl define-word cython-mode counsel-projectile company-web company-tern company-statistics company-shell company-rtags company-quickhelp company-php company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

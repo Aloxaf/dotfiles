@@ -12,7 +12,8 @@ antigen bundle archlinux
 antigen bundle z
 
 antigen bundle paulirish/git-open
-antigen bundle zsh-users/zsh-syntax-highlighting
+# antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 
