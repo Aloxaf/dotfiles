@@ -24,6 +24,9 @@ alias c='tput reset'
 alias del='trash'
 alias yafu='rlwrap yafu'
 alias nc='rlwrap nc'
+alias ll='exa -l'
+alias la='exa -la'
+alias ls='exa'
 
 export EDITOR="emacsclient -nw -c -a ''"
 # export EDITOR="vim"
