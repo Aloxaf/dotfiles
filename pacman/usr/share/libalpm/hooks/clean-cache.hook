@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Remove
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Cleaning up old packages...
+When = PostTransaction
+Exec = /usr/bin/paccache -rvk3
