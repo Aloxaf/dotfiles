@@ -8,4 +8,4 @@ Target = *
 [Action]
 Description = Cleaning up old packages...
 When = PostTransaction
-Exec = /usr/bin/paccache -rvk3
+Exec = /usr/bin/paccache -rvk2
