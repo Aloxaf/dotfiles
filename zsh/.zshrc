@@ -7,6 +7,18 @@ antigen init ~/.antigenrc
 
 ZSH_PIP_INDEXES=(https://mirrors.ustc.edu.cn/pypi/web/simple/)
 
+function init_fzf() {
+    source /usr/share/fzf/completion.zsh
+    source /usr/share/fzf/key-bindings.zsh
+
+    # Setting fd as the default source for fzf
+    export FZF_DEFAULT_COMMAND='fd --type f'
+    # To apply the command to CTRL-T as well
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+}
+
+init_fzf
+
 alias h="tldr"
 alias ec="emacsclient -n -c -a ''"
 #alias ecc="bindkey -v && emacsclient -nw -c -a '' && bindkey -e"
@@ -26,7 +38,7 @@ alias yafu='rlwrap yafu'
 alias nc='rlwrap nc'
 alias ll='exa -l'
 alias la='exa -la'
-alias ls='exa'
+alias ls='exa --git'
 
 export EDITOR="emacsclient -nw -c -a ''"
 # export EDITOR="vim"
