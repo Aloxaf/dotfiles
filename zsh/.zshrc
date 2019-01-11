@@ -15,6 +15,10 @@ function init_fzf() {
     export FZF_DEFAULT_COMMAND='fd --type f'
     # To apply the command to CTRL-T as well
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    # Set preview
+    export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+    # Use ~~ as the trigger sequence instead of the default **
+    export FZF_COMPLETION_TRIGGER='~~'
 }
 
 init_fzf
