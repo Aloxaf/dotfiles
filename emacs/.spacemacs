@@ -42,6 +42,9 @@ This function should only modify configuration layer settings."
      shell-scripts
      javascript
      lsp
+     (lsp :variables
+          ;; 文档太碍眼
+          lsp-ui-doc-enable nil)
      python
      (python :variables
              python-backend 'lsp
@@ -60,12 +63,13 @@ This function should only modify configuration layer settings."
      major-modes
      helm
      auto-completion
-     ;; 自动补全时显示snippets
-     ;; M-h弹出帮助
-     ;; 按使用频率排列结果
+
      (auto-completion :variables
-                      auto-completion-enable-snippets-in-popup t
+                      ;; 自动补全时显示snippets (已取消, 会干扰正常的补全
+                      auto-completion-enable-snippets-in-popup nil
+                      ;; M-h弹出帮助
                       auto-completion-enable-help-tooltip 'manual
+                      ;; 按使用频率排列结果
                       auto-completion-enable-sort-by-usage t)
      ;; better-defaults
      emacs-lisp
