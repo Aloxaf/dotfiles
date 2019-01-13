@@ -33,18 +33,30 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(vimscript
+   '(syntax-checking
+     lsp
+     (lsp :variables
+          ;; 文档太碍眼
+          lsp-ui-doc-enable nil)
+     helm
+     auto-completion
+     (auto-completion :variables
+                      ;; 自动补全时显示snippets (已取消, 会干扰正常的补全
+                      auto-completion-enable-snippets-in-popup nil
+                      ;; M-h弹出帮助
+                      auto-completion-enable-help-tooltip 'manual
+                      ;; 按使用频率排列结果
+                      auto-completion-enable-sort-by-usage t)
+     git
+     vimscript
      yaml
+
      rust
      (rust :variables rust-backend 'lsp)
      php
      html
      shell-scripts
      javascript
-     lsp
-     (lsp :variables
-          ;; 文档太碍眼
-          lsp-ui-doc-enable nil)
      python
      (python :variables
              python-backend 'lsp
@@ -52,7 +64,12 @@ This function should only modify configuration layer settings."
              python-enable-yapf-format-on-save t)
      c-c++
      (c-c++ :variables
-            c-c++-enable-clang-support t)
+            c-c++-backend 'lsp-ccls
+            c-c++-lsp-sem-highlight-method 'overlay
+            c-c++-enable-google-style t
+            c-c++-enable-google-newline t
+            ;; c-c++-enable-clang-support t
+            )
      common-lisp
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -61,21 +78,12 @@ This function should only modify configuration layer settings."
      ;; ----------------------------------------------------------------
      latex
      major-modes
-     helm
-     auto-completion
 
-     (auto-completion :variables
-                      ;; 自动补全时显示snippets (已取消, 会干扰正常的补全
-                      auto-completion-enable-snippets-in-popup nil
-                      ;; M-h弹出帮助
-                      auto-completion-enable-help-tooltip 'manual
-                      ;; 按使用频率排列结果
-                      auto-completion-enable-sort-by-usage t)
      ;; better-defaults
      emacs-lisp
-     git
      markdown
      neotree
+
      org
      pandoc
      ;; (shell :variables
@@ -84,7 +92,6 @@ This function should only modify configuration layer settings."
      ;; spell-checking
      racket
      scheme
-     syntax-checking
      version-control
      windows-scripts
      (wakatime :variables
@@ -672,13 +679,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (lsp-ui cquery company-lsp ccls lsp-mode yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode wolfram-mode winum which-key web-mode web-beautify wakatime-mode volatile-highlights vimrc-mode vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toml-mode toc-org thrift tagedit symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company slim-mode scss-mode scad-mode sass-mode restart-emacs rainbow-delimiters racket-mode racer qml-mode pyvenv pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pkgbuild-mode pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md geiser fuzzy font-lock+ flycheck-rust flycheck-rtags flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig ebuild-mode dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish diff-hl define-word dactyl-mode cython-mode counsel-projectile company-web company-tern company-statistics company-shell company-rtags company-quickhelp company-php company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (flycheck-rust flycheck-rtags flycheck-pos-tip yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode wolfram-mode winum which-key web-mode web-beautify wakatime-mode volatile-highlights vimrc-mode vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toml-mode toc-org thrift tagedit symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company slim-mode scss-mode scad-mode sass-mode restart-emacs rainbow-delimiters racket-mode racer qml-mode pyvenv pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pkgbuild-mode pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lsp-ui lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md geiser fuzzy font-lock+ flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig ebuild-mode dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish diff-hl define-word dactyl-mode cython-mode cquery counsel-projectile company-web company-tern company-statistics company-shell company-rtags company-quickhelp company-php company-lsp company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode ccls cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
- ;;
-
  ;; If there is more than one, they won't work right.
  )
 )
