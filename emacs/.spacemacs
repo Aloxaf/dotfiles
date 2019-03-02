@@ -51,6 +51,10 @@ This function should only modify configuration layer settings."
      vimscript
      yaml
 
+     haskell
+     (haskell :variables
+              haskell-completion-backend 'intero
+              haskell-enable-hindent t)
      rust
      (rust :variables rust-backend 'lsp)
      php
@@ -66,14 +70,16 @@ This function should only modify configuration layer settings."
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
             c-c++-lsp-sem-highlight-method 'overlay
-            c-c++-enable-google-style t
+            ;; c-c++-enable-google-style t
+            ;;
             c-c++-enable-google-newline t
             ;; c-c++-enable-clang-support t
             )
      common-lisp
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
+     ;; Un
+     ;; comment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      latex
@@ -228,8 +234,8 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+   dotspacemacs-default-font '("Fira Code"
+                               :size 18
                                :weight normal
                                :width normal)
 
@@ -520,11 +526,12 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
         '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
           ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
           ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
-  (setq-default dotspacemacs-default-font '("Hack"
-                                            :size 18
-                                            :weight normal
-                                            :width normal
-                                            :powerline-scale 1.1))
+
+  ;; (setq-default dotspacemacs-default-font '("Hack"
+  ;;                                           :size 18
+  ;;                                           :weight normal
+  ;;                                           :width normal
+  ;;                                           :powerline-scale 1.1))
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font)
                       charset (font-spec :family "SimSun" :size 22)))
@@ -565,13 +572,6 @@ before packages are loaded."
         (when (looking-at "^    ")
           (replace-match "")))))
 
-  ;; (setq sh-basic-offset 0)
-    ;; (setq tab-width 4)
-    ;; (electric-indent-mode 0)
-
-    ;; (setq indent-line-function 'insert-tab)
-  ;; (add-to-list 'spacemacs-indent-sensitive-modes 'shell-script-mode)
-
   (require 'helm)
   (require 'tramp)
 
@@ -600,6 +600,9 @@ before packages are loaded."
   (add-hook 'c-mode-common-hook
             '(lambda ()
                (c-set-style "k&r")
+               (setq c-basic-offset 4)))
+  (add-hook 'c++-mode-hook
+            '(lambda ()
                (setq c-basic-offset 4)))
   (add-hook 'arduino-mode-hook
             '(lambda ()
@@ -662,7 +665,7 @@ before packages are loaded."
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font)
 		                  charset (font-spec :family "Noto Sans CJK SC"
-				                                 :size 22)))
+				                                 :size 17))) ;; 22
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -679,7 +682,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (flycheck-rust flycheck-rtags flycheck-pos-tip yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode wolfram-mode winum which-key web-mode web-beautify wakatime-mode volatile-highlights vimrc-mode vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toml-mode toc-org thrift tagedit symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company slim-mode scss-mode scad-mode sass-mode restart-emacs rainbow-delimiters racket-mode racer qml-mode pyvenv pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pkgbuild-mode pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lsp-ui lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hoon-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md geiser fuzzy font-lock+ flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig ebuild-mode dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish diff-hl define-word dactyl-mode cython-mode cquery counsel-projectile company-web company-tern company-statistics company-shell company-rtags company-quickhelp company-php company-lsp company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode ccls cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (auctex-latexmk yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode wolfram-mode winum which-key web-mode web-beautify wakatime-mode volatile-highlights vimrc-mode vi-tilde-fringe vala-snippets vala-mode uuidgen use-package toml-mode toc-org thrift tagedit symon string-inflection stan-mode spaceline-all-the-icons smeargle slime-company slim-mode scss-mode scad-mode sass-mode restart-emacs rainbow-delimiters racket-mode racer qml-mode pyvenv pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pkgbuild-mode pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless move-text mmm-mode matlab-mode markdown-toc magit-svn magit-gitflow lsp-ui lorem-ipsum logcat livid-mode live-py-mode link-hint kivy-mode json-navigator json-mode js2-refactor js-doc intero insert-shebang indent-guide importmagic impatient-mode hungry-delete hoon-mode hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-hoogle helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haskell-snippets google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md geiser fuzzy font-lock+ flycheck-rust flycheck-rtags flycheck-pos-tip flycheck-haskell flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig ebuild-mode dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish diff-hl define-word dactyl-mode cython-mode cquery counsel-projectile company-web company-tern company-statistics company-shell company-rtags company-quickhelp company-php company-lsp company-cabal company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode cmm-mode clean-aindent-mode clang-format centered-cursor-mode ccls cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile arduino-mode aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
