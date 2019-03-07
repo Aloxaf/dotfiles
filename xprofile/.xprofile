@@ -4,4 +4,4 @@ export LC_ALL=zh_CN.UTF-8
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
-export PATH=/home/aloxaf/.cargo/bin:/home/aloxaf/.gem/ruby/2.5.0/bin:$PATH
+export PATH=$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.gem/ruby/2.5.0/bin:$PATH
