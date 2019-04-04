@@ -36,15 +36,23 @@ alias c='tput reset'
 alias del='trash'
 alias yafu='rlwrap yafu'
 alias nc='rlwrap nc'
-#alias ll='exa -l'
-#alias la='exa -la'
-#alias ls='exa --git'
 alias ls='lsd'
 alias la='ls -la'
 alias lt='ls --tree'
 
-# export EDITOR="emacsclient -nw -c -a ''"
 export EDITOR="vim"
+
+# for pacman
+alias pacs='sudo pacman -S'
+alias pacsyu='sudo pacman -Syu'
+alias pacss='pacman -Ss'
+alias pacqi='pacman -Qi'
+alias pacqs='pacman -Qs'
+alias pacql='pacman -Ql'
+alias pacrns='sudo pacman -Rns'
+alias pacfs='pacman -Fs'
+alias pacfy='sudo pacman -Fy'
+alias pacau='sudo pacman -U'
 
 # rustup
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
