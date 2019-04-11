@@ -43,16 +43,17 @@ alias lt='ls --tree'
 export EDITOR="vim"
 
 # for pacman
-alias pacs='sudo pacman -S'
-alias pacsyu='sudo pacman -Syu'
-alias pacss='pacman -Ss'
-alias pacqi='pacman -Qi'
-alias pacqs='pacman -Qs'
-alias pacql='pacman -Ql'
-alias pacrns='sudo pacman -Rns'
-alias pacfs='pacman -Fs'
-alias pacfy='sudo pacman -Fy'
-alias pacau='sudo pacman -U'
+alias S='sudo pacman -S'
+alias Syu='sudo pacman -Syu'
+alias Ss='pacman -Ss'
+alias Si='pacman -Si'
+alias Qi='pacman -Qi'
+alias Qs='pacman -Qs'
+alias Ql='pacman -Ql'
+alias Rns='sudo pacman -Rns'
+alias Fs='pacman -Fs'
+alias Fy='sudo pacman -Fy'
+alias U='sudo pacman -U'
 
 # rustup
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
