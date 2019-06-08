@@ -12,13 +12,14 @@ antigen bundle extract
 antigen bundle rust
 antigen bundle colored-man-pages
 antigen bundle archlinux
-antigen bundle z
+# antigen bundle z
 
 antigen bundle paulirish/git-open
 # antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
+antigen bundle skywind3000/z.lua
 
 # Load the theme.
 antigen bundle $HOME/dotfiles/zsh/.oh-my-zsh/custom/themes loli.zsh-theme  --no-local-clone

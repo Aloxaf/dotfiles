@@ -17,7 +17,6 @@ window:
   #
   # Specified in number of columns/lines, not pixels.
   # If both are `0`, this setting is ignored.
-  # NOTE: Alacritty has bug on hidpi mode. Please set `WINIT_HIDPI_FACTOR=1` to avoid it!
   dimensions:
     columns: 82
     lines: 25
@@ -115,7 +114,7 @@ font:
     #style: Italic
 
   # Point size
-  size: 14
+  size: 9.5
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.

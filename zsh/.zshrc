@@ -39,6 +39,10 @@ alias nc='rlwrap nc'
 alias ls='lsd'
 alias la='ls -la'
 alias lt='ls --tree'
+alias zz='z -c'
+alias zi='z -i'
+alias zf='z -I'
+alias zb='z -b'
 
 export EDITOR="vim"
 
@@ -56,11 +60,15 @@ alias Fy='sudo pacman -Fy'
 alias U='sudo pacman -U'
 
 # rustup
-export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
+# export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 # speed up rustc compile
 export RUSTC_WRAPPER=sccache
+
+export _ZL_MATCH_MODE=1
+
 
 [[ $- != *i* ]] && return 0
 [[ -z "$TMUX" ]] && exec tmux
