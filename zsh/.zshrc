@@ -7,21 +7,15 @@ antigen init ~/.antigenrc
 
 ZSH_PIP_INDEXES=(https://mirrors.ustc.edu.cn/pypi/web/simple/)
 
-function init_fzf() {
-    source /usr/share/fzf/completion.zsh
-    source /usr/share/fzf/key-bindings.zsh
+# Setting fd as the default source for fzf
+export FZF_DEFAULT_COMMAND='fd --type f'
+# To apply the command to CTRL-T as well
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# Set preview
+export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+# Use `` as the trigger sequence instead of the default **
+export FZF_COMPLETION_TRIGGER='``'
 
-    # Setting fd as the default source for fzf
-    export FZF_DEFAULT_COMMAND='fd --type f'
-    # To apply the command to CTRL-T as well
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-    # Set preview
-    export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
-    # Use ~~ as the trigger sequence instead of the default **
-    export FZF_COMPLETION_TRIGGER='~~'
-}
-
-init_fzf
 
 alias h="tldr"
 alias ec="emacsclient -n -c -a ''"

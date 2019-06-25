@@ -43,8 +43,22 @@ window:
   #     - buttonless: Title bar, transparent background, but no title bar buttons
   decorations: full
 
-  # When true, alacritty starts maximized.
-  start_maximized: false
+  # Startup Mode (changes require restart)
+  #
+  # Values for `startup_mode`:
+  #   - Windowed
+  #   - Maximized
+  #   - Fullscreen
+  #
+  # Values for `startup_mode` (macOS only):
+  #   - SimpleFullscreen
+  startup_mode: Windowed
+
+  # Window title
+  #title: Alacritty
+
+  # Window class (Linux only):
+  #class: Alacritty
 
 scrolling:
   # Maximum number of lines in the scrollback buffer.

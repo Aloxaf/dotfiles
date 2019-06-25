@@ -3,7 +3,7 @@ antigen use oh-my-zsh
 
 # Bundles from the default repo (robbyrussell's oh-my-zsh).
 antigen bundle cargo
-# antigen bundle fd
+antigen bundle fd
 antigen bundle git
 antigen bundle pip
 antigen bundle httpie
@@ -12,6 +12,7 @@ antigen bundle extract
 antigen bundle rust
 antigen bundle colored-man-pages
 antigen bundle archlinux
+antigen bundle fzf
 # antigen bundle z
 
 antigen bundle paulirish/git-open
