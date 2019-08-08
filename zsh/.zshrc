@@ -1,8 +1,8 @@
+# Init antigen
 ANTIGEN_PATH=~/dotfiles/zsh
+DISABLE_MAGIC_FUNCTIONS=true
 fpath=($ANTIGEN_PATH/.antigen/bundles/robbyrussell/oh-my-zsh/custom/completions $fpath)
-
 source $ANTIGEN_PATH/.antigen/antigen.zsh
-
 antigen init ~/.antigenrc
 
 ZSH_PIP_INDEXES=(https://mirrors.ustc.edu.cn/pypi/web/simple/)
@@ -63,6 +63,9 @@ export RUSTC_WRAPPER=sccache
 
 export _ZL_MATCH_MODE=1
 
-
-[[ $- != *i* ]] && return 0
-[[ -z "$TMUX" ]] && exec tmux
+# https://www.reddit.com/r/tmux/comments/a2e5mn/tmux_on_dolphin_inbuilt_terminal/
+windowname=$(xdotool getactivewindow getwindowname) # find window title
+if [[ "$windowname" != *"Dolphin"* ]] ;then # determine if window is not Dolphin
+   [[ $- != *i* ]] && return 0
+   [[ -z "$TMUX" ]] && exec tmux
+fi
