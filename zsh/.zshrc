@@ -30,7 +30,7 @@ alias c='tput reset'
 alias del='trash'
 alias yafu='rlwrap yafu'
 alias nc='rlwrap nc'
-alias ls='lsd'
+alias ls='exa --git'
 alias la='ls -la'
 alias lt='ls --tree'
 alias zz='z -c'
@@ -53,13 +53,25 @@ alias Fs='pacman -Fs'
 alias Fy='sudo pacman -Fy'
 alias U='sudo pacman -U'
 
+alias gdb-peda='gdb -q -ex init-peda'
+alias gdb-pwndbg='gdb -q -ex init-pwndbg'
+alias gdb-gef='gdb -q -ex init-gef'
+alias gdb=gdb-pwndbg
+
+alias blogin='/home/aloxaf/Coding/日常脚本/bit_login.py login'
+alias blogout='/home/aloxaf/Coding/日常脚本/bit_login.py logout'
+# alias yay='ALL_PROXY=socks5://127.0.0.1:1080 yay'
+# alias yay='yay --aururl https://aur.tuna.tsinghua.edu.cn/'
+alias wtf='wtf -f /home/aloxaf/.local/share/wtf/acronyms'
+
 # rustup
 export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
 # export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 # speed up rustc compile
-export RUSTC_WRAPPER=sccache
+# removed: all cache will be placed in ~/.cache/cargo-build
+# export RUSTC_WRAPPER=sccache
 
 export _ZL_MATCH_MODE=1
 
@@ -69,3 +81,26 @@ if [[ "$windowname" != *"Dolphin"* ]] ;then # determine if window is not Dolphin
    [[ $- != *i* ]] && return 0
    [[ -z "$TMUX" ]] && exec tmux
 fi
+
+function rgzh() {
+    str=$1
+    shift
+    rg "$str" ~/Coding/C++/Cataclysm-DDA/lang/po/zh_CN.po "$@"
+}
+
+function rgsrc() {
+    str=$1
+    shift
+    rg "$str" ~/Coding/C++/Cataclysm-DDA/src -I -N "$@" | bat --language=C++
+}
+
+function rgdata() {
+    str=$1
+    shift
+    rg "$str" ~/Coding/C++/Cataclysm-DDA/data -I -N "$@" | bat --language=json
+}
+
+# added by travis gem
+[ -f /home/aloxaf/.travis/travis.sh ] && source /home/aloxaf/.travis/travis.sh
+
+# eval "$(starship init zsh)"
