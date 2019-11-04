@@ -8,9 +8,11 @@ function la {
 
 Set-Alias -Name ls -Value exa
 
-function Prompt
-{
-    $CurrentDir = (Get-Location).ToString() -replace "^$ENV:HOME","~"
-    Write-Host -ForegroundColor Green "$CurrentDir"
-    "> "
+function Prompt {
+    $CurrentDir = $PWD.ToString() `
+        -replace "^$ENV:HOME","~" `
+        -replace "/([^/.])[^/]*(?=/)",'/$1' `
+        -replace "/\.([^/])[^/]*(?=/)",'/.$1';
+    Write-Host -NoNewline -ForegroundColor Green "$CurrentDir";
+    "> ";
 }
