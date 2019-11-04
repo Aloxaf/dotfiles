@@ -1,7 +1,7 @@
 # Init antigen
 ANTIGEN_PATH=~/dotfiles/zsh
 DISABLE_MAGIC_FUNCTIONS=true
-fpath=($ANTIGEN_PATH/.antigen/bundles/robbyrussell/oh-my-zsh/custom/completions $fpath)
+fpath+=($ANTIGEN_PATH/.antigen/bundles/robbyrussell/oh-my-zsh/custom/completions $fpath)
 source $ANTIGEN_PATH/.antigen/antigen.zsh
 antigen init ~/.antigenrc
 
