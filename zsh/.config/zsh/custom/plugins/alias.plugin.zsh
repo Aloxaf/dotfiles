@@ -48,3 +48,5 @@ alias Rns='sudo pacman -Rns'
 alias Fx='pacman -Fx'
 alias Fy='sudo pacman -Fy'
 alias U='sudo pacman -U'
+
+alias userctl='systemctl --user'
