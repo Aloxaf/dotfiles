@@ -1,6 +1,7 @@
 # for better oh-my-zsh experience
 DISABLE_MAGIC_FUNCTIONS=true
 DISABLE_AUTO_UPDATE=true
+ZSH_DISABLE_COMPFIX=true
 ZSH="$HOME/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh"
 
 # init my plugins
@@ -8,7 +9,7 @@ source ~/.config/zsh/plugins.zsh
 
 # `time` will show max memotry
 # https://superuser.com/questions/480928/is-there-any-command-like-time-but-for-memory-usage/767491
-TIMEFMT='%J   %U  user %S system %P cpu %*E total'$'\nmax memory:	%M MB'
+TIMEFMT='%J    user:%U system:%S cpu:%P total:%*E'$'\nmax memory:	%M MB'
 
 # rustup mirror
 export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup

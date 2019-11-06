@@ -1,10 +1,9 @@
-# combined by avit and kardan
+# 参考资料
+# https://stackoverflow.com/questions/19901044/what-is-k-f-in-oh-my-zsh-theme
+# https://stackoverflow.com/questions/4466245/customize-zshs-prompt-when-displaying-previous-command-exit-code
+# https://zhuanlan.zhihu.com/p/51008087
+# https://www.manpagez.com/man/1/zshmisc/
 
-function get_host {
-    echo '@'$HOST
-}
-
-# 参考 https://zhuanlan.zhihu.com/p/51008087
 function _fish_collapsed_pwd() {
     if [[ "$PWD" == "$HOME" ]] {
         echo "~"
@@ -27,9 +26,8 @@ function _fish_collapsed_pwd() {
     echo ${(j:/:)names}
 }
 
+function detect_fg() {}
 
-PROMPT='➤ '
-PROMPT2='? '
-RPROMPT='$(_fish_collapsed_pwd) ${_return_status}'
-
-local _return_status="%{$fg_bold[red]%}%(?..⍉)%{$reset_color%}"
+PROMPT="%(?.%F{cyan}.%F{red})%B$> %f%b"
+PROMPT2='$fg_bold[yellow]? $reset_color'
+RPROMPT='%F{blue}$(_fish_collapsed_pwd)%f'

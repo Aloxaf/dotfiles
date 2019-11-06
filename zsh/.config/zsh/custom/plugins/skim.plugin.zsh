@@ -10,7 +10,7 @@ zle     -N    sk-zjump-widget
 bindkey '\ec' sk-zjump-widget
 
 function sk-history-widget() {
-    local selected=$(fc -rl 1 | sk --color=dark,current_bg:23)
+    local selected=$(fc -rl 1 | sk --color=dark,current_bg:23 --tiebreak score,index,end)
     if [[ "$selected" != "" ]] {
         zle vi-fetch-history -n $selected
     }

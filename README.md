@@ -1,13 +1,13 @@
 # dotfiles
 
-my dotfiles
+My dotfiles controlled by GNU stow following [this way](https://farseerfc.me/using-gnu-stow-to-manage-your-dotfiles.html)
 
 ## Requirements
 
-### for lsd
+### xkeysnail
 
-nerd-fonts-fira-code (AUR)
+```shell
+sudo groupadd uinput
+sudo usermod -a -G input,uinput $USER
+```
 
-### for tmux
-
-https://github.com/tmux-plugins/tpm
