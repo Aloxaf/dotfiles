@@ -4,6 +4,7 @@ CUSTOM=~/.config/zsh/custom
 
 antibody bundle <<EOF > ./plugins.zsh
 robbyrussell/oh-my-zsh
+robbyrussell/oh-my-zsh path:plugins/colored-man-pages
 robbyrussell/oh-my-zsh path:plugins/extract
 robbyrussell/oh-my-zsh path:plugins/git
 robbyrussell/oh-my-zsh path:plugins/sudo

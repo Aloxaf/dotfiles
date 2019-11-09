@@ -26,8 +26,6 @@ function _fish_collapsed_pwd() {
     echo ${(j:/:)names}
 }
 
-function detect_fg() {}
-
 PROMPT="%(?.%F{cyan}.%F{red})%B$> %f%b"
-PROMPT2='$fg_bold[yellow]? $reset_color'
-RPROMPT='%F{blue}$(_fish_collapsed_pwd)%f'
+PROMPT2="$fg_bold[yellow]? $reset_color"
+RPROMPT="%F{blue}$(_fish_collapsed_pwd)%f"
