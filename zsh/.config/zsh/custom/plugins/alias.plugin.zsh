@@ -17,11 +17,7 @@ alias nc='rlwrap nc'
 alias ls='exa --git'
 alias la='ls -la'
 alias lt='ls --tree'
-
-alias zz='z -c'
-alias zi='z -i'
-alias zf='z -I'
-alias zb='z -b'
+alias ll='ls -l'
 
 export EDITOR="vim"
 

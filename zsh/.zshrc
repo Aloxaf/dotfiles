@@ -1,11 +1,8 @@
-# for better oh-my-zsh experience
-DISABLE_MAGIC_FUNCTIONS=true
-DISABLE_AUTO_UPDATE=true
-ZSH_DISABLE_COMPFIX=true
-ZSH="$HOME/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh"
+# load zplugin module, use zpmod -h for help
+module_path+=( "$HOME/.zplugin/bin/zmodules/Src" )
+zmodload zdharma/zplugin
 
-# init my plugins
-source ~/.config/zsh/plugins.zsh
+source ~/.zplugin/bin/zplugin.zsh
 
 # `time` will show max memotry
 # https://superuser.com/questions/480928/is-there-any-command-like-time-but-for-memory-usage/767491
@@ -29,3 +26,45 @@ fi
 
 # added by travis gem
 [ -f /home/aloxaf/.travis/travis.sh ] && source /home/aloxaf/.travis/travis.sh
+
+# for better oh-my-zsh experience
+
+DISABLE_LS_COLORS=true
+
+
+zplg ice lucid wait='!0'
+zplugin light paulirish/git-open
+
+zplg ice lucid wait='!0'
+zplugin light skywind3000/z.lua
+
+zplg ice lucid wait='!0' atinit='zpcompinit'
+zplugin light zdharma/fast-syntax-highlighting
+
+zplugin ice wait lucid atload='_zsh_autosuggest_start'
+zplugin light zsh-users/zsh-autosuggestions
+
+zplg ice lucid wait='!0'
+zplugin light zsh-users/zsh-completions
+
+zplugin ice wait="2" lucid as="program" pick="bin/git-dsf"
+zplugin light zdharma/zsh-diff-so-fancy
+
+zplugin ice svn
+zplugin snippet OMZ::plugins/extract
+zplugin snippet OMZ::lib/completion.zsh
+zplugin snippet OMZ::lib/history.zsh
+zplugin snippet OMZ::lib/key-bindings.zsh
+zplugin snippet OMZ::lib/theme-and-appearance.zsh
+zplugin snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+zplugin snippet OMZ::plugins/sudo/sudo.plugin.zsh
+
+zplg ice lucid wait='!0'
+zplugin snippet OMZ::plugins/git/git.plugin.zsh
+
+CUSTOM=~/.config/zsh/custom
+
+zplugin snippet $CUSTOM/themes/loli.zsh-theme
+zplugin snippet $CUSTOM/plugins/alias.plugin.zsh
+zplugin snippet $CUSTOM/plugins/fuzzy.plugin.zsh
+zplugin snippet $CUSTOM/plugins/rgcdda.plugin.zsh
