@@ -27,15 +27,16 @@ bindkey '^R' fz-history-widget
 # 会将 * 或 ** 替换为搜索结果
 # 前者表示搜索单层, 后者表示搜索子目录
 function fz-find() {
-    local selected dir
-    dir=$(cut -d' ' -f2- <<< $BUFFER | sed 's/\*\+$//;s/^$/./')
+    local selected dir cut
+    cut=$(grep -oP '[^* ]+(?=\*{1,2}$)' <<< $BUFFER)
+    eval "dir=${cut:-.}"
     if [[ $BUFFER == *"**"* ]] {
-        selected=$(fd . $dir | fzf)
+        selected=$(fd -H . $dir | fzf)
     } elif [[ $BUFFER == *"*"* ]] {
         selected=$(fd -d 1 . $dir | fzf)
     }
-    BUFFER=${BUFFER/"**"/$selected}
-    BUFFER=${BUFFER/"*"/$selected}
+    BUFFER=${BUFFER/%'*'*/}
+    BUFFER=${BUFFER/%$cut/$selected}
     zle end-of-line
 }
 
