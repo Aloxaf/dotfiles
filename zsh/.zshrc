@@ -22,15 +22,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
     [[ "$(</proc/$PPID/cmdline)" != *"/usr/bin/dolphin"* ]] && exec tmux
 }
 
-# ==== Emacs 键绑定 ====
-
-#bindkey '\ef' forward-word
-#bindkey '\eb' backward-word
-
 # ==== 加载 GitHub 插件 ====
-
-#zplg ice lucid wait='1'
-#zplg light djui/alias-tips
 
 zplg light MichaelAquilina/zsh-you-should-use
 
@@ -60,9 +52,6 @@ bindkey "^Xj" zce
 
 # ==== 加载 OMZ 插件 ====
 
-# for better oh-my-zsh experience
-DISABLE_LS_COLORS=true
-
 zplg ice svn
 zplg snippet OMZ::plugins/extract
 
@@ -73,19 +62,18 @@ zplg snippet OMZ::lib/clipboard.zsh
 zplg snippet OMZ::lib/completion.zsh
 zplg snippet OMZ::lib/history.zsh
 zplg snippet OMZ::lib/key-bindings.zsh
-zplg snippet OMZ::lib/git.zsh
-zplg snippet OMZ::lib/theme-and-appearance.zsh
 zplg snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplg snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
 # ==== 加载自定义插件 ====
 
-CUSTOM=~/.config/zsh/custom
+CUSTOM=~/.config/zsh
 
-zplg snippet $CUSTOM/plugins/alias.plugin.zsh
-zplg snippet $CUSTOM/plugins/fuzzy.plugin.zsh
-zplg snippet $CUSTOM/plugins/rgcdda.plugin.zsh
-zplg snippet $CUSTOM/plugins/zce.plugin.zsh
+zplg snippet $CUSTOM/snippets/alias.zsh
+zplg snippet $CUSTOM/snippets/fuzzy.zsh
+zplg snippet $CUSTOM/snippets/rgcdda.zsh
+zplg snippet $CUSTOM/snippets/zce.zsh
+zplg snippet $CUSTOM/snippets/opts.zsh
 
 zplg ice lucid wait="1"
 zplg snippet /home/aloxaf/.travis/travis.sh

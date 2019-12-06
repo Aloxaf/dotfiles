@@ -14,7 +14,7 @@ alias del='trash'
 alias yafu='rlwrap yafu'
 alias nc='rlwrap nc'
 
-alias ls='exa --git'
+alias ls='exa'
 alias la='ls -la'
 alias lt='ls --tree'
 alias ll='ls -l'

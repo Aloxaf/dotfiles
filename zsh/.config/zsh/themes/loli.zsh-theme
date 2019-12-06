@@ -29,3 +29,5 @@ function _fish_collapsed_pwd() {
 PROMPT="%(?.%F{cyan}.%F{red})%B$> %f%b"
 PROMPT2="$fg_bold[yellow]? $reset_color"
 RPROMPT='%F{blue}$(_fish_collapsed_pwd)%f'
+
+setopt prompt_subst
