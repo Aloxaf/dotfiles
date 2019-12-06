@@ -2,8 +2,18 @@ import re
 
 from xkeysnail.transform import *
 
-WHITE_LIST = ("Emacs", "Alacritty", "konsole", "jetbrains-clion",
-              "jetbrains-pycharm")
+# Alt + N to choose completion
+define_keymap(
+    lambda wm_class: wm_class in ("jetbrains-clion", "jetbrains-pycharm"),
+    {
+        K("LM-Key_2"): [K("down"), K("down"), K("tab")],
+        K("LM-Key_3"): [K("down"), K("down"), K("tab")],
+        K("LM-Key_4"): [K("down"), K("down"), K("down"), K("tab")],
+    },
+    "JetBrains",
+)
+
+WHITE_LIST = ("Emacs", "Alacritty", "konsole", "jetbrains-clion", "jetbrains-pycharm")
 
 define_keymap(
     lambda wm_class: wm_class not in WHITE_LIST,
@@ -25,6 +35,13 @@ define_keymap(
         # Beginning/End of file
         K("LShift-LM-comma"): with_mark(K("LC-home")),
         K("LShift-LM-dot"): with_mark(K("LC-end")),
+        # Delete line
+        K("LC-LShift-backspace"): [
+            K("home"),
+            K("LShift-end"),
+            K("LC-x"),
+            K("backspace"),
+        ],
         # Newline
         K("C-m"): K("enter"),
         K("C-j"): K("enter"),
@@ -36,8 +53,7 @@ define_keymap(
         K("LC-d"): [K("delete"), set_mark(False)],
         K("LM-d"): [K("LC-delete"), set_mark(False)],
         # Kill line
-        K("LC-k"): [K("LShift-end"),
-                    K("LC-x"), set_mark(False)],
+        K("LC-k"): [K("LShift-end"), K("LC-x"), set_mark(False)],
         # Undo
         K("LC-slash"): [K("LC-z"), set_mark(False)],
         K("LC-LShift-slash"): [K("LC-z"), set_mark(False)],
@@ -69,6 +85,7 @@ define_keymap(
             K("LC-g"): pass_through_key,
             # C-x u (undo)
             K("u"): [K("LC-z"), set_mark(False)],
-        }
+        },
     },
-    "Emacs-like keys")
+    "Emacs-like keys",
+)
