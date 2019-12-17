@@ -4,3 +4,4 @@ function zce() {
 }
 
 zle -A zce zce
+bindkey "\C-w" kill-region

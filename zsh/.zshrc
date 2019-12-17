@@ -24,6 +24,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
 
 # ==== 加载 GitHub 插件 ====
 
+zplg ice lucid wait='1'
 zplg light MichaelAquilina/zsh-you-should-use
 
 zplg ice lucid wait='1'
@@ -62,6 +63,7 @@ zplg snippet OMZ::lib/clipboard.zsh
 zplg snippet OMZ::lib/completion.zsh
 zplg snippet OMZ::lib/history.zsh
 zplg snippet OMZ::lib/key-bindings.zsh
+zplg snippet OMZ::lib/git.zsh
 zplg snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplg snippet OMZ::plugins/sudo/sudo.plugin.zsh
 

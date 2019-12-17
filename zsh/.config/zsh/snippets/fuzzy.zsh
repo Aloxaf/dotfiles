@@ -14,7 +14,7 @@ bindkey '\ec' fz-zjump-widget
 
 # 搜索历史, C-r 触发
 function fz-history-widget() {
-    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=begin,index --tac --prompt="cmd> ")
+    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=index --prompt="cmd> ")
     if [[ "$selected" != "" ]] {
         zle vi-fetch-history -n $selected
     }
@@ -31,9 +31,9 @@ function fz-find() {
     cut=$(grep -oP '[^* ]+(?=\*{1,2}$)' <<< $BUFFER)
     eval "dir=${cut:-.}"
     if [[ $BUFFER == *"**"* ]] {
-        selected=$(fd -H . $dir | fzf --prompt="cd> ")
+        selected=$(fd -H . $dir | fzf --tiebreak=end,length --prompt="cd> ")
     } elif [[ $BUFFER == *"*"* ]] {
-        selected=$(fd -d 1 . $dir | fzf --prompt="cd> ")
+        selected=$(fd -d 1 . $dir | fzf --tiebreak=end --prompt="cd> ")
     }
     BUFFER=${BUFFER/%'*'*/}
     BUFFER=${BUFFER/%$cut/$selected}
