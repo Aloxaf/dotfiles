@@ -8,7 +8,7 @@ source ~/.zplugin/bin/zplugin.zsh
 TIMEFMT=$'%J    user:%U system:%S cpu:%P total:%*E\nmax memory:	%M MB'
 
 # rustup mirror
-export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
+export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 # speed up rustc compile
@@ -30,9 +30,6 @@ zplg light MichaelAquilina/zsh-you-should-use
 zplg ice lucid wait='1'
 zplg light hlissner/zsh-autopair
 
-zplg ice lucid wait='1'
-zplg light paulirish/git-open
-
 zplg ice lucid wait='0'
 zplg light skywind3000/z.lua
 
@@ -44,9 +41,6 @@ zplg light zsh-users/zsh-autosuggestions
 
 zplg ice lucid wait='0'
 zplg light zsh-users/zsh-completions
-
-zplg ice wait="1" lucid as="program" pick="bin/git-dsf"
-zplg light zdharma/zsh-diff-so-fancy
 
 zplg light hchbaw/zce.zsh
 bindkey "^Xj" zce
@@ -66,6 +60,9 @@ zplg snippet OMZ::lib/key-bindings.zsh
 zplg snippet OMZ::lib/git.zsh
 zplg snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplg snippet OMZ::plugins/sudo/sudo.plugin.zsh
+
+zplg ice as"completion"; zplg snippet OMZ::plugins/cargo/_cargo
+zplg ice as"completion"; zplg snippet OMZ::plugins/rust/_rust
 
 # ==== 加载自定义插件 ====
 
