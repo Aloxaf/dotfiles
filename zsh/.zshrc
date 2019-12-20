@@ -46,10 +46,7 @@ bindkey "^Xj" zce
 
 # ==== 加载 OMZ 插件 ====
 
-zplg ice svn
-zplg snippet OMZ::plugins/extract
-
-zplg ice lucid wait='0'
+zplg ice lucid wait="0"
 zplg snippet OMZ::plugins/git/git.plugin.zsh
 
 zplg snippet OMZ::lib/clipboard.zsh
@@ -60,6 +57,7 @@ zplg snippet OMZ::lib/git.zsh
 zplg snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplg snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
+zplg ice svn; zplg snippet OMZ::plugins/extract
 zplg ice as="completion"; zplg snippet OMZ::plugins/cargo/_cargo
 zplg ice as="completion"; zplg snippet OMZ::plugins/rust/_rust
 
@@ -73,8 +71,8 @@ zplg snippet $CUSTOM/snippets/rgcdda.zsh
 zplg snippet $CUSTOM/snippets/zce.zsh
 zplg snippet $CUSTOM/snippets/opts.zsh
 
-zplg ice lucid wait="1"
-zplg snippet /home/aloxaf/.travis/travis.sh
+zplg ice lucid wait="0" atload="zpcompinit; zpcdreplay"
+zplg snippet ~/.travis/travis.sh
 
 # ==== 加载主题 ====
 
