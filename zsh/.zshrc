@@ -33,13 +33,12 @@ zplg light hlissner/zsh-autopair
 zplg ice lucid wait='0'
 zplg light skywind3000/z.lua
 
-zplg ice lucid wait='0' atinit='zpcompinit'
+zplg ice lucid wait='0'
 zplg light zdharma/fast-syntax-highlighting
 
-zplg ice wait lucid atload='_zsh_autosuggest_start'
+zplg ice lucid wait='0' atload='_zsh_autosuggest_start'
 zplg light zsh-users/zsh-autosuggestions
 
-zplg ice lucid wait='0'
 zplg light zsh-users/zsh-completions
 
 zplg light hchbaw/zce.zsh
@@ -61,8 +60,8 @@ zplg snippet OMZ::lib/git.zsh
 zplg snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplg snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
-zplg ice as"completion"; zplg snippet OMZ::plugins/cargo/_cargo
-zplg ice as"completion"; zplg snippet OMZ::plugins/rust/_rust
+zplg ice as="completion"; zplg snippet OMZ::plugins/cargo/_cargo
+zplg ice as="completion"; zplg snippet OMZ::plugins/rust/_rust
 
 # ==== 加载自定义插件 ====
 
@@ -79,6 +78,8 @@ zplg snippet /home/aloxaf/.travis/travis.sh
 
 # ==== 加载主题 ====
 
+PROMPT=$'\n%F{cyan}❯ %f'
+RPROMPT=""
 zstyle ':prompt:pure:prompt:success' color cyan
-zplg ice pick"async.zsh" src"pure.zsh"
+zplg ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
 zplg light Aloxaf/pure
