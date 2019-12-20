@@ -33,7 +33,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(javascript
+     yaml
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -41,11 +42,12 @@ This function should only modify configuration layer settings."
      ;; ----------------------------------------------------------------
      (auto-completion :variables
                       auto-completion-enable-help-tooltip 'manual
-                      auto-completion-enable-snippets-in-popup t
+                      ;; auto-complet
+                      ion-enable-snippets-in-popup t
                       auto-completion-enable-sort-by-usage t)
      ;; better-defaults
      (c-c++ :variables
-            c-c++-backend 'lsp-ccls
+            ;; c-c++-backend 'lsp-ccls
             c-c++-lsp-sem-highlight-method 'overlay
             c-c++-lsp-sem-highlight-rainbow t)
      emacs-lisp
@@ -56,15 +58,19 @@ This function should only modify configuration layer settings."
      ;; markdown
      multiple-cursors
      org
+     shell-script
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
      (python :variables
+             python-backend 'anaconda
              python-format-on-save t
+             python-formatter 'black
              python-sort-imports-on-save t)
-
+     (rust :variables
+           rust-backend 'lsp)
      treemacs
      ;; version-control
      (wakatime :variables
@@ -79,7 +85,7 @@ This function should only modify configuration layer settings."
    ;; To use a local version of a package, use the `:location' property:
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(rmsbolt)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -220,8 +226,8 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Fira Code"
-                               :size 18
+   dotspacemacs-default-font '("Ubuntu Mono"
+                               :size 22
                                :weight normal
                                :width normal)
 
@@ -494,3 +500,23 @@ before packages are loaded."
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (swiper ivy add-node-modules-path rmsbolt toml-mode racer helm-gtags ggtags flycheck-rust counsel-gtags cargo rust-mode yasnippet-snippets yapfify ws-butler writeroom-mode winum which-key wakatime-mode volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless move-text macrostep lsp-ui lsp-treemacs lsp-haskell lorem-ipsum live-py-mode link-hint intero indent-guide importmagic hungry-delete htmlize hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-lsp helm-hoogle helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag haskell-snippets google-translate google-c-style golden-ratio gnuplot fuzzy font-lock+ flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline disaster diminish define-word dante cython-mode cquery counsel-projectile company-statistics company-rtags company-quickhelp company-lsp company-ghci company-ghc company-cabal company-c-headers company-anaconda column-enforce-mode cmm-mode clean-aindent-mode clang-format centered-cursor-mode ccls blacken auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
