@@ -1,0 +1,11 @@
+[Unit]
+Description=Cleanup of Cargo Cache
+DefaultDependencies=no
+Conflicts=shutdown.target
+After=local-fs.target time-set.target
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=cargo sweep --maxsize 25600 /home/aloxaf/Coding/Rust/tmp2 -r
+IOSchedulingClass=idle
