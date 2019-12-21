@@ -42,9 +42,9 @@ zplugin light zdharma/fast-syntax-highlighting
 
 zplugin ice lucid wait='0' atload='_zsh_autosuggest_start'
 zplugin light zsh-users/zsh-autosuggestions
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-ZSH_AUTOSUGGEST_USE_ASYNC=1
+#ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+#ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+#ZSH_AUTOSUGGEST_USE_ASYNC=1
 
 zplugin ice blockf
 zplugin light zsh-users/zsh-completions

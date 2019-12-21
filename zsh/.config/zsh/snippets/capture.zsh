@@ -1,4 +1,5 @@
-# edited from https://github.com/Valodim/zsh-capture-completion
+# 基于 https://github.com/Valodim/zsh-capture-completion
+# 参照 https://github.com/zsh-users/zsh-autosuggestions/pull/330 应该还有优化空间
 
 zmodload zsh/zpty || { echo 'error: missing module zsh/zpty' >&2; exit 1 }
 
@@ -10,24 +11,29 @@ local line
 
 setopt rcquotes
 () {
-    zpty -w z source $1
-    repeat 4; do
-        zpty -r z line
-        [[ $line == ok* ]] && return
-    done
-    echo 'error initializing.' >&2
-    exit 2
+    # Initialize the pty env, blocking until null byte is seen
+    zpty -w z "source $1"
+    zpty -r z line '*'$'\0'
 } =( <<< '
 # no prompt!
 PROMPT=
+
+# FIXME: "fd -" 似乎补全有 error
+# Silence any error messages
+exec 2>/dev/null
 
 # load completion system
 autoload compinit
 compinit -d ~/.zcompdump_capture
 
-# never run a command
+# never run a command except cd
 fake-run() {
-    zle kill-whole-line
+    # 只起效一次, 因此每次补全后都要重新插入
+    compprefuncs=( null-line )
+    comppostfuncs=( null-line )
+    if [[ $BUFFER[1,3] != "cd " ]] {
+        zle kill-whole-line
+    }
     zle accept-line
 }
 zle -N fake-run
@@ -38,11 +44,6 @@ bindkey ''^I'' complete-word
 # send a line with null-byte at the end before and after completions are output
 null-line () {
     echo -E - $''\0''
-}
-
-precmd () {
-    compprefuncs=( null-line )
-    comppostfuncs=( null-line )
 }
 
 # never group stuff!
@@ -121,16 +122,22 @@ compadd () {
         # description to be displayed afterwards
         (( $#__dscr >= $i )) && dscr=" -- ${${__dscr[$i]}##$__hits[$i] #}" || dscr=
 
-        echo -E - $IPREFIX$apre$hpre$__hits[$i]$dsuf$hsuf$asuf$dscr
+        if (( $#__dscr >= $i )) {
+            printf -- "$IPREFIX$apre$hpre%-32s$dsuf$hsuf$asuf$dscr\n" $__hits[$i]
+        } else {
+            echo -E - $IPREFIX$apre$hpre$__hits[$i]$dsuf$hsuf$asuf$dscr
+        }
 
     done
 
 }
 
-# signal success!
-echo ok')
+# Signal setup completion by sending null byte
+echo $''\0''
+')
 
 function zcapture() {
+    zpty -w z "cd $(pwd)"
     zpty -w z "$*"$'\t'
 
     integer tog=0

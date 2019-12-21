@@ -52,9 +52,9 @@ function fzf-completion() {
         zle expand-or-complete
         return
     } else {
-        selected=$(printf '%s\n' "${clist[@]}" | fzf --border --layout=reverse --tiebreak=begin --bind tab:down,ctrl-i:down,ctrl-j:accept --height=30%)
+        selected=$(printf -- '%s\n' "${clist[@]}" | fzf --border --layout=reverse --tiebreak=begin --bind tab:down,ctrl-i:down,ctrl-j:accept --height=30%)
     }
-    LBUFFER="${LBUFFER% *} ${selected% -- *}"
+    LBUFFER="${LBUFFER% *} ${selected%% *-- *}"
     LBUFFER=${LBUFFER%$'\x0d'}
     zle reset-prompt
 }
