@@ -1,0 +1,5 @@
+# DESC: 在 CDDA 翻译中搜索指定字符串($1)
+
+str=$1
+shift
+rg "$str" ~/Coding/C++/Cataclysm-DDA/lang/po/zh_CN.po "$@"

@@ -42,3 +42,22 @@ function fz-find() {
 
 zle     -N    fz-find
 bindkey '\es' fz-find
+
+# 依赖 Valodim/zsh-capture-completion
+# 利用 fzf 补全参数
+function fzf-completion() {
+    local selected left_non_space clist
+    clist=("${(@f)$(capture.zsh "$LBUFFER")}")
+    if (( $#clist == 1 )) {
+        zle expand-or-complete
+        return
+    } else {
+        selected=$(printf '%s\n' "${clist[@]}" | fzf --border --layout=reverse --bind tab:down,ctrl-i:down,ctrl-j:accept --height=30%)
+    }
+    LBUFFER="${LBUFFER% *} ${selected% -- *}"
+    LBUFFER=${LBUFFER%$'\x0d'}
+    zle reset-prompt
+}
+
+zle     -N   fzf-completion
+bindkey '^I' fzf-completion

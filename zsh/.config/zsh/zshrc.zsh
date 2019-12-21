@@ -18,6 +18,14 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
     [[ "$(</proc/$PPID/cmdline)" != *"/usr/bin/dolphin"* ]] && exec tmux
 }
 
+fpath+=("$HOME/.config/zsh/functions")
+
+autoload -Uz rgzh   rgsrc   rgdata  pslist
+autoload +X zman
+
+# 避免 zpty z zsh -i 启动的 zsh 加载多余插件
+if [[ "$(</proc/$$/cmdline)" != $'zsh\x00-i\x00' ]] {
+
 # ==== 加载 GitHub 插件 ====
 
 zplugin ice lucid wait='1'
@@ -35,10 +43,14 @@ zplugin light zdharma/fast-syntax-highlighting
 zplugin ice lucid wait='0' atload='_zsh_autosuggest_start'
 zplugin light zsh-users/zsh-autosuggestions
 
+zplugin ice blockf
 zplugin light zsh-users/zsh-completions
 
 zplugin light hchbaw/zce.zsh
 bindkey "^Xj" zce
+
+zplugin ice pick="capture.zsh" as="program" atclone="sed -i 's#zsh -f -i#zsh -i#' capture.zsh"
+zplugin light Valodim/zsh-capture-completion
 
 # ==== 加载 OMZ 插件 ====
 
@@ -63,7 +75,6 @@ CUSTOM=~/.config/zsh
 zplugin snippet $CUSTOM/snippets/alias.zsh
 zplugin snippet $CUSTOM/snippets/fuzzy.zsh
 zplugin snippet $CUSTOM/snippets/history.zsh
-zplugin snippet $CUSTOM/snippets/rgcdda.zsh
 zplugin snippet $CUSTOM/snippets/zce.zsh
 zplugin snippet $CUSTOM/snippets/opts.zsh
 
@@ -77,3 +88,23 @@ RPROMPT=""
 zstyle ':prompt:pure:prompt:success' color cyan
 zplugin ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
 zplugin light Aloxaf/pure
+
+} else {
+
+CUSTOM=~/.config/zsh
+
+zplugin ice blockf
+zplugin light zsh-users/zsh-completions
+
+zplugin snippet OMZ::plugins/git/git.plugin.zsh
+zplugin snippet OMZ::lib/git.zsh
+zplugin snippet $CUSTOM/snippets/alias.zsh
+
+zplugin ice as="completion"; zplugin snippet OMZ::plugins/cargo/_cargo
+zplugin ice as="completion"; zplugin snippet OMZ::plugins/rust/_rust
+
+autoload -Uz compinit
+compinit
+zplugin cdreplay -q
+
+}

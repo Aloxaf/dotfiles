@@ -9,7 +9,8 @@ alias checksec="checksec --file"
 alias amd="env DRI_PRIME=1"
 alias trid="LC_ALL=C trid"
 alias c='tput reset'
-alias del='gio trash'
+alias d='gio trash'
+alias rm='rm -i'
 
 alias yafu='rlwrap yafu'
 alias nc='rlwrap nc'
