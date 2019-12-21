@@ -47,12 +47,12 @@ bindkey '\es' fz-find
 # 利用 fzf 补全参数
 function fzf-completion() {
     local selected left_non_space clist
-    clist=("${(@f)$(capture.zsh "$LBUFFER")}")
+    clist=("${(@f)$(zcapture "$LBUFFER")}")
     if (( $#clist == 1 )) {
         zle expand-or-complete
         return
     } else {
-        selected=$(printf '%s\n' "${clist[@]}" | fzf --border --layout=reverse --bind tab:down,ctrl-i:down,ctrl-j:accept --height=30%)
+        selected=$(printf '%s\n' "${clist[@]}" | fzf --border --layout=reverse --tiebreak=begin --bind tab:down,ctrl-i:down,ctrl-j:accept --height=30%)
     }
     LBUFFER="${LBUFFER% *} ${selected% -- *}"
     LBUFFER=${LBUFFER%$'\x0d'}

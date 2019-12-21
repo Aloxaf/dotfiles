@@ -42,15 +42,18 @@ zplugin light zdharma/fast-syntax-highlighting
 
 zplugin ice lucid wait='0' atload='_zsh_autosuggest_start'
 zplugin light zsh-users/zsh-autosuggestions
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_USE_ASYNC=1
 
 zplugin ice blockf
 zplugin light zsh-users/zsh-completions
 
+# zplugin snippet https://mimosa-pudica.net/src/incr-0.2.zsh
+# zplugin light hchbaw/auto-fu.zsh
+
 zplugin light hchbaw/zce.zsh
 bindkey "^Xj" zce
-
-zplugin ice pick="capture.zsh" as="program" atclone="sed -i 's#zsh -f -i#zsh -i#' capture.zsh"
-zplugin light Valodim/zsh-capture-completion
 
 # ==== 加载 OMZ 插件 ====
 
@@ -77,6 +80,7 @@ zplugin snippet $CUSTOM/snippets/fuzzy.zsh
 zplugin snippet $CUSTOM/snippets/history.zsh
 zplugin snippet $CUSTOM/snippets/zce.zsh
 zplugin snippet $CUSTOM/snippets/opts.zsh
+zplugin snippet $CUSTOM/snippets/capture.zsh
 
 zplugin ice lucid wait="0" atload="zpcompinit; zpcdreplay"
 zplugin snippet ~/.travis/travis.sh
