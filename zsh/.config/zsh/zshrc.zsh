@@ -76,11 +76,13 @@ zplugin ice as="completion"; zplugin snippet OMZ::plugins/rust/_rust
 CUSTOM=~/.config/zsh
 
 zplugin snippet $CUSTOM/snippets/alias.zsh
-zplugin snippet $CUSTOM/snippets/fuzzy.zsh
 zplugin snippet $CUSTOM/snippets/history.zsh
 zplugin snippet $CUSTOM/snippets/zce.zsh
 zplugin snippet $CUSTOM/snippets/opts.zsh
-zplugin snippet $CUSTOM/snippets/capture.zsh
+[[ "$(</proc/$PPID/cmdline)" != *"/usr/bin/dolphin"* ]] && {
+    zplugin snippet $CUSTOM/snippets/fuzzy.zsh
+    zplugin snippet $CUSTOM/snippets/capture.zsh
+}
 
 zplugin ice lucid wait="0" atload="zpcompinit; zpcdreplay"
 zplugin snippet ~/.travis/travis.sh

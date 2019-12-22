@@ -15,16 +15,9 @@ setopt rcquotes
     zpty -w z "source $1"
     zpty -r z line '*'$'\0'
 } =( <<< '
-# no prompt!
-PROMPT=
-
 # FIXME: "fd -" 似乎补全有 error
 # Silence any error messages
 exec 2>/dev/null
-
-# load completion system
-autoload compinit
-compinit -d ~/.zcompdump_capture
 
 # never run a command except cd
 fake-run() {
@@ -123,13 +116,11 @@ compadd () {
         (( $#__dscr >= $i )) && dscr=" -- ${${__dscr[$i]}##$__hits[$i] #}" || dscr=
 
         if (( $#__dscr >= $i )) {
-            printf -- "$IPREFIX$apre$hpre%-32s$dsuf$hsuf$asuf$dscr\n" $__hits[$i]
+            printf -- "$IPREFIX$apre$hpre%-32s$dsuf$hsuf$asuf$dscr\n" "$__hits[$i]"
         } else {
             echo -E - $IPREFIX$apre$hpre$__hits[$i]$dsuf$hsuf$asuf$dscr
         }
-
     done
-
 }
 
 # Signal setup completion by sending null byte
