@@ -4,7 +4,7 @@ from xkeysnail.transform import *
 
 # Alt + N to choose completion
 define_keymap(
-    lambda wm_class: wm_class in ("jetbrains-clion", "jetbrains-pycharm"),
+    lambda wm_class: wm_class in ("jetbrains-clion", "jetbrains-pycharm", "jetbrains-goland"),
     {
         K("LM-Key_2"): [K("down"), K("down"), K("tab")],
         K("LM-Key_3"): [K("down"), K("down"), K("tab")],
@@ -13,7 +13,7 @@ define_keymap(
     "JetBrains",
 )
 
-WHITE_LIST = ("Emacs", "Alacritty", "konsole", "jetbrains-clion", "jetbrains-pycharm")
+WHITE_LIST = ("Emacs", "Alacritty", "konsole", "jetbrains-clion", "jetbrains-pycharm", "jetbrains-goland")
 
 define_keymap(
     lambda wm_class: wm_class not in WHITE_LIST,
