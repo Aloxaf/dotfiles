@@ -10,7 +10,7 @@ function zshaddhistory() {
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
-SAVEHIST=10000
+SAVEHIST=50000
 
 # 记录时间戳
 setopt extended_history
@@ -24,5 +24,5 @@ setopt hist_ignore_space
 setopt hist_verify
 # 按执行顺序添加历史
 setopt inc_append_history
-# 共享历史数据
+# 实例之间即时共享历史
 setopt share_history

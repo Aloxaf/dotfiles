@@ -1,23 +1,10 @@
 source ~/.zplugin/bin/zplugin.zsh
 
-# https://superuser.com/questions/480928/is-there-any-command-like-time-but-for-memory-usage/767491
-TIMEFMT=$'%J    user:%U system:%S cpu:%P total:%*E\nmax memory:	%M MB'
-
-WORDCHARS=''
-
-# rustup mirror
-export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
-export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
-
-# speed up rustc compile
-# removed because all cache has be placed in ~/.cache/cargo-build
-# export RUSTC_WRAPPER=sccache
-
-# Dolphin 下禁用 tmux 以便使用 z 快速跳转目录
+# 作为嵌入式终端时禁用 tmux
 # https://www.reddit.com/r/tmux/comments/a2e5mn/tmux_on_dolphin_inbuilt_terminal/
 # 上面的方法由于 alacritty 0.4.0 的释出而失效
 if [[ "$TMUX" == "" && $- == *i* ]] {
-    [[ "$(</proc/$PPID/cmdline)" != *"/usr/bin/dolphin"* ]] && exec tmux
+    [[ "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)" ]] || exec tmux
 }
 
 fpath+=("$HOME/.config/zsh/functions")
@@ -27,42 +14,38 @@ autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
 
-zplugin ice lucid wait='1'
+zplugin ice lucid wait
 zplugin light MichaelAquilina/zsh-you-should-use
 
-zplugin ice lucid wait='1'
+zplugin ice lucid wait
 zplugin light hlissner/zsh-autopair
 
-zplugin ice lucid wait='0'
+zplugin ice lucid wait
 zplugin light skywind3000/z.lua
 
-zplugin ice lucid wait='0'
+zplugin ice lucid wait
 zplugin light zdharma/fast-syntax-highlighting
 
-zplugin ice lucid wait='0' atload='_zsh_autosuggest_start'
+zplugin ice lucid wait atload='_zsh_autosuggest_start'
 zplugin light zsh-users/zsh-autosuggestions
 
 zplugin ice blockf
 zplugin light zsh-users/zsh-completions
 
-# zplugin snippet https://mimosa-pudica.net/src/incr-0.2.zsh
-# zplugin light hchbaw/auto-fu.zsh
-
 zplugin light hchbaw/zce.zsh
-bindkey "^Xj" zce
 
 # ==== 加载 OMZ 插件 ====
 
-zplugin ice lucid wait="0"
-zplugin snippet OMZ::plugins/git/git.plugin.zsh
-
 zplugin snippet OMZ::lib/clipboard.zsh
-zplugin snippet OMZ::lib/key-bindings.zsh
 zplugin snippet OMZ::lib/git.zsh
 zplugin snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplugin snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
+zplugin ice lucid wait
+zplugin snippet OMZ::plugins/git/git.plugin.zsh
+
 zplugin ice svn; zplugin snippet OMZ::plugins/extract
+zplugin ice svn; zplugin snippet OMZ::plugins/pip
 zplugin ice as="completion"; zplugin snippet OMZ::plugins/cargo/_cargo
 zplugin ice as="completion"; zplugin snippet OMZ::plugins/rust/_rust
 zplugin ice as="completion"; zplugin snippet OMZ::plugins/fd/_fd
@@ -71,13 +54,14 @@ zplugin ice as="completion"; zplugin snippet OMZ::plugins/fd/_fd
 
 CUSTOM=~/.config/zsh
 
-zplugin snippet $CUSTOM/snippets/alias.zsh
-zplugin snippet $CUSTOM/snippets/history.zsh
-zplugin snippet $CUSTOM/snippets/zce.zsh
-zplugin snippet $CUSTOM/snippets/opts.zsh
-zplugin snippet $CUSTOM/snippets/fuzzy.zsh
+source $CUSTOM/snippets/alias.zsh
+# FIXME: 如果 completion 在 key-bindinds 之前初始化会有问题
+source $CUSTOM/snippets/key-bindings.zsh
+source $CUSTOM/snippets/completion.zsh
+source $CUSTOM/snippets/history.zsh
+source $CUSTOM/snippets/misc.zsh
 
-zplugin ice lucid wait="0" atload="zpcompinit; zpcdreplay"
+zplugin ice lucid wait atload="zpcompinit; zpcdreplay"
 zplugin snippet ~/.travis/travis.sh
 
 # ==== 加载主题 ====
