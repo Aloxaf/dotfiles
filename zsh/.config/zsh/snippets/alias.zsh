@@ -23,6 +23,7 @@ alias Fy='sudo pacman -Fy'  U='sudo pacman -U'
 function _wwrapper() {
     local wrapper=$1 command=$2
     [[ -n $aliases[$2] ]] && command=$aliases[$2]
+    [[ -z $commands[$command] ]] && echo "$command is not a executable file" && return
     shift 2
     eval $wrapper $command "$@"
 }

@@ -32,127 +32,108 @@ setopt complete_in_word
 # 基于 Valodim/zsh-capture-completion
 # 用 fzf 作为交互菜单
 function compadd-wrapper () {
-    # 如果参数包含 -O, -A 或 -D 则不作处理
-    if [[ ${@[1,(i)(-|--)]} == *-(O|A|D)\ * ]] {
+    # 解析所有参数, 避免无法识别组合参数的情况
+    typeset -A apre hpre ipre hsuf asuf isuf arg_d arg_J arg_V \
+         arg_X arg_x arg_r arg_R arg_W arg_F arg_M arg_O arg_A arg_D arg_E
+    local flag_a flag_k flag_l flag_o flag_1 flag_2 flag_q isfile \
+         flag_e flag_Q flag_n flag_U flag_C
+    zparseopts -E P:=apre p:=hpre i:=ipre S:=asuf s:=hsuf I:=isuf d:=arg_d \
+        J:=arg_J V:=arg_V X:=arg_X x:=arg_x r:=arg_r R:=arg_R W:=arg_W F:=arg_F \
+        M:=arg_M O:=arg_O A:=arg_A D:=arg_D E:=arg_E \
+        a=flag_a k=flag_k l=flag_l o=flag_o 1=flag_1 2=flag_2 q=flag_q \
+        f=isfile e=flag_e Q=flag_Q n=flag_n U=flag_U C=flag_C
+
+    # -O, -A or -D 原样传递
+    if (( $#arg_O || $#arg_A || $#arg_D )) {
         builtin compadd "$@"
         return $?
     }
 
-    typeset -a __hits __dscr __tmp
-
-    # 是否提供了 -d 开关 (后接包含参数描述的变量名)
-    # 由于 -default- 这种玩意儿的存在, zparseopts 无法使用, 会被误认为组合参数
-    if (( $@[(I)-d] )) { # kind of a hack, $+@[(r)-d] doesn't work because of line noise overload
-        # 获取 -d 的后一个参数
-        __tmp=${@[$[${@[(i)-d]}+1]]}
-        # 参数描述可能是一个数组变量名称, 也可能是 inline 数组
-        if [[ $__tmp == \(* ]] {
-            echo "是 inline 数组!" # 由于还没有遇到过 inline 数组, 做个标记
-            eval "__dscr=$__tmp"
-        } else {
-            __dscr=( "${(@P)__tmp}" )
-        }
+    # 获取所有补全和描述到 $__hits 和 $__dscr 中
+    typeset -a __hits __dscr
+    if (( $#arg_d == 1 )) {
+        __dscr=( "${(@P)${(v)arg_d}}" )
     }
-    # 参数也有可能是用 -ld 开关提供的(如 git, kill)
-    # 处理逻辑感觉差不多
-    if (( $@[(I)-ld] )) {
-        __tmp=${@[$[${@[(i)-ld]}+1]]}
-        __dscr=( "${(@P)__tmp}" )
-    }
-
-    # FIXME: zmodload 不正常
-    # 捕获补全列表, 并调整补全和提示的对应关系
     builtin compadd -A __hits -D __dscr "$@"
+    if (( $#__hits == 0 )) {
+        return
+    }
 
-    [[ $#__hits == 0 ]] && return
-
-    # extendedglob 扩展通配符, localoptions 限制选项作用域
-    setopt localoptions extendedglob # norcexpandparam
-
-    # 提取前缀和后缀
-    # 补全路径时 hpre 包含了前面的路径, 能否用来简化插入时的操作呢?
-    typeset -A apre hpre hsuf asuf
-    zparseopts -E P:=apre p:=hpre S:=asuf s:=hsuf
-
-    # 是否需要添加目录后缀或等于号
-    integer dirsuf=0 equ=0
-    # 先替换掉 -default- 和后面的 words, 然后判断是否存在 -f 开关和 -= 开关
-    # '#' 代表任意数量
-    [[ -z $hsuf && "${${@//-default-/}% -# *}" == *-[[:alnum:]]#f* ]] && dirsuf=1
-    [[ ${@% -# *} == *-[[:alnum:]]#=* ]] && equ=1
-
-    # 此时 $__hits 包含了所有匹配项, $__dscr 包含对应的描述
-    local dsuf dscr
-    for i ({1..$#__hits}) {
-        # 是否添加 /
-        if (( dirsuf )) && [[ -d ${hpre/#"~"/$HOME}$__hits[$i] ]] {
-            dsuf=/
-        } else {
-            # TODO: 不能准确判断什么时候该加空格, 干脆不加
-            (( equ )) && dsuf='=' || dsuf=''
+    # 需要记录的参数
+    local -a keys=(ipre apre hpre hsuf asuf isuf IPREFIX ISUFFIX QIPREFIX QISUFFIX PREFIX SUFFIX)
+    local __tmp_value=">_<"$'\0'">_<" expanded  # 随便加个值, 防止值为空导致解析出错
+    for i ($keys) {
+        expanded=${(P)i}
+        if [[ -n $expanded ]] {
+            __tmp_value+=$'\0'$i$'\0'$expanded
         }
-        # 是否显示描述
-        (( $#__dscr >= $i )) && dscr="${${__dscr[$i]}##$__hits[$i] #}" || dscr=
+    }
 
-        compcap_list[$IPREFIX$apre$hpre$__hits[$i]$hsuf$asuf$dsuf]=${dscr:-$'\0'}
+    setopt localoptions extendedglob
+    local dscr
+    for i ({1..$#__hits}) {
+        # 参数描述
+        dscr=
+        if (( $#__dscr >= $i )) {
+            dscr="${${${__dscr[$i]}##$__hits[$i] #}//$'\n'}"
+        }
+        # 是目录的话添加 '/'
+        # FIXME: 含有特殊符号如 '*' 的目录无法判断 (因为包含了转义字符)
+        if [[ -n isfile && -d $(echo ${~hpre}$__hits[$i]) ]] {
+            __hits[$i]+=/
+        }
+        compcap_list[$__hits[$i]]=$__tmp_value${dscr:+$'\0'"dscr"$'\0'$dscr}
     }
 }
 
 FUZZY_COMPLETE_COMMAND='fzf'
-FUZZY_COMPLETE_OPTIONS='--cycle --layout=reverse --tiebreak=begin --bind tab:down,ctrl-i:down,ctrl-j:accept --height=50%'
-FUZZY_COMPLETE_CHAR=' ['
+FUZZY_COMPLETE_OPTIONS='-1 --ansi --cycle --layout=reverse --tiebreak=begin --bind tab:down,ctrl-j:accept --height=50%'
 
-function -fuzzy-select() {
-    setopt localoptions shwordsplit
-    if [[ $LBUFFER[-1] == " " ]] {
-        $FUZZY_COMPLETE_COMMAND $FUZZY_COMPLETE_OPTIONS
+function fuzzy-select() {
+    local ret
+    if [[ -z $1 ]] {
+        ret=$($FUZZY_COMPLETE_COMMAND ${(z)FUZZY_COMPLETE_OPTIONS})
     } else {
-        $FUZZY_COMPLETE_COMMAND $FUZZY_COMPLETE_OPTIONS -q $1
+        ret=$($FUZZY_COMPLETE_COMMAND ${(z)FUZZY_COMPLETE_OPTIONS} -q $1)
     }
+    echo ${ret%% $'\0' *}
 }
 
-function -compcap-pretty-print() {
+function compcap-pretty-print() {
     local -i command_length=0
     for i (${(k)compcap_list}) {
         (( $#i > command_length )) && command_length=$#i
     }
-    command_length+=4
+    command_length+=3
     for k v (${(kv)compcap_list}) {
-        if [[ $v == $'\0' ]] {
-            echo $k
+        local -A v=("${(@0)v}")
+        if [[ -z $v[dscr] ]] {
+            echo -E $k
         } else {
-            printf "%-${command_length}s$v\n" $k$' \0 '
+            printf "%-${command_length}s${v[dscr]}\n" $k$' \0 '
         }
     }
 }
 
+# TODO: 获取到结果后能否使用 compadd 来传递结果
 function fuzzy-complete() {
-    local -A compcap_list
-    local selected tokens
+    typeset -g -A compcap_list=()
+    local selected
 
     zle expand-or-complete
 
-    tokens=(${(z)LBUFFER}) # 命令行参数风格分割
-
     if (( $#compcap_list == 0 )) {
         return
-    } elif (( $#compcap_list == 1 )) {
-        selected=${(k)compcap_list}
     } else {
-        selected=$(-compcap-pretty-print | sort | -fuzzy-select $tokens[-1])
+        selected=$(compcap-pretty-print | sort | fuzzy-select)
     }
 
     if [[ $selected != "" ]] {
-        # 如果末尾不是 ' [' (注意转义), 则删掉最后一个参数,
-        if [[ ($LBUFFER[-1] != " " && $LBUFFER[-1] != '[') || $LBUFFER[-2] == '\' ]] {
-            LBUFFER=${LBUFFER/%$tokens[-1]}
-        }
-        LBUFFER+="${selected%% $'\0' *}"
-        # 可能是在单词中进行的补全, 此时右边第一个参数也要删掉
-        if [[ $RBUFFER[1] != " " ]] {
-            tokens=(${(z)RBUFFER})
-            RBUFFER=${RBUFFER/#$tokens[1]}
-        }
+        local -A v=("${(@0)${compcap_list[$selected]}}")
+        # echo "\n"
+        # echo -n ${compcap_list[$selected]} | hexyl
+        LBUFFER=${LBUFFER/%$v[PREFIX]}$v[ipre]$v[apre]$v[hpre]$selected$v[hsuf]$v[asuf]$v[isuf]
+        RBUFFER=${RBUFFER/#$v[SUFFIX]}
     }
     zle reset-prompt
 }
@@ -161,9 +142,7 @@ zle -N fuzzy-complete
 
 function disable-fuzzy-complete() {
     bindkey '^I' expand-or-complete
-    function compadd() {
-        builtin compadd "$@"
-    }
+    unfunction compadd
 }
 
 function enable-fuzzy-complete() {

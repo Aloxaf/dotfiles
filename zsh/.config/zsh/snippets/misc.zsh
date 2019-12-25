@@ -1,6 +1,6 @@
 # https://superuser.com/questions/480928/is-there-any-command-like-time-but-for-memory-usage/767491
 TIMEFMT=$'%J    user:%U system:%S cpu:%P total:%*E\nmax memory:	%M MB'
-WORDCHARS=${WORDCHARS/\/}
+WORDCHARS='*?_.~=&;!#$%^(){}<>'
 DIRSTACKSIZE=100
 
 # 直接输入路径即可跳转
