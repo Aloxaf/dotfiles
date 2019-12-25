@@ -19,13 +19,15 @@ alias Ql='pacman -Ql'       Rns='sudo pacman -Rns'  Fx='pacman -Fx'
 alias Fy='sudo pacman -Fy'  U='sudo pacman -U'
 
 # wrapper 的 wrapper
-# e.g. _wwrapper 'proxychains -q' gcl https://xxx.git => proxychains -q git clone http://xxx.git
+# 用于处理被 wrap 的命令是 alias 的情况
 function _wwrapper() {
-    local wrapper=$1 command=$2
-    [[ -n $aliases[$2] ]] && command=$aliases[$2]
-    [[ -z $commands[$command] ]] && echo "$command is not a executable file" && return
+    local -a wrapper=(${(z)1}) command=(${(z)2})
+    [[ -n $aliases[$2] ]] && command=(${(z)aliases[$2]})
+    if [[ -z $commands[$command[1]] ]] {
+        print -P "%F{red}%B$command[1] is not an executable file%b%f" && return
+    }
     shift 2
-    eval $wrapper $command "$@"
+    $wrapper $command "$@"
 }
 
 # wrapper

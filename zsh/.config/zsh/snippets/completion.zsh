@@ -16,9 +16,10 @@ zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w 
 # complete manual by their section, from grml
 zstyle ':completion:*:manuals'    separate-sections true
 zstyle ':completion:*:manuals.*'  insert-sections   true
+# FIXME: 有点慢
 # complete user-commands for git-*
 # https://pbrisbin.com/posts/deleting_git_tags_with_style/
-zstyle ':completion:*:*:git:*' user-commands ${${(M)${(k)commands}:#git-*}/git-/}
+# zstyle ':completion:*:*:git:*' user-commands ${${(M)${(k)commands}:#git-*}/git-/}
 # zwc 什么的忽略掉吧
 zstyle ':completion:*:*:*:*' file-patterns '^*.zwc'
 zstyle ':completion:*:*:rm:*' file-patterns '*'
@@ -31,7 +32,7 @@ setopt complete_in_word
 
 # 基于 Valodim/zsh-capture-completion
 # 用 fzf 作为交互菜单
-function compadd-wrapper () {
+function _compadd_wrapper () {
     # 解析所有参数, 避免无法识别组合参数的情况
     typeset -A apre hpre ipre hsuf asuf isuf arg_d arg_J arg_V \
          arg_X arg_x arg_r arg_R arg_W arg_F arg_M arg_O arg_A arg_D arg_E
@@ -61,11 +62,12 @@ function compadd-wrapper () {
 
     # 需要记录的参数
     local -a keys=(ipre apre hpre hsuf asuf isuf IPREFIX ISUFFIX QIPREFIX QISUFFIX PREFIX SUFFIX)
-    local __tmp_value=">_<"$'\0'">_<" expanded  # 随便加个值, 防止值为空导致解析出错
-    for i ($keys) {
-        expanded=${(P)i}
+    local __tmp_value="<"$'\0'">" expanded  # 随便加个值, 防止值为空导致解析出错
+    # NOTE: 虽然不知道为什么, 但是这个地方直接用 for 遍历元素的话, `gd -` 的展开会报错, keys 会被当成数字
+    for i ({1..$#keys}) {
+        expanded=${(P)keys[$i]}
         if [[ -n $expanded ]] {
-            __tmp_value+=$'\0'$i$'\0'$expanded
+            __tmp_value+=$'\0'$keys[$i]$'\0'$expanded
         }
     }
 
@@ -79,27 +81,25 @@ function compadd-wrapper () {
         }
         # 是目录的话添加 '/'
         # FIXME: 含有特殊符号如 '*' 的目录无法判断 (因为包含了转义字符)
-        if [[ -n isfile && -d $(echo ${~hpre}$__hits[$i]) ]] {
+        # FIXME: 只应该出现在补全列表中?
+        if [[ -n $isfile && -d ${~hpre}$__hits[$i] ]] {
             __hits[$i]+=/
         }
         compcap_list[$__hits[$i]]=$__tmp_value${dscr:+$'\0'"dscr"$'\0'$dscr}
     }
 }
 
-FUZZY_COMPLETE_COMMAND='fzf'
-FUZZY_COMPLETE_OPTIONS='-1 --ansi --cycle --layout=reverse --tiebreak=begin --bind tab:down,ctrl-j:accept --height=50%'
+[[ ${FUZZY_COMPLETE_COMMAND:='fzf'} ]]
+[[ ${FUZZY_COMPLETE_OPTIONS:='-1 --ansi --cycle --layout=reverse --tiebreak=begin --bind tab:down,ctrl-j:accept --height=50%'} ]]
 
-function fuzzy-select() {
-    local ret
-    if [[ -z $1 ]] {
-        ret=$($FUZZY_COMPLETE_COMMAND ${(z)FUZZY_COMPLETE_OPTIONS})
-    } else {
-        ret=$($FUZZY_COMPLETE_COMMAND ${(z)FUZZY_COMPLETE_OPTIONS} -q $1)
-    }
+function _fuzzy_select() {
+    local -A v=(${(@0)${${(v)compcap_list}[1]}})
+    local query=${${${v[PREFIX]}#$v[hpre]}#$v[apre]}
+    local ret=$($FUZZY_COMPLETE_COMMAND ${(z)FUZZY_COMPLETE_OPTIONS} ${query:+-q $query})
     echo ${ret%% $'\0' *}
 }
 
-function compcap-pretty-print() {
+function _compcap_pretty_print() {
     local -i command_length=0
     for i (${(k)compcap_list}) {
         (( $#i > command_length )) && command_length=$#i
@@ -116,22 +116,28 @@ function compcap-pretty-print() {
 }
 
 # TODO: 获取到结果后能否使用 compadd 来传递结果
+# cd /u/l/b\t
+# zstyle :comple\t
+# echo $widget\t[\t
+# git \tdiff --word-diff=\t
+# 文件中间补全
 function fuzzy-complete() {
-    typeset -g -A compcap_list=()
+    local -A compcap_list
     local selected
 
     zle expand-or-complete
 
     if (( $#compcap_list == 0 )) {
         return
+    } elif (( $#compcap_list == 1 )) {
+        selected=$(_compcap_pretty_print)
     } else {
-        selected=$(compcap-pretty-print | sort | fuzzy-select)
+        selected=$(_compcap_pretty_print | sort | _fuzzy_select)
     }
 
     if [[ $selected != "" ]] {
         local -A v=("${(@0)${compcap_list[$selected]}}")
-        # echo "\n"
-        # echo -n ${compcap_list[$selected]} | hexyl
+        (( $FUZZY_DEBUG_MODE )) && echo "\n" && echo -n ${compcap_list[$selected]} | hexyl
         LBUFFER=${LBUFFER/%$v[PREFIX]}$v[ipre]$v[apre]$v[hpre]$selected$v[hsuf]$v[asuf]$v[isuf]
         RBUFFER=${RBUFFER/#$v[SUFFIX]}
     }
@@ -148,7 +154,7 @@ function disable-fuzzy-complete() {
 function enable-fuzzy-complete() {
     bindkey '^I' fuzzy-complete
     function compadd() {
-        compadd-wrapper "$@"
+        _compadd_wrapper "$@"
     }
 }
 

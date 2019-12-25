@@ -20,6 +20,8 @@ setopt transient_rprompt
 setopt ksh_option_print
 # 单引号中 '' 表示一个 '
 setopt rc_quotes
+# 增强 glob
+setopt extended_glob
 
 export EDITOR="vim"
 

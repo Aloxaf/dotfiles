@@ -15,9 +15,6 @@ autoload +X zman
 # ==== 加载 GitHub 插件 ====
 
 zplugin ice lucid wait
-zplugin light MichaelAquilina/zsh-you-should-use
-
-zplugin ice lucid wait
 zplugin light hlissner/zsh-autopair
 
 zplugin ice lucid wait
@@ -33,6 +30,10 @@ zplugin ice blockf
 zplugin light zsh-users/zsh-completions
 
 zplugin light hchbaw/zce.zsh
+
+zplugin ice as="program" atclone="rm install *.rst vv agg"
+zplugin light lilydjwg/search-and-view
+AGV_EDITOR='kwrite -l $line -c $col $file'
 
 # ==== 加载 OMZ 插件 ====
 
@@ -55,6 +56,7 @@ zplugin ice as="completion"; zplugin snippet OMZ::plugins/fd/_fd
 CUSTOM=~/.config/zsh
 
 source $CUSTOM/snippets/alias.zsh
+source $CUSTOM/snippets/alias-tips.zsh
 # FIXME: 如果 completion 在 key-bindinds 之前初始化会有问题
 source $CUSTOM/snippets/key-bindings.zsh
 source $CUSTOM/snippets/completion.zsh

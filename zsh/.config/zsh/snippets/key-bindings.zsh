@@ -123,20 +123,6 @@ function rationalise-dot() {
 zle -N rationalise-dot
 bindkey . rationalise-dot
 
-# 快速执行当前 BUFFER
-function eval-buffer() {
-    echoti sc
-    echoti cud 1
-    echoti hpa 0 2>/dev/null || echo -n '\x1b[1G'
-    echoti el
-    eval $BUFFER
-    echoti hpa 0 2>/dev/null || echo -n '\x1b[1G'
-    echoti el
-    echoti rc
-}
-#zle -N eval-buffer
-#bindkey "\ee" eval-buffer
-
 # 记住上一条命令的 CURSOR 位置 {{{2
 function cached-accept-line() {
     _last_cursor=$CURSOR
