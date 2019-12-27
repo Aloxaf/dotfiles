@@ -1,6 +1,6 @@
-# DESC: Searches zshall with special keyword ($1) matching
+# DESC: Searches ${2:-zshall} with special keyword ($1) matching
 # from https://github.com/zdharma/zplugin-configs/tree/master/psprint/functions
 
-PAGER="less -g -s '+/^       "$1"'" command man zshall
+PAGER="less -g -s '+/^       "$1"'" command man ${2:-zshall}
 
 # vim:ft=zsh:et

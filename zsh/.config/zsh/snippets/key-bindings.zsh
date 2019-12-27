@@ -5,6 +5,7 @@ bindkey '^[[1;5C' forward-word   # C-Right
 bindkey '^[[1;3C' forward-word   # M-Right
 bindkey '^[[1;5D' backward-word  # C-Left
 bindkey '^[[1;3D' backward-word  # M-Left
+bindkey '^D' delete-char  # 不需要触发补全的功能
 bindkey ' ' magic-space  # 按空格展开历史
 
 # https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/key-bindings.zsh 写得很复杂
@@ -36,7 +37,7 @@ bindkey '\ec' fz-zjump-widget
 
 # 搜索历史, C-r 触发
 function fz-history-widget() {
-    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=index --prompt="cmd> ")
+    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=index --prompt="cmd> " ${BUFFER:+-q $BUFFER})
     if [[ "$selected" != "" ]] {
         zle vi-fetch-history -n $selected
     }
@@ -80,6 +81,7 @@ function zce-jump-char() {
 }
 zle -N zce-jump-char
 bindkey "^Jc" zce-jump-char
+bindkey "^[j" zce-jump-char
 
 # C-j d 删除到指定字符
 function zce-delete-to-char() {

@@ -8,13 +8,13 @@ function _check_alias() {
     local result1 result2 tmp
 
     for k v (${(kv)aliases}) {
-        if [[ ${(M)raw# #$v} ]] {
+        if [[ ${(M)raw# #$v } ]] {
             tmp=${raw/$v/$k}
             if (( $#tmp < $#result1 || ! $#result1 )) {
                 result1=$tmp
             }
         }
-        if [[ $expand == $v* ]] {
+        if [[ $expand == "$v "* ]] {
             tmp=${expand/$v/$k}
             if (( $#tmp < $#result1 || ! $#result1 )) {
                 result1=$tmp
@@ -32,13 +32,14 @@ function _check_alias() {
             }
         }
     }
-
-    [[ ${raw## #$result2 #} && $#raw > $#result2 ]] && ALIAS_TIPS_BUFFER=$result2
+    if [[ -n ${raw## #$result2 #} ]] && (( $#raw > $#result2 )) {
+        ALIAS_TIPS_BUFFER=$result2
+    }
 }
 
 function _show_alias_tips() {
     if [[ -n $ALIAS_TIPS_BUFFER ]] {
-        print -P "%F{yellow}%BTips: you can use '$ALIAS_TIPS_BUFFER'%b%f"
+        print -P "%F{yellow}%BTips: you can use '\$ALIAS_TIPS_BUFFER'%b%f"
     }
     ALIAS_TIPS_BUFFER=
 }

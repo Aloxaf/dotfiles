@@ -14,42 +14,43 @@ autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
 
-zplugin ice lucid wait
-zplugin light hlissner/zsh-autopair
+zplugin light-mode lucid wait for \
+    zdharma/fast-syntax-highlighting \
+    hlissner/zsh-autopair \
+    skywind3000/z.lua
 
-zplugin ice lucid wait
-zplugin light skywind3000/z.lua
-
-zplugin ice lucid wait
-zplugin light zdharma/fast-syntax-highlighting
-
-zplugin ice lucid wait atload='_zsh_autosuggest_start'
-zplugin light zsh-users/zsh-autosuggestions
-
-zplugin ice blockf
-zplugin light zsh-users/zsh-completions
+zplugin light-mode lucid wait for \
+    atload='_zsh_autosuggest_start' \
+        zsh-users/zsh-autosuggestions \
+    blockf \
+        zsh-users/zsh-completions \
+    as="program" atclone="rm -f install *.rst vv agg" \
+        lilydjwg/search-and-view
 
 zplugin light hchbaw/zce.zsh
+# zplugin light Aloxaf/fzf-tab
 
-zplugin ice as="program" atclone="rm install *.rst vv agg"
-zplugin light lilydjwg/search-and-view
-AGV_EDITOR='kwrite -l $line -c $col $file'
+export AGV_EDITOR='kwrite -l $line -c $col $file'
 
 # ==== 加载 OMZ 插件 ====
 
-zplugin snippet OMZ::lib/clipboard.zsh
-zplugin snippet OMZ::lib/git.zsh
-zplugin snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
-zplugin snippet OMZ::plugins/sudo/sudo.plugin.zsh
+zplugin for \
+    OMZ::lib/clipboard.zsh \
+    OMZ::lib/git.zsh \
+    OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh \
+    OMZ::plugins/sudo/sudo.plugin.zsh
+
+zplugin svn for \
+    OMZ::plugins/extract \
+    OMZ::plugins/pip
+
+zplugin as="completion" for \
+    OMZ::plugins/cargo/_cargo \
+    OMZ::plugins/rust/_rust \
+    OMZ::plugins/fd/_fd
 
 zplugin ice lucid wait
 zplugin snippet OMZ::plugins/git/git.plugin.zsh
-
-zplugin ice svn; zplugin snippet OMZ::plugins/extract
-zplugin ice svn; zplugin snippet OMZ::plugins/pip
-zplugin ice as="completion"; zplugin snippet OMZ::plugins/cargo/_cargo
-zplugin ice as="completion"; zplugin snippet OMZ::plugins/rust/_rust
-zplugin ice as="completion"; zplugin snippet OMZ::plugins/fd/_fd
 
 # ==== 加载自定义插件 ====
 
@@ -57,13 +58,17 @@ CUSTOM=~/.config/zsh
 
 source $CUSTOM/snippets/alias.zsh
 source $CUSTOM/snippets/alias-tips.zsh
-# FIXME: 如果 completion 在 key-bindinds 之前初始化会有问题
-source $CUSTOM/snippets/key-bindings.zsh
 source $CUSTOM/snippets/completion.zsh
 source $CUSTOM/snippets/history.zsh
+source $CUSTOM/snippets/key-bindings.zsh
 source $CUSTOM/snippets/misc.zsh
 
-zplugin ice lucid wait atload="zpcompinit; zpcdreplay"
+source ~/Coding/shell/fzf-tab/fzf-tab.zsh
+
+zplugin ice as="completion"
+zplugin snippet $CUSTOM/snippets/_bat
+
+zplugin ice lucid wait atload="ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
 zplugin snippet ~/.travis/travis.sh
 
 # ==== 加载主题 ====

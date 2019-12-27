@@ -47,3 +47,5 @@ alias nc='rlwrap nc'
 alias blogin="bit_login login"
 alias blogout="bit_login logout"
 alias wtf='wtf -f ~/.local/share/wtf/acronyms'
+alias rgc='rg --color=always'
+alias less='less -r'

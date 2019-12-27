@@ -1,12 +1,24 @@
+# 参考资料:
+# http://zsh.sourceforge.net/Doc/Release/Completion-Widgets.html#Completion-Matching-Control
+# http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Completion-System
 # 禁用旧补全系统
 zstyle ':completion:*' use-compctl false
 # 缓存补全结果
-zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
+zstyle ':completion:*:complete:*' use-cache 1
+zstyle ':completion:*:complete:*' cache-path $ZSH_CACHE_DIR
 # 方便选择
-zstyle ':completion:*:*:*:*:*' menu select
-# 大小写修正
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*:*:*:*:*' menu true select search interactive
+# 补全顺序:
+# complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
+# _match - 和 _complete 类似但允许使用通配符(有了 fzf-tab 后没啥用了)
+# _expand_alias - 展开别名 _ignored - 被 ignored-patterns 忽略掉的
+# _files:complete_word - 补全文件
+zstyle ':completion:*' completer _complete _extensions # _files:complete_word
+# 允许小写字母匹配大写字母以及通过首字母匹配单词
+# zstyle ':completion:*:complete_word:*' matcher-list '' \
+zstyle ':completion:*' matcher-list '' \
+  'm:{[:lower:]-}={[:upper:]_}' \
+  'r:|[.,_-]=* r:|=*'
 # 不分组
 zstyle ':completion:*' list-grouped false
 # 无列表分隔符
@@ -29,135 +41,5 @@ zstyle ':completion:*:*:gio:*' file-patterns '*'
 
 # 单词中也进行补全
 setopt complete_in_word
-
-# 基于 Valodim/zsh-capture-completion
-# 用 fzf 作为交互菜单
-function _compadd_wrapper () {
-    # 解析所有参数, 避免无法识别组合参数的情况
-    typeset -A apre hpre ipre hsuf asuf isuf arg_d arg_J arg_V \
-         arg_X arg_x arg_r arg_R arg_W arg_F arg_M arg_O arg_A arg_D arg_E
-    local flag_a flag_k flag_l flag_o flag_1 flag_2 flag_q isfile \
-         flag_e flag_Q flag_n flag_U flag_C
-    zparseopts -E P:=apre p:=hpre i:=ipre S:=asuf s:=hsuf I:=isuf d:=arg_d \
-        J:=arg_J V:=arg_V X:=arg_X x:=arg_x r:=arg_r R:=arg_R W:=arg_W F:=arg_F \
-        M:=arg_M O:=arg_O A:=arg_A D:=arg_D E:=arg_E \
-        a=flag_a k=flag_k l=flag_l o=flag_o 1=flag_1 2=flag_2 q=flag_q \
-        f=isfile e=flag_e Q=flag_Q n=flag_n U=flag_U C=flag_C
-
-    # -O, -A or -D 原样传递
-    if (( $#arg_O || $#arg_A || $#arg_D )) {
-        builtin compadd "$@"
-        return $?
-    }
-
-    # 获取所有补全和描述到 $__hits 和 $__dscr 中
-    typeset -a __hits __dscr
-    if (( $#arg_d == 1 )) {
-        __dscr=( "${(@P)${(v)arg_d}}" )
-    }
-    builtin compadd -A __hits -D __dscr "$@"
-    if (( $#__hits == 0 )) {
-        return
-    }
-
-    # 需要记录的参数
-    local -a keys=(ipre apre hpre hsuf asuf isuf IPREFIX ISUFFIX QIPREFIX QISUFFIX PREFIX SUFFIX)
-    local __tmp_value="<"$'\0'">" expanded  # 随便加个值, 防止值为空导致解析出错
-    # NOTE: 虽然不知道为什么, 但是这个地方直接用 for 遍历元素的话, `gd -` 的展开会报错, keys 会被当成数字
-    for i ({1..$#keys}) {
-        expanded=${(P)keys[$i]}
-        if [[ -n $expanded ]] {
-            __tmp_value+=$'\0'$keys[$i]$'\0'$expanded
-        }
-    }
-
-    setopt localoptions extendedglob
-    local dscr
-    for i ({1..$#__hits}) {
-        # 参数描述
-        dscr=
-        if (( $#__dscr >= $i )) {
-            dscr="${${${__dscr[$i]}##$__hits[$i] #}//$'\n'}"
-        }
-        # 是目录的话添加 '/'
-        # FIXME: 含有特殊符号如 '*' 的目录无法判断 (因为包含了转义字符)
-        # FIXME: 只应该出现在补全列表中?
-        if [[ -n $isfile && -d ${~hpre}$__hits[$i] ]] {
-            __hits[$i]+=/
-        }
-        compcap_list[$__hits[$i]]=$__tmp_value${dscr:+$'\0'"dscr"$'\0'$dscr}
-    }
-}
-
-[[ ${FUZZY_COMPLETE_COMMAND:='fzf'} ]]
-[[ ${FUZZY_COMPLETE_OPTIONS:='-1 --ansi --cycle --layout=reverse --tiebreak=begin --bind tab:down,ctrl-j:accept --height=50%'} ]]
-
-function _fuzzy_select() {
-    local -A v=(${(@0)${${(v)compcap_list}[1]}})
-    local query=${${${v[PREFIX]}#$v[hpre]}#$v[apre]}
-    local ret=$($FUZZY_COMPLETE_COMMAND ${(z)FUZZY_COMPLETE_OPTIONS} ${query:+-q $query})
-    echo ${ret%% $'\0' *}
-}
-
-function _compcap_pretty_print() {
-    local -i command_length=0
-    for i (${(k)compcap_list}) {
-        (( $#i > command_length )) && command_length=$#i
-    }
-    command_length+=3
-    for k v (${(kv)compcap_list}) {
-        local -A v=("${(@0)v}")
-        if [[ -z $v[dscr] ]] {
-            echo -E $k
-        } else {
-            printf "%-${command_length}s${v[dscr]}\n" $k$' \0 '
-        }
-    }
-}
-
-# TODO: 获取到结果后能否使用 compadd 来传递结果
-# cd /u/l/b\t
-# zstyle :comple\t
-# echo $widget\t[\t
-# git \tdiff --word-diff=\t
-# 文件中间补全
-function fuzzy-complete() {
-    local -A compcap_list
-    local selected
-
-    zle expand-or-complete
-
-    if (( $#compcap_list == 0 )) {
-        return
-    } elif (( $#compcap_list == 1 )) {
-        selected=$(_compcap_pretty_print)
-    } else {
-        selected=$(_compcap_pretty_print | sort | _fuzzy_select)
-    }
-
-    if [[ $selected != "" ]] {
-        local -A v=("${(@0)${compcap_list[$selected]}}")
-        (( $FUZZY_DEBUG_MODE )) && echo "\n" && echo -n ${compcap_list[$selected]} | hexyl
-        LBUFFER=${LBUFFER/%$v[PREFIX]}$v[ipre]$v[apre]$v[hpre]$selected$v[hsuf]$v[asuf]$v[isuf]
-        RBUFFER=${RBUFFER/#$v[SUFFIX]}
-    }
-    zle reset-prompt
-}
-
-zle -N fuzzy-complete
-
-function disable-fuzzy-complete() {
-    bindkey '^I' expand-or-complete
-    unfunction compadd
-}
-
-function enable-fuzzy-complete() {
-    bindkey '^I' fuzzy-complete
-    function compadd() {
-        _compadd_wrapper "$@"
-    }
-}
-
-enable-fuzzy-complete
 
 # TODO: https://github.com/wfxr/forgit 样式的 git 命令补全
