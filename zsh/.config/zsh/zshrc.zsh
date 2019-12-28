@@ -9,14 +9,13 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
 
 fpath+=("$HOME/.config/zsh/functions")
 
-autoload -Uz rgzh   rgsrc   rgdata  pslist
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey
 autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
 
 zplugin light-mode lucid wait for \
     zdharma/fast-syntax-highlighting \
-    hlissner/zsh-autopair \
     skywind3000/z.lua
 
 zplugin light-mode lucid wait for \
@@ -24,8 +23,10 @@ zplugin light-mode lucid wait for \
         zsh-users/zsh-autosuggestions \
     blockf \
         zsh-users/zsh-completions \
-    as="program" atclone="rm -f install *.rst vv agg" \
-        lilydjwg/search-and-view
+    as="program" atclone="rm -f ^(rgg|agv)" \
+        lilydjwg/search-and-view \
+    atclone='sed -i "s/\^h/^?/" autopair.zsh' \
+        hlissner/zsh-autopair
 
 zplugin light hchbaw/zce.zsh
 # zplugin light Aloxaf/fzf-tab
@@ -38,6 +39,7 @@ zplugin for \
     OMZ::lib/clipboard.zsh \
     OMZ::lib/git.zsh \
     OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh \
+    OMZ::plugins/systemd/systemd.plugin.zsh \
     OMZ::plugins/sudo/sudo.plugin.zsh
 
 zplugin svn for \

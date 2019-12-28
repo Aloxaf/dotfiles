@@ -25,4 +25,5 @@ setopt hist_verify
 # 按执行顺序添加历史
 setopt inc_append_history
 # 实例之间即时共享历史
-setopt share_history
+# setopt share_history
+# 使用 fc -IR 读取历史  fc -IA 保存历史

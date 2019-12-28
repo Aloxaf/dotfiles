@@ -1,0 +1,41 @@
+# DESC: Emacs 风格语法的 bindkey
+# C-v + 按键 以查看特殊按键的转义序列
+zmodload zsh/zutil
+
+local seq remove
+
+zparseopts r=remove
+
+[[ $remove ]] && shift
+
+# 组合键的绑定
+if [[ $1 == *-* ]] {
+    local -A modifier=("C" "^" "M" "^[")
+    local mod=${1[(ws:-:)1]} key=${1[(ws:-:)2]}
+    # 普通的组合键的绑定
+    if [[ $key == ? ]] {
+        seq="$modifier[$mod]$key"
+    # 普通的带前缀组合键
+    } elif [[ $key == ?" "? ]] {
+        seq="$modifier[$mod]${key/ }"
+    # 特殊按键的组合键的绑定
+    } elif [[ ${(C)key} == Backspace ]] {
+        local -A modifier=("C" "^h" "M" "^[^?")
+        seq="$modifier[$mod]"
+    } else {
+        local -A spkeys=(Up A   Down B   Right C   Left D)
+        local -A modifier=("C" "^[[1;5" "M" "^[[1;3")
+        seq="$modifier[$mod]$spkeys[${(C)key}]"
+    }
+# 普通的单键的绑定
+} elif (( $#1 == 1 )) {
+    seq=$1
+# 单个特殊按键的绑定 ( Backspace 是异类)
+} elif [[ ${(C)1} == Backspace ]] {
+    seq="^?"
+} else {
+    local -A spkeys=(Up kcuu1   Down kcud1   Left kcub1   Right kcuf1)
+    seq="$terminfo[$spkeys[${(C)1}]]"
+}
+
+bindkey $remove $seq $2

@@ -4,7 +4,7 @@ ALIAS_TIPS_BUFFER=''
 
 function _check_alias() {
     setopt local_options extended_glob
-    local raw=$1 expand=$2
+    local raw=$1 expand=$3
     local result1 result2 tmp
 
     for k v (${(kv)aliases}) {
