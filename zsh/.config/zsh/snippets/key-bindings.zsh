@@ -17,24 +17,29 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )) {
     zle -N zle-line-finish
 }
 
+ebindkey -M command "Backspace" backward-delete-char
+
 ebindkey "C-Right" forward-word
 ebindkey 'C-Left'  backward-word
 ebindkey "C-Backspace" backward-kill-word
-ebindkey 'C-d' delete-char  # 不需要触发补全的功能
-ebindkey ' ' magic-space    # 按空格展开历史
+ebindkey 'C-d'   delete-char  # 不需要触发补全的功能
+ebindkey 'Space' magic-space    # 按空格展开历史
 
 # 单行模式下将当前内容入栈开启一个临时 prompt
 # 多行模式下允许编辑前面的行
 ebindkey 'M-q' push-line-or-edit
 
+autoload -U edit-command-line
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 
+zle -N edit-command-line
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-ebindkey "Up" up-line-or-beginning-search    # Uo
-ebindkey "Down" down-line-or-beginning-search  # Down
+ebindkey 'C-x C-e' edit-command-line
+ebindkey "Up"   up-line-or-beginning-search
+ebindkey "Down" down-line-or-beginning-search
 
 # 按参数边界跳转
 # 参考 https://blog.lilydjwg.me/2013/11/14/zsh-move-by-shell-arguments.41712.html
@@ -62,7 +67,7 @@ function fz-zjump-widget() {
     }
     zle reset-prompt
 }
-zle     -N    fz-zjump-widget
+zle -N fz-zjump-widget
 ebindkey 'M-c' fz-zjump-widget
 
 # 搜索历史
@@ -72,7 +77,7 @@ function fz-history-widget() {
         zle vi-fetch-history -n $selected
     }
 }
-zle     -N   fz-history-widget
+zle -N fz-history-widget
 ebindkey 'C-r' fz-history-widget
 
 # 搜索文件
@@ -91,7 +96,7 @@ function fz-find() {
     BUFFER=${BUFFER/%$cut/$selected}
     zle end-of-line
 }
-zle     -N    fz-find
+zle -N fz-find
 ebindkey 'M-s' fz-find
 # }}}1
 
@@ -153,7 +158,7 @@ function rationalise-dot() {
     }
 }
 zle -N rationalise-dot
-ebindkey . rationalise-dot
+ebindkey "." rationalise-dot
 
 # 记住上一条命令的 CURSOR 位置 {{{2
 function cached-accept-line() {
@@ -162,17 +167,19 @@ function cached-accept-line() {
 }
 zle -N cached-accept-line
 ebindkey "C-m" cached-accept-line
+ebindkey "C-j" cached-accept-line
 
-function prev-cache-buffer() {
+function prev-buffer-or-beginning-search() {
     local pbuffer=$BUFFER
     zle up-line-or-beginning-search
     if [[ -n $_last_cursor && -z $pbuffer ]] {
         CURSOR=$_last_cursor
         _last_cursor=
+        zle redisplay
     }
 }
-zle -N prev-cache-buffer
-ebindkey "C-p" prev-cache-buffer
-ebindkey "C-n" down-line-or-beginning-search
+zle -N prev-buffer-or-beginning-search
+ebindkey "C-p" prev-buffer-or-beginning-search
+ebindkey "Up"  prev-buffer-or-beginning-search
 # }}}2
 # }}}1

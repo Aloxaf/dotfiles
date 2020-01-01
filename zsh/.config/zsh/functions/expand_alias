@@ -1,0 +1,12 @@
+# DESC: expand alias
+
+local reciver=$1
+local command=$2
+local -a result=($argv[2,-1])
+
+while [[ -n $aliases[$command] && $aliases[$command] != $command ]] {
+    result[1]=(${(z)aliases[$command]})
+    command=$result[1]
+}
+
+eval "$reciver=(\$result)"

@@ -9,7 +9,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
 
 fpath+=("$HOME/.config/zsh/functions")
 
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias
 autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
@@ -30,6 +30,9 @@ zplugin light-mode lucid wait for \
 
 zplugin light hchbaw/zce.zsh
 # zplugin light Aloxaf/fzf-tab
+
+zplugin ice atclone="dircolors -b LS_COLORS > c.zsh" atpull='%atclone' pick="c.zsh"
+zplugin light trapd00r/LS_COLORS
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'
 

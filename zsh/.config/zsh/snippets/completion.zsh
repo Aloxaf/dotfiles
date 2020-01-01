@@ -9,19 +9,20 @@ zstyle ':completion:*:complete:*' use-cache 1
 zstyle ':completion:*:complete:*' cache-path $ZSH_CACHE_DIR
 # 方便选择
 zstyle ':completion:*:*:*:*:*' menu true select search interactive
-# 补全 global alias, 是否 idiomatic 呢 ?
-_complete_alias() { compadd -- ${(k)galiases}; return 1 }
+# 增强版文件名补全, 貌似没办法仅仅通过 zstlye 实现仅作用于文件的效果
+# 0 - 完全匹配 ( Abc -> Abc )      1 - 大写修正 ( abc -> Abc )
+# 2 - 单词补全 ( f-b -> foo-bar )  3 - 后缀补全 ( .cxx -> foo.cxx )
+function _files_enhance() {
+    _files -M '' \
+        -M 'm:{[:lower:]-}={[:upper:]_}' \
+        -M 'r:|[.,_-]=* r:|=*' \
+        -M 'r:|.=* r:|=*'
+}
 # 补全顺序:
-# complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
-# _match - 和 _complete 类似但允许使用通配符(有了 fzf-tab 后没啥用了)
+# _complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
+# _match    - 和 _complete 类似但允许使用通配符(有了 fzf-tab 后没啥用了)
 # _expand_alias - 展开别名 _ignored - 被 ignored-patterns 忽略掉的
-# _files:complete_word - 补全文件
-zstyle ':completion:*' completer _complete_alias _complete _extensions # _files:complete_word
-# 允许小写字母匹配大写字母以及通过首字母匹配单词
-# zstyle ':completion:*:complete_word:*' matcher-list '' \
-zstyle ':completion:*' matcher-list '' \
-    'm:{[:lower:]-}={[:upper:]_}' \
-    'r:|[.,_-]=* r:|=*'
+zstyle ':completion:*' completer _expand_alias _complete _extensions _ignored _files_enhance
 # 不分组
 zstyle ':completion:*' list-grouped false
 # 无列表分隔符
@@ -36,10 +37,10 @@ zstyle ':completion:*:manuals.*'  insert-sections   true
 # https://pbrisbin.com/posts/deleting_git_tags_with_style/
 # zstyle ':completion:*:*:git:*' user-commands ${${(M)${(k)commands}:#git-*}/git-/}
 # zwc 什么的忽略掉吧
-zstyle ':completion:*:*:*:*' file-patterns '^*.zwc'
-zstyle ':completion:*:*:rm:*' file-patterns '*'
-zstyle ':completion:*:*:gio:*' file-patterns '*'
-# 好看的警告(与 fzf-tab 冲突)
+zstyle ':completion:*:*:*:*'   file-patterns '^*.(zwc|pyc):compiled-files' '*:all-files'
+zstyle ':completion:*:*:rm:*'  file-patterns '*:all-files'
+zstyle ':completion:*:*:gio:*' file-patterns '*:all-files'
+# 好看的警告
 zstyle ':completion:*:warnings' format '%F{red}%B-- No match for: %d --%b%f'
 zstyle ':completion:*:descriptions' format '%F{yellow}-- Note: %d --%f'
 

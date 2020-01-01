@@ -22,6 +22,10 @@ setopt ksh_option_print
 setopt rc_quotes
 # 增强 glob
 setopt extended_glob
+# 没有匹配时原样输出 glob 而不是报错
+setopt no_nomatch
+# 开启拼写检查
+setopt correct
 
 export EDITOR="vim"
 
@@ -31,4 +35,18 @@ export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 # speed up rustc compile
 # removed because all cache has be placed in ~/.cache/cargo-build
-# export RUSTC_WRAPPER=sccache 
+# export RUSTC_WRAPPER=sccache
+
+# Thanks https://blog.lilydjwg.me/2011/6/29/using-zpty-module-of-zsh.27677.html
+function ptyrun() {
+    zmodload zsh/zpty
+    local ptyname=pty-$$ cmds
+    expand_alias cmds $@
+    zpty $ptyname $cmds
+    if [[ ! -t 1 ]] {
+        setopt local_traps
+        trap '' INT
+    }
+    zpty -r $ptyname
+    zpty -d $ptynamez
+}

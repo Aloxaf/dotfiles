@@ -3,43 +3,31 @@
 ALIAS_TIPS_BUFFER=''
 
 function _check_alias() {
-    setopt local_options extended_glob
-    local raw=$1 expand=$3
-    local result1 result2 tmp
+    local raw="${(z)1}" expand="${(z)3}"
+    local result tmp
 
     for k v (${(kv)aliases}) {
-        if [[ ${(M)raw# #$v } ]] {
-            tmp=${raw/$v/$k}
-            if (( $#tmp < $#result1 || ! $#result1 )) {
-                result1=$tmp
-            }
-        }
-        if [[ $expand == "$v "* ]] {
+        if [[ $expand == "$v "* || $expand == $v ]] {
             tmp=${expand/$v/$k}
-            if (( $#tmp < $#result1 || ! $#result1 )) {
-                result1=$tmp
+            if (( $#tmp < $#result || ! $#result )) {
+                result=$tmp
+            }
+        }
+        if [[ $raw == "$v "* || $raw == $v ]] {
+            tmp=${raw/$v/$k}
+            if (( $#tmp < $#result || ! $#result )) {
+                result=$tmp
             }
         }
     }
-
-    result2=$result1
-    for k v (${(kv)galiases}) {
-        if [[ $result1 == $v* ]] {
-            # FIXME: 此处会将引号内的也一并替换, 不过大多数时候也没啥问题...大概
-            tmp=${result1//$v/$k}
-            if (( $#tmp < $#result2 || ! $#result2 )) {
-                result2=$tmp
-            }
-        }
-    }
-    if [[ -n ${raw## #$result2 #} ]] && (( $#raw > $#result2 )) {
-        ALIAS_TIPS_BUFFER=$result2
+    if (( $#raw > $#result )) {
+        ALIAS_TIPS_BUFFER=$result
     }
 }
 
 function _show_alias_tips() {
     if [[ -n $ALIAS_TIPS_BUFFER ]] {
-        print -P "%F{yellow}%BTips: you can use '\$ALIAS_TIPS_BUFFER'%b%f"
+        print -P "%F{yellow}%BTips: you can use %b%f%K{cyan}%F{black}\$ALIAS_TIPS_BUFFER%f%k"
     }
     ALIAS_TIPS_BUFFER=
 }
