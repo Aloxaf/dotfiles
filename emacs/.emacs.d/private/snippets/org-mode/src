@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: source
-# key: src
-# --
-#+begin_src $1 :results output
-$0
-#+end_src
