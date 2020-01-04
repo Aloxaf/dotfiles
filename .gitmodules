@@ -4,3 +4,7 @@
 [submodule "zsh/.zplugin/bin"]
 	path = zsh/.zplugin/bin
 	url = https://github.com/zdharma/zplugin.git
+[submodule "emacs/.emacs.d"]
+	path = emacs/.emacs.d
+	url = https://github.com/syl20bnr/spacemacs.git
+	branch = develop

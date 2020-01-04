@@ -1,5 +1,16 @@
 # https://superuser.com/questions/480928/is-there-any-command-like-time-but-for-memory-usage/767491
-TIMEFMT=$'%J    user:%U system:%S cpu:%P total:%*E\nmax memory:	%M MB'
+autoload -Uz colors
+colors
+
+() {
+    local white_b=$fg_bold[white] blue=$fg[blue] rst=$reset_color
+    TIMEFMT=("$white_b%J$rst"$'\n'
+        "User: $blue%U$rst"$'\t'"System: $blue%S$rst  Total: $blue%*E$rst"$'\n'
+        "CPU:  $blue%P$rst"$'\t'"Mem:    $blue%M MB$rst")
+}
+
+SPROMPT="%B%F{yellow}zsh: correct '%R' be '%r' [nyae]?%f%b "
+
 WORDCHARS=''
 DIRSTACKSIZE=100
 
@@ -27,7 +38,7 @@ setopt no_nomatch
 # 开启拼写检查
 setopt correct
 
-export EDITOR="vim"
+export EDITOR="emacs -nw"
 
 # rustup mirror
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static

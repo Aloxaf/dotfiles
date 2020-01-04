@@ -1,0 +1,1 @@
+xhost +SI:localuser:root 

@@ -10,7 +10,10 @@ zparseopts r=remove M:=keymap
 [[ $keymap ]] && shift 2
 
 function escape-single-key() {
-    local -A name=(Up kcuu1   Down kcud1   Left kcub1   Right kcuf1)
+    local -A name=(
+        up kcuu1   down kcud1   left kcub1   right kcuf1
+        home khome  end kend  delete kdch1
+    )
 
     if (( $#1 == 1 )) {
         ret=$1
@@ -18,8 +21,8 @@ function escape-single-key() {
         ret="^?"
     } elif [[ ${(L)1} == "space" ]] {
         ret=" "
-    } elif (( $+name[$1] )) {
-        ret="$terminfo[$name[$1]]"
+    } elif (( $+name[${(L)1}] )) {
+        ret="$terminfo[$name[${(L)1}]]"
     } else {
         print -P "%F{red}%BERROR: $1%b%F" >&2
     }
@@ -38,7 +41,7 @@ function escape-mod-key() {
         modifier=(C "^" M "^[")
         ret="$modifier[$mod]${1[(ws:-:)2]}"
     } else {
-        spkeys=(up A   down B   right C   left D)
+        spkeys=(up A   down B   right C   left D   end F   home H)
         modifier=("C" "^[[1;5" "M" "^[[1;3")
         ret="$modifier[$mod]$spkeys[$key]"
     }

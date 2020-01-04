@@ -23,6 +23,8 @@ function _files_enhance() {
 # _match    - 和 _complete 类似但允许使用通配符(有了 fzf-tab 后没啥用了)
 # _expand_alias - 展开别名 _ignored - 被 ignored-patterns 忽略掉的
 zstyle ':completion:*' completer _expand_alias _complete _extensions _ignored _files_enhance
+# 不展开普通别名
+zstyle ':completion:*' regular false
 # 不分组
 zstyle ':completion:*' list-grouped false
 # 无列表分隔符

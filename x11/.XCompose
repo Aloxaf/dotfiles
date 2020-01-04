@@ -1,0 +1,9 @@
+# ~/.Compose
+ # This file defines custom Compose sequences for Unicode characters
+
+# Import default rules from the system Compose file:
+ include "/usr/share/X11/locale/en_US.UTF-8/Compose"
+
+# To put some stuff onto compose key strokes:
+ <multi_key> <backslash> <slash>   : "✔" U2714  # \ / Fat tick/check mark
+

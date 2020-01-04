@@ -2,32 +2,40 @@
 
 ALIAS_TIPS_BUFFER=''
 
-function _check_alias() {
-    local raw="${(z)1}" expand="${(z)3}"
-    local result tmp
+function init_alias_list() {
+    typeset -g -A alias_list
+    (( $#alias_list != 0 )) && return
 
+    local k v cmds
     for k v (${(kv)aliases}) {
+        expand_alias cmds ${(z)v}
+        alias_list[$k]=$cmds
+    }
+}
+
+# FIXME: l -l should be ll
+function _check_alias() {
+    local expand="${(z)3}"
+    local result tmp k v
+
+    init_alias_list
+
+    for k v (${(kv)alias_list}) {
         if [[ $expand == "$v "* || $expand == $v ]] {
             tmp=${expand/$v/$k}
             if (( $#tmp < $#result || ! $#result )) {
                 result=$tmp
             }
         }
-        if [[ $raw == "$v "* || $raw == $v ]] {
-            tmp=${raw/$v/$k}
-            if (( $#tmp < $#result || ! $#result )) {
-                result=$tmp
-            }
-        }
     }
-    if (( $#raw > $#result )) {
+    if (( $#1 > $#result )) {
         ALIAS_TIPS_BUFFER=$result
     }
 }
 
 function _show_alias_tips() {
     if [[ -n $ALIAS_TIPS_BUFFER ]] {
-        print -P "%F{yellow}%BTips: you can use %b%f%K{cyan}%F{black}\$ALIAS_TIPS_BUFFER%f%k"
+        print -P "%B%F{yellow}Tips: you can use %f%K{011}%F{016}\$ALIAS_TIPS_BUFFER%f%k%b"
     }
     ALIAS_TIPS_BUFFER=
 }

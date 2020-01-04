@@ -1,6 +1,7 @@
 # 参考资料:
 # http://zshwiki.org/home/#reading_terminfo
 # https://stackoverflow.com/questions/31641910/why-is-terminfokcuu1-eoa
+# https://www.reddit.com/r/zsh/comments/eblqvq/del_pgup_and_pgdown_input_in_terminal/fb7337q/
 
 bindkey -e  # Emacs 键绑定
 
@@ -17,29 +18,30 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )) {
     zle -N zle-line-finish
 }
 
-ebindkey -M command "Backspace" backward-delete-char
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+ebindkey 'Home'   beginning-of-line
+ebindkey 'End'    end-of-line
+ebindkey 'Delete' delete-char
+ebindkey "Up"     up-line-or-beginning-search
+ebindkey "Down"   down-line-or-beginning-search
 
 ebindkey "C-Right" forward-word
 ebindkey 'C-Left'  backward-word
 ebindkey "C-Backspace" backward-kill-word
+ebindkey 'Space' magic-space  # 按空格展开历史
 ebindkey 'C-d'   delete-char  # 不需要触发补全的功能
-ebindkey 'Space' magic-space    # 按空格展开历史
+ebindkey 'C-w'   kill-region
 
 # 单行模式下将当前内容入栈开启一个临时 prompt
 # 多行模式下允许编辑前面的行
 ebindkey 'M-q' push-line-or-edit
 
-autoload -U edit-command-line
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-
-zle -N edit-command-line
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-
-ebindkey 'C-x C-e' edit-command-line
-ebindkey "Up"   up-line-or-beginning-search
-ebindkey "Down" down-line-or-beginning-search
+ebindkey -M command "Backspace" backward-delete-char
 
 # 按参数边界跳转
 # 参考 https://blog.lilydjwg.me/2013/11/14/zsh-move-by-shell-arguments.41712.html
@@ -102,11 +104,7 @@ ebindkey 'M-s' fz-find
 
 # ZLE 相关 {{{1
 
-# 行内光标跳转 {{{2
-
-# C-j 被征用为 prefix
-ebindkey -r "C-j"
-
+# zce {{{2
 # 快速跳转到指定字符
 function zce-jump-char() {
     [[ -z $BUFFER ]] && zle up-history
@@ -115,7 +113,6 @@ function zce-jump-char() {
     with-zce zce-raw zce-searchin-read
 }
 zle -N zce-jump-char
-ebindkey "C-j c" zce-jump-char
 ebindkey "M-j" zce-jump-char
 
 # 删除到指定字符
@@ -136,19 +133,20 @@ function zce-delete-to-char() {
     BUFFER=$pbuffer
 }
 zle -N zce-delete-to-char
-ebindkey "C-j d" zce-delete-to-char
+# ebindkey "C-j d" zce-delete-to-char
 
 # }}}2
 
-# 快速添加括号
+# 快速添加括号 {{{2
 function add-bracket() {
     BUFFER[$CURSOR+1]="($BUFFER[$CURSOR+1]"
     BUFFER+=')'
 }
 zle -N add-bracket
 ebindkey "M-(" add-bracket
+# }}}2
 
-# 快速跳转到上级目录: ... => ../..
+# 快速跳转到上级目录: ... => ../.. {{{2
 # https://grml.org/zsh/zsh-lovers.html
 function rationalise-dot() {
     if [[ $LBUFFER = *.. ]] {
@@ -159,6 +157,7 @@ function rationalise-dot() {
 }
 zle -N rationalise-dot
 ebindkey "." rationalise-dot
+# }}}2
 
 # 记住上一条命令的 CURSOR 位置 {{{2
 function cached-accept-line() {
@@ -167,7 +166,6 @@ function cached-accept-line() {
 }
 zle -N cached-accept-line
 ebindkey "C-m" cached-accept-line
-ebindkey "C-j" cached-accept-line
 
 function prev-buffer-or-beginning-search() {
     local pbuffer=$BUFFER
@@ -175,11 +173,22 @@ function prev-buffer-or-beginning-search() {
     if [[ -n $_last_cursor && -z $pbuffer ]] {
         CURSOR=$_last_cursor
         _last_cursor=
-        zle redisplay
     }
 }
 zle -N prev-buffer-or-beginning-search
 ebindkey "C-p" prev-buffer-or-beginning-search
 ebindkey "Up"  prev-buffer-or-beginning-search
 # }}}2
+
+# 用编辑器编辑当前行 {{{2
+autoload -U edit-command-line
+function edit-command-line-as-zsh {
+    TMPSUFFIX=.zsh
+    edit-command-line
+    unset TMPSUFFIX
+}
+zle -N edit-command-line-as-zsh
+ebindkey 'C-x C-e' edit-command-line-as-zsh
+# }}}2
+
 # }}}1

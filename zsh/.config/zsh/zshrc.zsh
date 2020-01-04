@@ -9,7 +9,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
 
 fpath+=("$HOME/.config/zsh/functions")
 
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette
 autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
@@ -42,6 +42,7 @@ zplugin for \
     OMZ::lib/clipboard.zsh \
     OMZ::lib/git.zsh \
     OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh \
+    OMZ::plugins/git-extras/git-extras.plugin.zsh \
     OMZ::plugins/systemd/systemd.plugin.zsh \
     OMZ::plugins/sudo/sudo.plugin.zsh
 

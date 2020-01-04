@@ -1,12 +1,17 @@
 # DESC: expand alias
+# expand_alias result gcmsg "abc" => reuslt=git commit -m "abc"
 
 local reciver=$1
 local command=$2
-local -a result=($argv[2,-1])
+local -a result=($argv[2,-1]) used tmp
 
-while [[ -n $aliases[$command] && $aliases[$command] != $command ]] {
-    result[1]=(${(z)aliases[$command]})
+while [[ -n $aliases[$command] ]] {
+    tmp=(${(z)aliases[$command]})
+    # 避免循环展开
+    (( $used[(I)$tmp[1]] != 0 )) && break
+    result[1]=($tmp)
     command=$result[1]
+    used+=($command)
 }
 
 eval "$reciver=(\$result)"

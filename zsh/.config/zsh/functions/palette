@@ -1,0 +1,15 @@
+# DESC: 输出调色板, 可以额外指定背景色或加粗(-b)
+
+local -a colors
+local bold bg="%K{000}"
+
+for i ($@) {
+    [[ $i == -b ]] && bold=%B
+    [[ $i == <-> ]] && bg="%K{$i}"
+}
+
+for i ({000..255}) {
+    colors+=("$bold$bg%F{$i}$i%f%k${(L)bold}")
+}
+
+print -cP $colors

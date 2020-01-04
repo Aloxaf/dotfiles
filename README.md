@@ -5,7 +5,7 @@ My dotfiles controlled by GNU stow following [this way](https://farseerfc.me/usi
 ## Requirements
 
 ```bash
-sudo pacman -S diff-so-fancy exa ripgrep
+sudo pacman -S diff-so-fancy exa ripgrep git-extras
 ```
 
 ```bash
