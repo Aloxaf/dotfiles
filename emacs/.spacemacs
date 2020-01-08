@@ -9,7 +9,7 @@ This function should only modify configuration layer settings."
    ;; Base distribution to use. This is a layer contained in the directory
    ;; `+distribution'. For now available distributions are `spacemacs-base'
    ;; or `spacemacs'. (default 'spacemacs)
-   dotspacemacs-distribution 'spacemacs-base
+   dotspacemacs-distribution 'spacemacs
 
    ;; Lazy installation of layers (i.e. layers are installed only when a file
    ;; with a supported type is opened). Possible values are `all', `unused'
@@ -38,15 +38,17 @@ This function should only modify configuration layer settings."
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ;; auto-completion
+     auto-completion
      ;; better-defaults
      emacs-lisp
      ;; git
      helm
      ;; lsp
+     major-modes
      ;; markdown
-     ;; multiple-cursors
-     ;; org
+     multiple-cursors
+     org
+     shell-scripts
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -205,8 +207,8 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-colorize-cursor-according-to-state t
 
    ;; Default font or prioritized list of fonts.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 10.0
+   dotspacemacs-default-font '("Fira Code"
+                               :size 11.0
                                :weight normal
                                :width normal)
 
@@ -415,7 +417,7 @@ It should only modify the values of Spacemacs settings."
    ;; %z - mnemonics of buffer, terminal, and keyboard coding systems
    ;; %Z - like %z, but including the end-of-line format
    ;; (default "%I@%S")
-   dotspacemacs-frame-title-format "%I@%S"
+   dotspacemacs-frame-title-format "%f@%m"
 
    ;; Format specification for setting the icon title format
    ;; (default nil - same as frame-title-format)
@@ -455,6 +457,11 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
         '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
           ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
           ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+
+  ;; emacs-custom-settings
+  (setq custom-file "~/.cache/emacs/custom.el")
+  (when (file-exists-p custom-file)
+    (load-file custom-file))
   )
 
 (defun dotspacemacs/user-load ()
@@ -475,7 +482,19 @@ before packages are loaded."
 
   ;; show numbers for completion
   (setq company-show-numbers t)
+
+  ;; set chinese font
+  (custom-set-faces
+   '(org-table ((t (:family "Noto Sans Mono CJK SC")))))
+
+  ;; set column indicator
+  (turn-on-fci-mode)
+  (setq fci-rule-column 100)
+
+  ;; always follow symbol link
+  (setq vc-follow-symlinks t)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+

@@ -5,7 +5,7 @@ colors
 () {
     local white_b=$fg_bold[white] blue=$fg[blue] rst=$reset_color
     TIMEFMT=("$white_b%J$rst"$'\n'
-        "User: $blue%U$rst"$'\t'"System: $blue%S$rst  Total: $blue%*E$rst"$'\n'
+        "User: $blue%U$rst"$'\t'"System: $blue%S$rst  Total: $blue%*Es$rst"$'\n'
         "CPU:  $blue%P$rst"$'\t'"Mem:    $blue%M MB$rst")
 }
 
@@ -13,6 +13,8 @@ SPROMPT="%B%F{yellow}zsh: correct '%R' be '%r' [nyae]?%f%b "
 
 WORDCHARS=''
 DIRSTACKSIZE=100
+
+export FZF_DEFAULT_OPTS='--color=bg+:23 -m --bind ctrl-space:toggle'
 
 # 直接输入路径即可跳转
 setopt auto_cd
@@ -38,7 +40,7 @@ setopt no_nomatch
 # 开启拼写检查
 setopt correct
 
-export EDITOR="emacs -nw"
+export EDITOR="emacsclient -nw -c -a ''"
 
 # rustup mirror
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static

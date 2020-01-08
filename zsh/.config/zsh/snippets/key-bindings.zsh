@@ -58,8 +58,6 @@ ebindkey 'M-Right' forward-word-match
 ebindkey 'M-Left'  backward-word-match
 ebindkey "M-Backspace" backward-kill-word-match
 
-export FZF_DEFAULT_OPTS='--color=bg+:23'
-
 # fuzzy 相关绑定 {{{1
 # 快速目录跳转
 function fz-zjump-widget() {
@@ -162,10 +160,10 @@ ebindkey "." rationalise-dot
 # 记住上一条命令的 CURSOR 位置 {{{2
 function cached-accept-line() {
     _last_cursor=$CURSOR
-    zle accept-line
+    zle .accept-line
 }
-zle -N cached-accept-line
-ebindkey "C-m" cached-accept-line
+zle -N accept-line cached-accept-line
+#ebindkey "C-m" accept-line
 
 function prev-buffer-or-beginning-search() {
     local pbuffer=$BUFFER
@@ -176,8 +174,9 @@ function prev-buffer-or-beginning-search() {
     }
 }
 zle -N prev-buffer-or-beginning-search
-ebindkey "C-p" prev-buffer-or-beginning-search
-ebindkey "Up"  prev-buffer-or-beginning-search
+#连续上翻有问题
+#ebindkey "C-p" prev-buffer-or-beginning-search
+#ebindkey "Up"  prev-buffer-or-beginning-search
 # }}}2
 
 # 用编辑器编辑当前行 {{{2
@@ -192,3 +191,14 @@ ebindkey 'C-x C-e' edit-command-line-as-zsh
 # }}}2
 
 # }}}1
+
+# 棒棒 M-x
+function execute-command() {
+    local selected=$(printf "%s\n" ${(k)widgets} | fzf --reverse --prompt="cmd> " --height=10 )
+    [[ $selected ]] && {
+        zle redisplay
+        zle $selected
+    }
+}
+zle -N execute-command
+ebindkey "M-x" execute-command

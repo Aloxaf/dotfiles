@@ -9,7 +9,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
 
 fpath+=("$HOME/.config/zsh/functions")
 
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette zcalc
 autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
@@ -33,8 +33,6 @@ zplugin light hchbaw/zce.zsh
 
 zplugin ice atclone="dircolors -b LS_COLORS > c.zsh" atpull='%atclone' pick="c.zsh"
 zplugin light trapd00r/LS_COLORS
-
-export AGV_EDITOR='kwrite -l $line -c $col $file'
 
 # ==== 加载 OMZ 插件 ====
 
@@ -84,3 +82,11 @@ RPROMPT=""
 zstyle ':prompt:pure:prompt:success' color cyan
 zplugin ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
 zplugin light Aloxaf/pure
+
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+ZSH_AUTOSUGGEST_COMPLETION_IGNORE=
+
+export AGV_EDITOR='kwrite -l $line -c $col $file'
