@@ -18,6 +18,8 @@ function _files_enhance() {
         -M 'r:|[.,_-]=* r:|=*' \
         -M 'r:|.=* r:|=*'
 }
+# zstyle ':completion:*' matcher-list 'r:|=*' 'l:|=* r:|=*'
+# zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
 # 补全顺序:
 # _complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
 # _match    - 和 _complete 类似但允许使用通配符(有了 fzf-tab 后没啥用了)
@@ -43,9 +45,11 @@ zstyle ':completion:*:*:*:*'   file-patterns '^*.(zwc|pyc):compiled-files' '*:al
 zstyle ':completion:*:*:rm:*'  file-patterns '*:all-files'
 zstyle ':completion:*:*:gio:*' file-patterns '*:all-files'
 # 好看的警告
+# zstyle ':completion:*' verbose yes
 zstyle ':completion:*:warnings' format '%F{red}%B-- No match for: %d --%b%f'
-zstyle ':completion:*:descriptions' format '%F{yellow}-- Note: %d --%f'
-
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
+zstyle ':completion:*:descriptions' format '[%d]'
 # 单词中也进行补全
 setopt complete_in_word
 

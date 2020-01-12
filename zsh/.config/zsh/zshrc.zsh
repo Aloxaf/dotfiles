@@ -9,7 +9,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
 
 fpath+=("$HOME/.config/zsh/functions")
 
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette zcalc
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette zcalc printc
 autoload +X zman
 
 # ==== 加载 GitHub 插件 ====
@@ -77,16 +77,29 @@ zplugin snippet ~/.travis/travis.sh
 
 # ==== 加载主题 ====
 
-PROMPT=$'\n%F{cyan}❯ %f'
-RPROMPT=""
-zstyle ':prompt:pure:prompt:success' color cyan
-zplugin ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
-zplugin light Aloxaf/pure
+THEME=p10k
+
+case $THEME in
+    pure)
+        PROMPT=$'\n%F{cyan}❯ %f'
+        RPROMPT=""
+        zstyle ':prompt:pure:prompt:success' color cyan
+        zplugin ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
+        zplugin light Aloxaf/pure
+        ;;
+    p10k)
+        PROMPT=$'\n%F{cyan}❯ %f'
+        RPROMPT=""
+        zplugin ice lucid depth=1
+        zplugin light romkatv/powerlevel10k
+        source ~/.config/zsh/p10k.zsh
+        ;;
+esac
 
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
-ZSH_AUTOSUGGEST_COMPLETION_IGNORE=
+ZSH_AUTOSUGGEST_COMPLETION_IGNORE='(man|pikaur -S) *'
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'

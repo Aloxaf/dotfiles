@@ -13,7 +13,6 @@ function init_alias_list() {
     }
 }
 
-# FIXME: l -l should be ll
 function _check_alias() {
     local expand="${(z)3}"
     local result tmp k v
@@ -28,7 +27,8 @@ function _check_alias() {
             }
         }
     }
-    if (( $#1 > $#result )) {
+
+    if (( ${#${1% #}} > $#result )) {
         ALIAS_TIPS_BUFFER=$result
     }
 }
