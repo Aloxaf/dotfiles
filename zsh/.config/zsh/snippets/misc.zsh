@@ -10,11 +10,16 @@ colors
 }
 
 SPROMPT="%B%F{yellow}zsh: correct '%R' be '%r' [nyae]?%f%b "
-
 WORDCHARS=''
 DIRSTACKSIZE=100
 
-export FZF_DEFAULT_OPTS='--color=bg+:23 -m --bind ctrl-space:toggle'
+hash -d target=~/.cache/cargo-build
+hash -d zsh=~/.config/zsh
+hash -d dot=~/dotfiles
+hash -d xdata=~/.local/share
+hash -d xconf=~/.config
+
+export FZF_DEFAULT_OPTS='--color=bg+:23 -m --bind ctrl-space:toggle,pgup:preview-up,pgdn:preview-down'
 
 # 直接输入路径即可跳转
 setopt auto_cd
@@ -43,8 +48,9 @@ setopt correct
 export EDITOR="emacsclient -nw -c -a ''"
 
 # rustup mirror
-export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
-export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
+# export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+# export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 # speed up rustc compile
 # removed because all cache has be placed in ~/.cache/cargo-build

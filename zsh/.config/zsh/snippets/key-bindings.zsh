@@ -56,7 +56,7 @@ ebindkey -M command "Backspace" backward-delete-char
 }
 ebindkey 'M-Right' forward-word-match
 ebindkey 'M-Left'  backward-word-match
-ebindkey "M-Backspace" backward-kill-word-match
+ebindkey "C-Backspace" backward-kill-word-match
 
 # fuzzy 相关绑定 {{{1
 # 快速目录跳转

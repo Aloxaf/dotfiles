@@ -1,4 +1,4 @@
-source ~/.zplugin/bin/zplugin.zsh
+source $XDG_DATA_HOME/zsh/zplugin/bin/zplugin.zsh
 
 # 作为嵌入式终端时禁用 tmux
 # https://www.reddit.com/r/tmux/comments/a2e5mn/tmux_on_dolphin_inbuilt_terminal/
@@ -7,7 +7,7 @@ if [[ "$TMUX" == "" && $- == *i* ]] {
     [[ "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)" ]] || exec tmux
 }
 
-fpath+=("$HOME/.config/zsh/functions")
+fpath+=("$XDG_CONFIG_HOME/zsh/functions")
 
 autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette zcalc printc
 autoload +X zman
@@ -16,7 +16,7 @@ autoload +X zman
 
 zplugin light-mode lucid wait for \
     zdharma/fast-syntax-highlighting \
-    skywind3000/z.lua
+    wfxr/forgit
 
 zplugin light-mode lucid wait for \
     atload='_zsh_autosuggest_start' \
@@ -26,7 +26,9 @@ zplugin light-mode lucid wait for \
     as="program" atclone="rm -f ^(rgg|agv)" \
         lilydjwg/search-and-view \
     atclone='sed -i "s/\^h/^?/" autopair.zsh' \
-        hlissner/zsh-autopair
+        hlissner/zsh-autopair \
+    atinit="export _ZL_DATA=$XDG_DATA_HOME/zsh/zlua" \
+        skywind3000/z.lua
 
 zplugin light hchbaw/zce.zsh
 # zplugin light Aloxaf/fzf-tab
@@ -58,7 +60,7 @@ zplugin snippet OMZ::plugins/git/git.plugin.zsh
 
 # ==== 加载自定义插件 ====
 
-CUSTOM=~/.config/zsh
+CUSTOM=$XDG_CONFIG_HOME/zsh
 
 source $CUSTOM/snippets/alias.zsh
 source $CUSTOM/snippets/alias-tips.zsh
@@ -77,7 +79,7 @@ zplugin snippet ~/.travis/travis.sh
 
 # ==== 加载主题 ====
 
-THEME=p10k
+: ${THEME:=p10k}
 
 case $THEME in
     pure)
@@ -88,11 +90,10 @@ case $THEME in
         zplugin light Aloxaf/pure
         ;;
     p10k)
-        PROMPT=$'\n%F{cyan}❯ %f'
-        RPROMPT=""
-        zplugin ice lucid depth=1
+        PROMPT=$'\n%F{076}❯ %f'
+        RPROMPT="%F{244}─╯%f"
+        zplugin ice lucid wait="!0" depth=1 atinit="source $XDG_CONFIG_HOME/zsh/p10k.zsh" atload="_p9k_precmd"
         zplugin light romkatv/powerlevel10k
-        source ~/.config/zsh/p10k.zsh
         ;;
 esac
 
@@ -101,5 +102,9 @@ ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 ZSH_AUTOSUGGEST_COMPLETION_IGNORE='(man|pikaur -S) *'
+
+forgit_add=gai
+forgit_diff=gdi
+forgit_log=glgi
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'

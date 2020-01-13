@@ -8,7 +8,7 @@ function zshaddhistory() {
     return 0
 }
 
-HISTFILE="$HOME/.zsh_history"
+HISTFILE="$XDG_DATA_HOME/zsh/zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
 
