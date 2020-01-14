@@ -41,7 +41,7 @@ alias ecc="emacsclient -nw -c -a ''"
 alias checksec="checksec --file"
 alias amd="env DRI_PRIME=1"
 alias trid="LC_ALL=C trid"
-alias yafu='rlwrap yafu'
+alias yafu='command rlwrap yafu'
 alias nc='command rlwrap nc'
 alias blogin="bit_login login"
 alias blogout="bit_login logout"

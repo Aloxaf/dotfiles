@@ -1,6 +1,10 @@
 export LANG=zh_CN.UTF-8
 export LC_ALL=zh_CN.UTF-8
 
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
+
 export XIM=fcitx
 export XIM_PROGRAM=fcitx
 export GTK_IM_MODULE=fcitx

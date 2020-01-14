@@ -1,6 +1,3 @@
-[submodule "tmux/.tmux/plugins/tpm"]
-	path = tmux/.tmux/plugins/tpm
-	url = https://github.com/tmux-plugins/tpm
 [submodule "emacs/.emacs.d"]
 	path = emacs/.emacs.d
 	url = https://github.com/syl20bnr/spacemacs.git
@@ -8,3 +5,6 @@
 [submodule "zsh/.local/share/zsh/zplugin/bin"]
 	path = zsh/.local/share/zsh/zplugin/bin
 	url = https://github.com/zdharma/zplugin.git
+[submodule "tmux/.local/share/tmux/plugins/tpm"]
+	path = tmux/.local/share/tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

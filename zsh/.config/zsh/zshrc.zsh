@@ -4,7 +4,9 @@ source $XDG_DATA_HOME/zsh/zplugin/bin/zplugin.zsh
 # https://www.reddit.com/r/tmux/comments/a2e5mn/tmux_on_dolphin_inbuilt_terminal/
 # 上面的方法由于 alacritty 0.4.0 的释出而失效
 if [[ "$TMUX" == "" && $- == *i* ]] {
-    [[ "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)" ]] || exec tmux
+    if [[ ! "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)" ]] {
+        exec tmux -f "$XDG_CONFIG_HOME/tmux/tmux.conf"
+    }
 }
 
 fpath+=("$XDG_CONFIG_HOME/zsh/functions")
@@ -101,7 +103,7 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
-ZSH_AUTOSUGGEST_COMPLETION_IGNORE='(man|pikaur -S) *'
+ZSH_AUTOSUGGEST_COMPLETION_IGNORE='( |man |pikaur -S )*'
 
 forgit_add=gai
 forgit_diff=gdi

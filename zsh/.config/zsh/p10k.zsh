@@ -724,6 +724,14 @@
   typeset -g POWERLEVEL9K_RUST_VERSION_FOREGROUND=37
   # Show rust version only when in a rust project subdirectory.
   typeset -g POWERLEVEL9K_RUST_VERSION_PROJECT_ONLY=true
+  # Full rust version for nightly
+  typeset -g POWERLEVEL9K_RUST_VERSION_CONTENT_EXPANSION='$(
+    if [[ $P9K_RUST_VERSION == *nightly* ]] {
+      echo ${${${P9K_RUST_VERSION#rustc }/ * / }[1,-2]}
+    } else {
+      echo $P9K_RUST_VERSION[(w)2]
+    }
+  )'
   # Custom icon.
   # typeset -g POWERLEVEL9K_RUST_VERSION_VISUAL_IDENTIFIER_EXPANSION='⭐'
 

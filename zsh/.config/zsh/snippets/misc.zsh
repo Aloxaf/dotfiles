@@ -16,6 +16,7 @@ DIRSTACKSIZE=100
 hash -d target=~/.cache/cargo-build
 hash -d zsh=~/.config/zsh
 hash -d dot=~/dotfiles
+hash -d xcache=~/.cache
 hash -d xdata=~/.local/share
 hash -d xconf=~/.config
 
