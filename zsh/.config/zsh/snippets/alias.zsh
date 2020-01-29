@@ -23,7 +23,7 @@ alias pacman='noglob pacman'
 function _wwrapper() {
     local -a wrapper=(${(z)1}) cmd
     expand_alias cmd ${(z)2}
-    if (( ! $+commands[$cmd[1]] )) {
+    if (( ! $+commands[$cmd[1]] )) && [[ ! -f $cmd[1] ]] {
         print -P "%F{red}%B$cmd[1] is not an executable file%b%f" && return
     }
     $wrapper ${(e)cmd} $argv[3,-1]

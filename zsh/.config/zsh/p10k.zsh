@@ -62,8 +62,8 @@
       # nodenv                # node.js version from nodenv (https://github.com/nodenv/nodenv)
       # nvm                   # node.js version from nvm (https://github.com/nvm-sh/nvm)
       # nodeen                # node.js environment (https://github.com/ekalinin/nodeenv)
-      # node_version          # node.js version
-      # go_version            # go version (https://golang.org)
+      node_version            # node.js version
+      go_version              # go version (https://golang.org)
       rust_version            # rustc version (https://www.rust-lang.org)
       # dotnet_version        # .NET version (https://dotnet.microsoft.com)
       # rbenv                 # ruby version from rbenv (https://github.com/rbenv/rbenv)
@@ -732,6 +732,8 @@
       echo $P9K_RUST_VERSION[(w)2]
     }
   )'
+  # Show rustc only when the the command you are typing invokes one of these tools.
+  typeset -g POWERLEVEL9K_RUST_VERSION_SHOW_ON_COMMAND='xargo|cargo|rustc|rustup'
   # Custom icon.
   # typeset -g POWERLEVEL9K_RUST_VERSION_VISUAL_IDENTIFIER_EXPANSION='⭐'
 

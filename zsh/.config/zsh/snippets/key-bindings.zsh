@@ -65,7 +65,8 @@ function fz-zjump-widget() {
     if [[ "$selected" != "" ]] {
         builtin cd "${selected[(w)2]}"
     }
-    zle reset-prompt
+    zle push-line
+    zle accept-line
 }
 zle -N fz-zjump-widget
 ebindkey 'M-c' fz-zjump-widget

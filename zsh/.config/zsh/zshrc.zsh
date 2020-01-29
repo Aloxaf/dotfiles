@@ -15,20 +15,21 @@ fi
 
 # ==== Zplugin 初始化 ====
 
-typeset -A ZPLGM=(
-    BIN_DIR         $XDG_DATA_HOME/zsh/zplugin/bin
-    HOME_DIR        $XDG_DATA_HOME/zsh/zplugin
+typeset -A ZINIT=(
+    BIN_DIR         $XDG_DATA_HOME/zsh/zinit/bin
+    HOME_DIR        $XDG_DATA_HOME/zsh/zinit
     COMPINIT_OPTS   -C
 )
 
-source $XDG_DATA_HOME/zsh/zplugin/bin/zplugin.zsh
+source $XDG_DATA_HOME/zsh/zinit/bin/zinit.zsh
 
 # ===== 函数 ====
 
 fpath+=("$XDG_CONFIG_HOME/zsh/functions")
 
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette zcalc printc
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette printc
 autoload +X zman
+autoload -Uz zcalc zmv
 
 # ==== 某些插件需要的环境变量 ====
 
@@ -45,11 +46,10 @@ forgit_log=glgi
 export AGV_EDITOR='kwrite -l $line -c $col $file'
 export _ZL_DATA=$XDG_DATA_HOME/zsh/zlua
 
-# ==== 加载 GitHub 插件 ====
+# ==== 加载插件 ====
 
 zplugin light-mode for \
-    zdharma/fast-syntax-highlighting \
-    zsh-users/zsh-autosuggestions \
+    zdharma/zzcomplete zdharma/zui \
     hlissner/zsh-autopair \
     skywind3000/z.lua \
     hchbaw/zce.zsh \
@@ -64,8 +64,6 @@ zplugin light-mode for \
         trapd00r/LS_COLORS
 
 # zplugin light Aloxaf/fzf-tab
-
-# ==== 加载 OMZ 插件 ====
 
 zplugin for \
     OMZ::lib/clipboard.zsh \
@@ -92,6 +90,7 @@ for i in $XDG_CONFIG_HOME/zsh/snippets/*.zsh; do
 done
 
 source ~/Coding/shell/fzf-tab/fzf-tab.zsh
+source ~/Coding/shell/zvm/zvm.zsh
 
 zplugin ice as="completion"
 zplugin snippet $XDG_CONFIG_HOME/zsh/snippets/_bat
@@ -99,6 +98,10 @@ zplugin snippet $XDG_CONFIG_HOME/zsh/snippets/_bat
 zplugin snippet ~/.travis/travis.sh
 
 # ==== 初始化补全 ====
+
+zplugin light-mode for \
+    zdharma/fast-syntax-highlighting \
+    zsh-users/zsh-autosuggestions
 
 zpcompinit; zpcdreplay
 
