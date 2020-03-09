@@ -43,8 +43,11 @@ forgit_add=gai
 forgit_diff=gdi
 forgit_log=glgi
 
+ZLUA_EXEC=luajit
+
 export AGV_EDITOR='kwrite -l $line -c $col $file'
 export _ZL_DATA=$XDG_DATA_HOME/zsh/zlua
+export _ZL_HYPHEN=1
 
 # ==== 加载插件 ====
 
@@ -63,6 +66,7 @@ zplugin light-mode for \
     atclone="dircolors -b LS_COLORS > c.zsh" atpull='%atclone' pick='c.zsh' \
         trapd00r/LS_COLORS
 
+# b4b4r07/enhancd \
 # zplugin light Aloxaf/fzf-tab
 
 zplugin for \
@@ -89,8 +93,19 @@ for i in $XDG_CONFIG_HOME/zsh/snippets/*.zsh; do
     source $i
 done
 
-source ~/Coding/shell/fzf-tab/fzf-tab.zsh
 source ~/Coding/shell/zvm/zvm.zsh
+
+local extract="
+# trim input
+in=\${\${\"\$(<{f})\"%\$'\0'*}#*\$'\0'}
+# get ctxt for current completion
+local -A ctxt=(\"\${(@ps:\2:)CTXT}\")
+"
+
+zstyle ':fzf-tab:*' single-group ''
+zstyle ':fzf-tab:complete:_zlua:*' query-string input
+zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview='echo $(<{f})' --preview-window=down:3:wrap
+zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract"exa -1 --color=always \${~ctxt[hpre]}\$in"
 
 zplugin ice as="completion"
 zplugin snippet $XDG_CONFIG_HOME/zsh/snippets/_bat
@@ -98,12 +113,13 @@ zplugin snippet $XDG_CONFIG_HOME/zsh/snippets/_bat
 zplugin snippet ~/.travis/travis.sh
 
 # ==== 初始化补全 ====
+zpcompinit; zpcdreplay
+
+source ~/Coding/shell/fzf-tab/fzf-tab.zsh
 
 zplugin light-mode for \
     zdharma/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions
-
-zpcompinit; zpcdreplay
 
 # ==== 加载主题 ====
 

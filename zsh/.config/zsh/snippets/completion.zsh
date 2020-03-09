@@ -12,24 +12,23 @@
 # 禁用旧补全系统
 zstyle ':completion:*' use-compctl false
 
+compctl() {
+    print -P "\n%F{red}Don't use compctl anymore%f"
+}
+
 # 缓存补全结果
 zstyle ':completion:*:complete:*' use-cache 1
 zstyle ':completion:*:complete:*' cache-path $ZSH_CACHE_DIR
 
-# 增强版文件名补全, 貌似没办法仅仅通过 zstlye 实现仅作用于文件的效果
-# 0 - 完全匹配 ( Abc -> Abc )      1 - 大写修正 ( abc -> Abc )
-# 2 - 单词补全 ( f-b -> foo-bar )  3 - 后缀补全 ( .cxx -> foo.cxx )
-function _files_enhance() {
-    _files -M '' \
-        -M 'm:{[:lower:]-}={[:upper:]_}' \
-        -M 'r:|[.,_-]=* r:|=*' \
-        -M 'r:|.=* r:|=*'
-}
 # 补全顺序:
 # _complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
 # _match    - 和 _complete 类似但允许使用通配符
 # _expand_alias - 展开别名 _ignored - 被 ignored-patterns 忽略掉的
-zstyle ':completion:*' completer _expand_alias _complete _extensions _match _ignored _files_enhance
+zstyle ':completion:*' completer _expand_alias _complete _extensions _match _ignored _files
+# 增强版文件名补全
+# 0 - 完全匹配 ( Abc -> Abc )      1 - 大写修正 ( abc -> Abc )
+# 2 - 单词补全 ( f-b -> foo-bar )  3 - 后缀补全 ( .cxx -> foo.cxx )
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:]-}={[:upper:]_}' 'r:|[.,_-]=* r:|=*' 'r:|.=* r:|=*'
 
 # 不展开普通别名
 zstyle ':completion:*' regular false
@@ -47,7 +46,7 @@ zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 zstyle ':completion:*:descriptions' format '[%d]'
 
 # 补全当前用户所有进程列表
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm,cmd -w -w"
 
 # complete manual by their section, from grml
 zstyle ':completion:*:manuals'    separate-sections true
@@ -61,6 +60,9 @@ zstyle ':completion:*:*:git:*' user-commands ${${(M)${(k)commands}:#git-*}/git-/
 # zstyle ':completion:*:*:*:*'   file-patterns '^*.(zwc|pyc):compiled-files' '*:all-files'
 # zstyle ':completion:*:*:rm:*'  file-patterns '*:all-files'
 # zstyle ':completion:*:*:gio:*' file-patterns '*:all-files'
+
+# color
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # 单词中也进行补全
 setopt complete_in_word

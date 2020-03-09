@@ -2,6 +2,11 @@ import re
 
 from xkeysnail.transform import *
 
+# [Global modemap] Change modifier keys as in xmodmap
+define_modmap({
+    Key.CAPSLOCK: Key.LEFT_CTRL
+})
+
 # Alt + N to choose completion
 define_keymap(
     lambda wm_class: wm_class in ("jetbrains-clion", "jetbrains-pycharm", "jetbrains-goland"),

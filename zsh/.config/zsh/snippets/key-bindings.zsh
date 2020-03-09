@@ -196,10 +196,8 @@ ebindkey 'C-x C-e' edit-command-line-as-zsh
 # 棒棒 M-x
 function execute-command() {
     local selected=$(printf "%s\n" ${(k)widgets} | fzf --reverse --prompt="cmd> " --height=10 )
-    [[ $selected ]] && {
-        zle redisplay
-        zle $selected
-    }
+    zle redisplay
+    [[ $selected ]] && zle $selected
 }
 zle -N execute-command
 ebindkey "M-x" execute-command
