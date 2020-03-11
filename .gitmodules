@@ -6,5 +6,5 @@
 	path = tmux/.local/share/tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
 [submodule "zsh/.local/share/zsh/zinit/bin"]
-	path = zsh/.local/share/zsh/zinit/bin
+	path = zsh/.config/zsh/zinit/bin
 	url = https://github.com/zdharma/zinit.git

@@ -61,7 +61,7 @@ ebindkey "C-Backspace" backward-kill-word-match
 # fuzzy 相关绑定 {{{1
 # 快速目录跳转
 function fz-zjump-widget() {
-    local selected=$(z | fzf -n "2.." --tiebreak=end,index --tac --prompt="jump> ")
+    local selected=$(z -l | fzf -n "2.." --tiebreak=end,index --tac --prompt="jump> ")
     if [[ "$selected" != "" ]] {
         builtin cd "${selected[(w)2]}"
     }

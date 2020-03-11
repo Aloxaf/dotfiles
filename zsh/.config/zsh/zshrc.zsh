@@ -16,12 +16,12 @@ fi
 # ==== Zplugin 初始化 ====
 
 typeset -A ZINIT=(
-    BIN_DIR         $XDG_DATA_HOME/zsh/zinit/bin
-    HOME_DIR        $XDG_DATA_HOME/zsh/zinit
+    BIN_DIR         $ZDOTDIR/zinit/bin
+    HOME_DIR        $ZDOTDIR/zinit
     COMPINIT_OPTS   -C
 )
 
-source $XDG_DATA_HOME/zsh/zinit/bin/zinit.zsh
+source $ZDOTDIR/zinit/bin/zinit.zsh
 
 # ===== 函数 ====
 
@@ -43,19 +43,17 @@ forgit_add=gai
 forgit_diff=gdi
 forgit_log=glgi
 
-ZLUA_EXEC=luajit
+ZSHZ_DATA=$ZDOTDIR/.z
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'
-export _ZL_DATA=$XDG_DATA_HOME/zsh/zlua
-export _ZL_HYPHEN=1
 
 # ==== 加载插件 ====
 
 zplugin light-mode for \
     zdharma/zzcomplete zdharma/zui \
     hlissner/zsh-autopair \
-    skywind3000/z.lua \
     hchbaw/zce.zsh \
+    agkozak/zsh-z \
     wfxr/forgit
 
 zplugin light-mode for \

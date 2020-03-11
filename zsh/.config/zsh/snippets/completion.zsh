@@ -24,7 +24,16 @@ zstyle ':completion:*:complete:*' cache-path $ZSH_CACHE_DIR
 # _complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
 # _match    - 和 _complete 类似但允许使用通配符
 # _expand_alias - 展开别名 _ignored - 被 ignored-patterns 忽略掉的
-zstyle ':completion:*' completer _expand_alias _complete _extensions _match _ignored _files
+zstyle ':completion:*' completer _expand_alias _complete _extensions _match _files
+# 由于某些 completer 调用的代价比较昂贵，第一次调用时不考虑它们
+# zstyle -e ':completion:*' completer '
+#   if [[ $_last_try != "$HISTNO$BUFFER$CURSOR" ]]; then
+#     _last_try="$HISTNO$BUFFER$CURSOR"
+#     reply=(_expand_alias _complete _extensions _match _files)
+#   else
+#     reply=(_ignored _correct _approximate)
+#   fi'
+
 # 增强版文件名补全
 # 0 - 完全匹配 ( Abc -> Abc )      1 - 大写修正 ( abc -> Abc )
 # 2 - 单词补全 ( f-b -> foo-bar )  3 - 后缀补全 ( .cxx -> foo.cxx )
@@ -34,7 +43,7 @@ zstyle ':completion:*' matcher-list '' 'm:{[:lower:]-}={[:upper:]_}' 'r:|[.,_-]=
 zstyle ':completion:*' regular false
 
 # 结果样式
-zstyle ':completion:*:*:*:*:*' menu true select search interactive
+zstyle ':completion:*:*:*:*:*' menu true select # search interactive
 zstyle ':completion:*' list-grouped false
 zstyle ':completion:*' list-separator ''
 zstyle ':completion:*' group-name ''
