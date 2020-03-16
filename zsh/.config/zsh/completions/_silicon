@@ -1,0 +1,33 @@
+#compdef silicon
+
+# zsh completions for 'silicon'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  '--from-clipboard[read input from clipboard.]'
+  {-h,--help}'[prints help information]'
+  '--list-themes[list all themes.]'
+  '--no-line-number[hide the line number.]'
+  '--no-round-corner[dont round the corner]'
+  '--no-window-controls[hide the window controls.]'
+  {-c,--to-clipboard}'[]'
+  {-V,--version}'[prints version information]'
+  {-b,--background}'[background color of the image \[default: #aaaaff\]]'
+  {-f,--font}'[the font list. eg. Hack; SimSun=31]'
+  '--highlight-lines[lines to high light. rg. 1-3; 4]'
+  {-l,--language}'[the language for syntax highlighting. You can use full name ("Rust")]'
+  '--line-pad[pad between lines \[default: 2\]]'
+  {-o,--output}'[write output image to specific location instead of cwd.]'
+  '--pad-horiz[pad horiz \[default: 80\]]'
+  '--pad-vert[pad vert \[default: 100\]]'
+  '--shadow-blur-radius[blur radius of the shadow. (set it to 0 to hide shadow) \[default: 0\]]'
+  '--shadow-color[color of shadow \[default: #555555\]]'
+  '--shadow-offset-x[shadows offset in X axis \[default: 0\]]'
+  '--shadow-offset-y[shadows offset in Y axis \[default: 0\]]'
+  '--tab-width[tab width \[default: 4\]]'
+  '--theme[the syntax highlight theme. It can be a theme name or path to a]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

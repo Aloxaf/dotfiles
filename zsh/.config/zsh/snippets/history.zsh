@@ -1,7 +1,9 @@
 # 限制单条历史记录长度
 # return 1: will not be saved
 # reutnr 2: saved on the internal history list
-function zshaddhistory() {
+autoload -Uz add-zsh-hook
+add-zsh-hook zshaddhistory max_history_len
+function max_history_len() {
     if (($#1 > 160)) {
         return 2
     }

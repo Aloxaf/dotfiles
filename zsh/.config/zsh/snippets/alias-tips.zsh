@@ -28,7 +28,7 @@ function _check_alias() {
         }
     }
 
-    if (( ${#${1% #}} > $#result )) {
+    if (( ${#${1%% #}} > $#result )) {
         ALIAS_TIPS_BUFFER=$result
     }
 }

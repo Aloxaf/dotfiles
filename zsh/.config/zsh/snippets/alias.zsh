@@ -29,9 +29,17 @@ function _wwrapper() {
     $wrapper ${(e)cmd} $argv[3,-1]
 }
 
+# 写成函数方便定义补全
+function proxychains_8877() {
+    proxychains -q -f ~/.config/proxychains/8877.conf $@
+}
+function proxychains_8080() {
+    proxychains -q -f ~/.config/proxychains/8080.conf $@
+}
+
 # wrapper
-alias p="_wwrapper 'proxychains -q -f ~/.config/proxychains/8877.conf'"
-alias p8080="_wwrapper 'proxychains -q -f ~/.config/proxychains/8080.conf'"
+alias p="_wwrapper proxychains_8877"
+alias p8080="_wwrapper proxychains_8080"
 alias rlwrap="_wwrapper rlwrap"
 
 # 乱七八糟的

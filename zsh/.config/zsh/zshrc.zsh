@@ -7,6 +7,9 @@ if [[ "$TMUX" == "" && $- == *i* ]]; then
     fi
 fi
 
+# 让 prompt 在底部
+# printf "\n%.0s" {1..100}
+
 # p10k instant prompt
 # 可取代 zplugin turbo mode
 if [[ -r "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -25,7 +28,7 @@ source $ZDOTDIR/zinit/bin/zinit.zsh
 
 # ===== 函数 ====
 
-fpath+=("$XDG_CONFIG_HOME/zsh/functions")
+fpath+=("$XDG_CONFIG_HOME/zsh/functions" "$XDG_CONFIG_HOME/zsh/completions")
 
 autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette printc
 autoload +X zman
@@ -39,6 +42,8 @@ ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 ZSH_AUTOSUGGEST_COMPLETION_IGNORE='( |man |pikaur -S )*'
 
+GENCOMP_DIR=$XDG_CONFIG_HOME/zsh/completions
+
 forgit_add=gai
 forgit_diff=gdi
 forgit_log=glgi
@@ -49,14 +54,15 @@ export AGV_EDITOR='kwrite -l $line -c $col $file'
 
 # ==== 加载插件 ====
 
-zplugin light-mode for \
+zinit light-mode for \
     zdharma/zzcomplete zdharma/zui \
     hlissner/zsh-autopair \
     hchbaw/zce.zsh \
+    Aloxaf/gencomp \
     agkozak/zsh-z \
     wfxr/forgit
 
-zplugin light-mode for \
+zinit light-mode for \
     blockf \
         zsh-users/zsh-completions \
     as="program" atclone="rm -f ^(rgg|agv)" \
@@ -65,9 +71,9 @@ zplugin light-mode for \
         trapd00r/LS_COLORS
 
 # b4b4r07/enhancd \
-# zplugin light Aloxaf/fzf-tab
+# zinit light Aloxaf/fzf-tab
 
-zplugin for \
+zinit for \
     OMZ::lib/clipboard.zsh \
     OMZ::lib/git.zsh \
     OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh \
@@ -76,11 +82,17 @@ zplugin for \
     OMZ::plugins/sudo/sudo.plugin.zsh \
     OMZ::plugins/git/git.plugin.zsh
 
-zplugin svn for \
+zinit ice mv=":cht.sh -> cht.sh" atclone="chmod +x cht.sh" as="program"
+zinit snippet https://cht.sh/:cht.sh
+
+zinit ice mv=":zsh -> _cht" as="completion"
+zinit snippet https://cheat.sh/:zsh
+
+zinit svn for \
     OMZ::plugins/extract \
     OMZ::plugins/pip
 
-zplugin as="completion" for \
+zinit as="completion" for \
     OMZ::plugins/cargo/_cargo \
     OMZ::plugins/rust/_rust \
     OMZ::plugins/fd/_fd
@@ -101,12 +113,9 @@ local -A ctxt=(\"\${(@ps:\2:)CTXT}\")
 "
 
 zstyle ':fzf-tab:*' single-group ''
-zstyle ':fzf-tab:complete:_zlua:*' query-string input
+zstyle ':fzf-tab:complete:zshz:*' query-string input
 zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview='echo $(<{f})' --preview-window=down:3:wrap
 zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract"exa -1 --color=always \${~ctxt[hpre]}\$in"
-
-zplugin ice as="completion"
-zplugin snippet $XDG_CONFIG_HOME/zsh/snippets/_bat
 
 zplugin snippet ~/.travis/travis.sh
 

@@ -1,0 +1,50 @@
+#compdef sk
+
+_arguments \
+         '*:file:_files' \
+		{-e,--exact}'[Enable exact-match.]' \
+		'--regex[Search with regular expression instead of fuzzy match.]' \
+		'--algo[Fuzzy matching algorithm (default: skim_v2) .]' \
+		'--case[To ignore case on matching or not. (default smart) . br.]' \
+		{-n,--nth}'[Comma-separated list of field index expressions for limiting search scope.]' \
+		'--with-nth[Transform the presentation of each line using field index expressions.]' \
+		{-d,--delimiter}'[Field delimiter regex for --nth and --with-nth (default: AWK-style) .]' \
+		'--tac[Reverse the order of the input . RS e. g. history | sk --tac . RE.]' \
+		'--tiebreak[Comma-separated list of sort criteria to apply when the scores are tied. br .]' \
+		{-i,--interactive}'[Start the finder in the command query.]' \
+		{-c,--cmd}'[Specify the command to invoke for fetching options.]' \
+		'-I[Replace replstr with the selected item.]' \
+		{-m,--multi}'[Enable multi-select with tab/shift-tab.]' \
+		'--no-multi[Disable multi-select.]' \
+		'--bind[Comma-separated list of custom key bindings.]' \
+		'--no-hscroll[Disable horizontal scroll.]' \
+		'--height[Display sk window below the cursor with the given height instead of using the…]' \
+		'--min-height[Minimum height when --height is given in percent (default: 10).]' \
+		'--layout[Choose the layout (default: default) .]' \
+		'--reverse[A synonym for --layout=reverse.]' \
+		'--margin[Comma-separated expression for margins around the finder. br . br .]' \
+		'--inline-info[Display finder info inline with the query.]' \
+		{-p,--prompt}'[Input prompt (default: '"'"'> '"'"').]' \
+		'--cmd-prompt[Command prompt (default: '"'"'c> '"'"').]' \
+		'--header[The given string will be printed as the sticky header.]' \
+		'--header-lines[The first N lines of the input are treated as the sticky header.]' \
+		'--ansi[Enable processing of ANSI color codes.]' \
+		'--tabstop[Number of spaces for a tab character (default: 8).]' \
+		'--color[Color configuration.]' \
+		'--history[Load search history from the specified file and update the file on completion.]' \
+		'--history-size[Maximum number of entries in the history file (default: 1000).]' \
+		'--cmd-history[Load command query history from the specified file and update the file on com…]' \
+		'--cmd-history-size[Maximum number of command query entries in the history file (default: 1000).]' \
+		'--preview[Execute the given command for the current line and display the result on the …]' \
+		'--preview-window[Determine the layout of the preview window.]' \
+		{-q,--query}'[Start the finder with the given query.]' \
+		'--cmd-query[Specify the initial query for the command query.]' \
+		'--print-query[Print query as the first line.]' \
+		{-f,--filter}'[Filter mode. Do not start interactive finder.]' \
+		'--expect[Comma-separated list of keys that can be used to complete sk in addition to t…]' \
+		'--read0[Read input delimited by ASCII NUL characters instead of newline characters.]' \
+		'--print0[Print output delimited by ASCII NUL characters instead of newline characters.]' \
+		'-index[.]' \
+		'--version[Display version information and exit.]' \
+		'-1[.]' \
+		'-2[.]'

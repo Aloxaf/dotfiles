@@ -1,0 +1,37 @@
+#compdef rlwrap
+
+_arguments \
+		{-a,--always-readline}'[Always remain in "readline mode", regardless of command'"'"'s terminal settings.]' \
+		{-A,--ansi-colour-aware}'[Prompts that use colour will confuse rlwrap, especially at the end of long in…]' \
+		{-b,--break-chars}'[Consider the specified characters word-breaking (whitespace is always word-br…]' \
+		{-c,--complete-filenames}'[Complete filenames (filename completion is always case-sensitive, even with t…]' \
+		{-C,--command-name}'[Use command_name instead of command to determine the names of history and com…]' \
+		{-D,--history-no-dupes}'[How aggressively to weed out duplicate entries from the input history.]' \
+		{-e,--extra-char-after-completion}'[By default, rlwrap appends a space after any inserted completion text.]' \
+		{-f,--file}'[Split file into words (using the default word-breaking characters, or those s…]' \
+		{-g,--forget-matching}'[Forget (i. e.]' \
+		{-h,--help}'[Print a short help message.]' \
+		{-H,--history-filename}'[Read command history from file (and write it back there if --histsize >= 0).]' \
+		{-i,--case-insensitive}'[Ignore case when completing (filename completion remains case-sensitive).]' \
+		{-I,--pass-sigint-as-sigterm}'[Send a TERM signal to command when an INT is received (e. g.]' \
+		{-l,--logfile}'[When in readline mode, append command'"'"'s output (including echo'"'"'ed user input)…]' \
+		{-n,--no-warnings}'[Don'"'"'t print warnings.]' \
+		{-N,--no-children}'[Don'"'"'t rlwrap command'"'"'s children: whenever rlwrap notices that command is wai…]' \
+		{-m,--multi-line}'[Enable multi-line input using a "newline substitute" character sequence (" \\"…]' \
+		{-M,--multi-line-ext}'[Call multi-line-editor on temporary files with filename extension .]' \
+		{-o,--one-shot}'[Send an EOF to command after accepting the first line of input.]' \
+		{-O,--only-cook}'[Only ever "cook" prompts that match regexp.]' \
+		{-p,--prompt-colour}'[Use one of the colour names black, red, green, yellow, blue, cyan, purple (=m…]' \
+		{-P,--pre-given}'[Start rlwrap with text in its edit buffer (this will automatically set the -…]' \
+		{-q,--quote-characters}'[Assume that the given characters act as quotes, e. g.]' \
+		{-r,--remember}'[Put all words seen on in- and output on the completion list.]' \
+		{-R,--renice}'[Make rlwrap nicer than command (cf nice (1)).]' \
+		{-s,--histsize}'[Limit the history list to N entries, truncating the history file (default: 30…]' \
+		{-S,--substitute-prompt}'[Substitute the specified prompt for command'"'"'s own prompt.]' \
+		{-t,--set-term-name}'[Set command'"'"'s TERM to name.]' \
+		{-U,--mirror-arguments}'[(linux only) Keep track of command'"'"'s arguments as seen by the ps (1) command,…]' \
+		{-v,--version}'[Print rlwrap version.]' \
+		{-w,--wait-before-prompt}'[In order to determine if command'"'"'s last output is a prompt, rlwrap waits tim…]' \
+		{-W,--polling}'[EXPERIMENTAL: Wake up every timeout millisecs, where timeout is the same as f…]' \
+		'(-)1:command: _command_names -e' \
+        '*::arguments: _normal '
