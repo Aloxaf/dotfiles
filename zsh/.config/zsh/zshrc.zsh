@@ -34,7 +34,7 @@ autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette printc
 autoload +X zman
 autoload -Uz zcalc zmv
 
-# ==== 某些插件需要的环境变量 ====
+# ==== 某些插件需要的设置 ====
 
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
@@ -48,18 +48,28 @@ forgit_add=gai
 forgit_diff=gdi
 forgit_log=glgi
 
-ZSHZ_DATA=$ZDOTDIR/.z
+export _ZL_DATA=$ZDOTDIR/.z
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'
+
+local extract="
+# trim input
+in=\${\${\"\$(<{f})\"%\$'\0'*}#*\$'\0'}
+# get ctxt for current completion
+local -A ctxt=(\"\${(@ps:\2:)CTXT}\")
+"
+zstyle ':fzf-tab:*' single-group ''
+zstyle ':fzf-tab:complete:_zlua:*' query-string input
+zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
+zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
 
 # ==== 加载插件 ====
 
 zinit light-mode for \
-    zdharma/zzcomplete zdharma/zui \
     hlissner/zsh-autopair \
+    skywind3000/z.lua \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
-    agkozak/zsh-z \
     wfxr/forgit
 
 zinit light-mode for \
@@ -70,6 +80,7 @@ zinit light-mode for \
     atclone="dircolors -b LS_COLORS > c.zsh" atpull='%atclone' pick='c.zsh' \
         trapd00r/LS_COLORS
 
+# agkozak/zsh-z \
 # b4b4r07/enhancd \
 # zinit light Aloxaf/fzf-tab
 
@@ -97,30 +108,16 @@ zinit as="completion" for \
     OMZ::plugins/rust/_rust \
     OMZ::plugins/fd/_fd
 
-# ==== 加载自定义插件 ====
+source ~/.travis/travis.sh
+source ~/Coding/shell/zvm/zvm.zsh
+
+# ==== 某些比较特殊的插件 ====
+
+zpcompinit; zpcdreplay
 
 for i in $XDG_CONFIG_HOME/zsh/snippets/*.zsh; do
     source $i
 done
-
-source ~/Coding/shell/zvm/zvm.zsh
-
-local extract="
-# trim input
-in=\${\${\"\$(<{f})\"%\$'\0'*}#*\$'\0'}
-# get ctxt for current completion
-local -A ctxt=(\"\${(@ps:\2:)CTXT}\")
-"
-
-zstyle ':fzf-tab:*' single-group ''
-zstyle ':fzf-tab:complete:zshz:*' query-string input
-zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview='echo $(<{f})' --preview-window=down:3:wrap
-zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract"exa -1 --color=always \${~ctxt[hpre]}\$in"
-
-zplugin snippet ~/.travis/travis.sh
-
-# ==== 初始化补全 ====
-zpcompinit; zpcdreplay
 
 source ~/Coding/shell/fzf-tab/fzf-tab.zsh
 

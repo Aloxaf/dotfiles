@@ -28,6 +28,7 @@ function _wwrapper() {
     }
     $wrapper ${(e)cmd} $argv[3,-1]
 }
+compdef _precommand _wwrapper
 
 # 写成函数方便定义补全
 function proxychains_8877() {
@@ -36,6 +37,8 @@ function proxychains_8877() {
 function proxychains_8080() {
     proxychains -q -f ~/.config/proxychains/8080.conf $@
 }
+compdef _precommand proxychains_8877
+compdef _precommand proxychains_8080
 
 # wrapper
 alias p="_wwrapper proxychains_8877"

@@ -18,7 +18,6 @@ compctl() {
 
 # 缓存补全结果
 zstyle ':completion:*:complete:*' use-cache 1
-zstyle ':completion:*:complete:*' cache-path $ZSH_CACHE_DIR
 
 # 补全顺序:
 # _complete - 普通补全函数  _extensions - 通过 *.\t 选择扩展名
@@ -37,7 +36,10 @@ zstyle -e ':completion:*' completer '
 # 增强版文件名补全
 # 0 - 完全匹配 ( Abc -> Abc )      1 - 大写修正 ( abc -> Abc )
 # 2 - 单词补全 ( f-b -> foo-bar )  3 - 后缀补全 ( .cxx -> foo.cxx )
-zstyle ':completion:*' matcher-list '' 'm:{[:lower:]-}={[:upper:]_}' 'r:|[.,_-]=* r:|=*' 'r:|.=* r:|=*'
+zstyle ':completion:*:(argument-rest|files):*' matcher-list '' \
+    'm:{[:lower:]-}={[:upper:]_}' \
+    'r:|[.,_-]=* r:|=*' \
+    'r:|.=* r:|=*'
 
 # 不展开普通别名
 zstyle ':completion:*' regular false
