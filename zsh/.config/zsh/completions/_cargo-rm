@@ -1,0 +1,18 @@
+#compdef cargo-rm
+
+_cargo-rm() {
+  _arguments \
+    {-B,--build}"[Remove crate as build dependency]" \
+    {-D,--dev}"[Remove crate as development dependency]" \
+    {-h,--help}"[Prints help information]" \
+    {-q,--quiet}"[Do not print any output in case of success]" \
+    {-V,--version}"[Prints version information]" \
+    '--manifest-path=[Path to the manifest to add a dependency to]:file:_files' \
+    '*:crate:_cargo-edit_local_crates'
+}
+
+_cargo-edit_local_crates() {
+  local -a crates
+  crates=(${${(f)"$(cargo read-manifest | jq -r '.dependencies[] | "\(.name):\(.kind)"')"}%:null})
+  _describe -t crates 'local crates' crates
+}

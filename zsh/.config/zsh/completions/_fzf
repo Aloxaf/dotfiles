@@ -1,67 +1,58 @@
 #compdef fzf
 
-_fzf() {
-  _arguments \
-    '*:file:_files' \
-		{-x,--extended}'[Extended-search mode. Since 0. 10. 9, this is enabled by default.]' \
-    {+x,--no-extended}'[Disable extended-search mode]' \
-		{-e,--exact}'[Enable exact-match.]' \
-		'-i[Case-insensitive match (default: smart-case match).]' \
-    '+i[Case-sensitive match]' \
-		'--literal[Do not normalize latin script letters for matching.]' \
-		'--algo=[Fuzzy matching algorithm (default: v2) .]:algo:(v1 v2)' \
-		{-n+,--nth=}'[Comma-separated list of field index expressions for limiting search scope.]' \
-		'--with-nth[Transform the presentation of each line using field index expressions.]' \
-		{-d+,--delimiter=}'[Field delimiter regex for --nth and --with-nth (default: AWK-style).]' \
-		'--phony[Do not perform search.]' \
-		{+s,--no-sort}'[Do not sort the result.]' \
-		'--tac[Reverse the order of the input . RS e. g.]' \
-		'--tiebreak=[Comma-separated list of sort criteria to apply when the scores are tied. br .]:tiebreak:_fzf_tiebreak' \
-		{-m,--multi}'[Enable multi-select with tab/shift-tab.]' \
-		{+m,--no-multi}'[Disable multi-select.]' \
-		'--no-mouse[Disable mouse.]' \
-		'--bind[Comma-separated list of custom key bindings.]' \
-		'--cycle[Enable cyclic scroll.]' \
-		'--keep-right[Keep the right end of the line visible when it'"'"'s too long.]' \
-		'--no-hscroll[Disable horizontal scroll.]' \
-		'--hscroll-off=[Number of screen columns to keep to the right of the highlighted substring (d…]' \
-		'--filepath-word[Make word-wise movements and actions respect path separators.]' \
-		'--jump-labels=[Label characters for jump and jump-accept . SS Layout.]' \
-		'--height=[Display fzf window below the cursor with the given height instead of using th…]' \
-		'--min-height=[Minimum height when --height is given in percent (default: 10).]' \
-		'--layout=[Choose the layout (default: default) .]:layout:(default reverse reverse-list)' \
-		'--reverse[A synonym for --layout=reverse.]' \
-		'--border=[Draw border around the finder .]:border:(rounded sharp horizontal)' \
-		'--no-unicode[Use ASCII characters instead of Unicode box drawing characters to draw border.]' \
-		'--margin=[Comma-separated expression for margins around the finder. br . br .]' \
-		'--info=[Determines the display style of finder info.]:style:(default inline hidden)' \
-		'--no-info[A synonym for --info=hidden.]' \
-		'--prompt=[Input prompt (default: '"'"'> '"'"').]' \
-		'--pointer=[Pointer to the current line (default: '"'"'>'"'"').]' \
-		'--marker=[Multi-select marker (default: '"'"'>'"'"').]' \
-		'--header=[The given string will be printed as the sticky header.]' \
-		'--header-lines=[The first N lines of the input are treated as the sticky header.]' \
-		'--ansi[Enable processing of ANSI color codes.]' \
-		'--tabstop=[Number of spaces for a tab character (default: 8).]' \
-		'--color=[Color configuration.]' \
-		'--no-bold[Do not use bold text.]' \
-		'--black[Use black background . SS History.]' \
-		'--history=[Load search history from the specified file and update the file on completion.]: :_files' \
-		'--history-size=[Maximum number of entries in the history file (default: 1000).]' \
-		'--preview=[Execute the given command for the current line and display the result on the …]' \
-		'--preview-window[Determines the layout of the preview window.]' \
-		{-q+,--query=}'[Start the finder with the given query.]' \
-		{-1,--select-1}'[Automatically select the only match.]' \
-		{-0,--exit-0}'[Exit immediately when there'"'"'s no match.]' \
-		{-f+,--filter=}'[Filter mode. Do not start interactive finder.]' \
-		'--print-query[Print query as the first line.]' \
-		'--expect=[Comma-separated list of keys that can be used to complete fzf in addition to …]' \
-		'--read0[Read input delimited by ASCII NUL characters instead of newline characters.]' \
-		'--print0[Print output delimited by ASCII NUL characters instead of newline characters.]' \
-		'--no-clear[Do not clear finder interface on exit.]' \
-		'--sync[Synchronous search for multi-staged filtering.]' \
-		'--version[Display version information and exit.]'
-}
+local context state state_descr line
+local -A val_args opt_args
+
+local -a fzf_keys=(
+  ctrl-{a..z}
+  ctrl-{space,'\',']',^,/}
+  ctrl-alt-{a..z}
+  alt-{a..z}
+  alt-{0..9}
+  f{1..12}
+  enter space bspace
+  alt-{up,down,left,right,enter,space,bspace,/}
+  tab btab esc del up down left right home end insert pgup pgdn
+  shift-{up,down,left-right}
+  {left,right,doule}-click
+  change
+)
+
+local -a fzf_actions=(
+  abort
+  accept
+  accept-non-empty
+  backward-delete-char
+  backward-delete-char/eof
+  backward-kill-word
+  beginning-of-line
+  cancel
+  clear-{screen,selection,query}
+  delete-{char,char/eof}
+  {select,deselect}-all
+  down
+  end-of-line
+  execute
+  execurt-{silent,multi}
+  {forward,backword}-{char,word}
+  ignore
+  jump
+  jump-accept
+  kill-{line,word}
+  {next,previous}-history
+  {half,preview}-page-{down,up}
+  {page,preview}-{down,up}
+  {print,replace}-query
+  reload
+  toggle
+  toggle-{all,in,out,preview,preview-wrap,sort}
+  toggle+{down,up}
+  top
+  unix-line-discard
+  unix-word-rubout
+  up
+  yank
+)
 
 _fzf_tiebreak() {
   _values -s , tiebreak \
@@ -71,4 +62,68 @@ _fzf_tiebreak() {
           'index[Prefers line that appeared earlier in the input stream]'
 }
 
-_fzf "$@"
+_fzf_keybindings() {
+  _sep_parts fzf_keys ':' fzf_actions
+}
+
+_arguments \
+  '*:file:_files' \
+	{-x,--extended}'[Extended-search mode. Since 0.10.9, this is enabled by default.]' \
+  {+x,--no-extended}'[Disable extended-search mode]' \
+	{-e,--exact}'[Enable exact-match]' \
+	'-i[Case-insensitive match (default: smart-case match)]' \
+  '+i[Case-sensitive match]' \
+	'--literal[Do not normalize latin script letters for matching]' \
+	'--algo=[Fuzzy matching algorithm (default: v2)]:algo:(v1 v2)' \
+	{-n+,--nth=}'[Comma-separated list of field index expressions for limiting search scope]' \
+	'--with-nth[Transform the presentation of each line using field index expressions]' \
+	{-d+,--delimiter=}'[Field delimiter regex for --nth and --with-nth (default: AWK-style)]' \
+	'--phony[Do not perform search]' \
+	{+s,--no-sort}'[Do not sort the result]' \
+	'--tac[Reverse the order of the input]' \
+	'--tiebreak=[Comma-separated list of sort criteria to apply when the scores are tied.]:tiebreak:_fzf_tiebreak' \
+	{-m,--multi}'[Enable multi-select with tab/shift-tab]' \
+	{+m,--no-multi}'[Disable multi-select]' \
+	'--no-mouse[Disable mouse]' \
+	'--bind=[Comma-separated list of custom key bindings]:key bindings:_sequence -s , _fzf_keybindings' \
+	'--cycle[Enable cyclic scroll]' \
+	'--keep-right[Keep the right end of the line visible when it'"'"'s too long]' \
+	'--no-hscroll[Disable horizontal scroll.]' \
+	'--hscroll-off=[Number of screen columns to keep to the right of the highlighted substring (default: 10)]' \
+	'--filepath-word[Make word-wise movements and actions respect path separators]' \
+	'--jump-labels=[Label characters for jump and jump-accept]' \
+	'--height=[Display fzf window below the cursor with the given height instead of using the full screen]' \
+	'--min-height=[Minimum height when --height is given in percent (default: 10)]' \
+	'--layout=[Choose the layout (default: default)]:layout:(default reverse reverse-list)' \
+	'--reverse[A synonym for --layout=reverse]' \
+	'--border=[Draw border around the finder]:border:(rounded sharp horizontal)' \
+	'--no-unicode[Use ASCII characters instead of Unicode box drawing characters to draw border]' \
+	'--margin=[Comma-separated expression for margins around the finder]' \
+	'--info=[Determines the display style of finder info]:style:(default inline hidden)' \
+	'--no-info[A synonym for --info=hidden]' \
+	'--prompt=[Input prompt (default: '"'"'> '"'"')]' \
+	'--pointer=[Pointer to the current line (default: '"'"'>'"'"')]' \
+	'--marker=[Multi-select marker (default: '"'"'>'"'"')]' \
+	'--header=[The given string will be printed as the sticky header]' \
+	'--header-lines=[The first N lines of the input are treated as the sticky header]' \
+	'--ansi[Enable processing of ANSI color codes]' \
+	'--tabstop=[Number of spaces for a tab character (default: 8)]' \
+	'--color=[Color configuration]' \
+	'--no-bold[Do not use bold text]' \
+	'--black[Use black background]' \
+	'--history=[Load search history from the specified file and update the file on completion]: :_files' \
+	'--history-size=[Maximum number of entries in the history file (default: 1000)]' \
+	'--preview=[Execute the given command for the current line and display the result on the preview window]' \
+	'--preview-window[Determines the layout of the preview window]' \
+	{-q+,--query=}'[Start the finder with the given query]' \
+	{-1,--select-1}'[Automatically select the only match]' \
+	{-0,--exit-0}'[Exit immediately when there'"'"'s no match]' \
+	{-f+,--filter=}'[Filter mode. Do not start interactive finder]' \
+	'--print-query[Print query as the first line]' \
+	'--expect=[Comma-separated list of keys that can be used to complete fzf in addition to the default enter key]:keys:_values -s , $fzf_keys' \
+	'--read0[Read input delimited by ASCII NUL characters instead of newline characters]' \
+	'--print0[Print output delimited by ASCII NUL characters instead of newline characters]' \
+	'--no-clear[Do not clear finder interface on exit]' \
+	'--sync[Synchronous search for multi-staged filtering]' \
+	'--version[Display version information and exit]'
+

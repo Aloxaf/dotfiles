@@ -40,6 +40,7 @@ zstyle ':completion:*:(argument-rest|files):*' matcher-list '' \
     'm:{[:lower:]-}={[:upper:]_}' \
     'r:|[.,_-]=* r:|=*' \
     'r:|.=* r:|=*'
+# zstyle ':completion:*' matcher-list 'b:=*'
 
 # 不展开普通别名
 zstyle ':completion:*' regular false

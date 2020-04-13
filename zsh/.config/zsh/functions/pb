@@ -1,0 +1,23 @@
+emulate -L zsh
+
+local file==(<<<'')
+
+if (( $# == 0 )); then
+  cat > $file
+else
+  file=$1
+fi
+
+local url=$(curl -F "c=@-" "https://fars.ee/?u=1" <$file)
+local mime=$(file --mime-type -b $file)
+case $mime in
+  image/*)
+    local type=${${file:e}:-${mime#*/}}
+    print "$url.$type" ;;
+  text/x-*)
+    local lang=${${file:e}:-${mime#*-}}
+    print "$url/$lang" ;;
+  *) print "$url" ;;
+esac
+
+(( $# == 0 )) && rm $file

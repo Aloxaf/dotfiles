@@ -1,0 +1,21 @@
+#compdef cargo-upgrade
+
+_cargo-upgrade() {
+  _arguments \
+    '--all[upgrade all packages in the workspace]' \
+    '--allow-prerelease[include prerelease versions when fetching from crates.io (e.g. 0.6.0-alpha)]' \
+    '--dry-run[print changes to be made without making them]' \
+    {-h,--help}'[prints help information]' \
+    '--offline[run without accessing the network]' \
+    '--skip-compatible[only update a dependency if the new version is semver incompatible]' \
+    '--to-lockfile[upgrade all packages to the version in the lockfile]' \
+    {-V,--version}'[prints version information]' \
+    '--manifest-path=[path to the manifest to upgrade]:file:_files' \
+    '*:crate:_cargo-edit_local_crates'
+}
+
+_cargo-edit_local_crates() {
+  local -a crates
+  crates=(${${(f)"$(cargo read-manifest | jq -r '.dependencies[] | "\(.name):\(.kind)"')"}%:null})
+  _describe -t crates 'local crates' crates
+}

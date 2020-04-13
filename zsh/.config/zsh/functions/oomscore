@@ -1,0 +1,6 @@
+for proc in /proc/<0-9>#; do
+    printf "%2d %5d %s\n" \
+        $(<$proc/oom_score) \
+        ${proc:t} \
+        ${"$(<$proc/cmdline)"[1,80]}
+done | sort -nr | head -n 15

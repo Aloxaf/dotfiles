@@ -1,0 +1,30 @@
+#compdef cargo-add
+
+_cargo-add() {
+  _arguments \
+    '--allow-prerelease[Include prerelease versions when fetching from crates.io (e.g. '0.6.0-alpha')]' \
+    {-B,--build}'[Add crate as build dependency]' \
+    {-D,--dev}'[Add crate as development dependency]' \
+    {-h,--help}'[rprints help information]' \
+    '--no-default-features[Set `default-features = false` for the added dependency]' \
+    '--offline[Run without accessing the network]' \
+    '--optional[Add as an optional dependency (for use in features)]' \
+    {-s,--sort}'[Keep dependencies sorted]' \
+    {-V,--version}'[prints version information]' \
+    '--git[Specify a git repository to download the crate from]' \
+    '--manifest-path=[Path to the manifest to add a dependency to]:file:_files' \
+    '--path[Specify the path the crate should be loaded from]:path:_files -/' \
+    '--registry[Registry to use]' \
+    {-r,--rename=}'[Rename a dependency in Cargo.toml]' \
+    '--target[Add as dependency to the given target platform]:targets:_cargo-edit_targets' \
+    '--upgrade=[Choose method of semantic version upgrade (default: default)]:method:(none patch minor all default)' \
+    '--vers[Specify the version to grab from the registry(crates.io)]' \
+    '*:crate:_cargo-edit_cached_crates'
+}
+
+_cargo-edit_cached_crates() {
+  local -Ua crates
+  crates=(~/.cargo/registry/cache/**/*.crate(:r:t))
+  crates=(${crates%%-[0-9].[0-9]*})
+  _describe -t crates 'local cached crates' crates
+}

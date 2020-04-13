@@ -60,20 +60,20 @@ ebindkey "C-Backspace" backward-kill-word-match
 
 # fuzzy 相关绑定 {{{1
 # 快速目录跳转
-function fz-zjump-widget() {
-    local selected=$(z -l | fzf -n "2.." --tiebreak=end,index --tac --prompt="jump> ")
-    if [[ "$selected" != "" ]] {
-        builtin cd "${selected[(w)2]}"
-    }
-    zle push-line
-    zle accept-line
-}
-zle -N fz-zjump-widget
-ebindkey 'M-c' fz-zjump-widget
+# function fz-zjump-widget() {
+#     local selected=$(z -l | fzf -n "2.." --tiebreak=end,index --tac --prompt="jump> ")
+#     if [[ "$selected" != "" ]] {
+#         builtin cd "${selected[(w)2]}"
+#     }
+#     zle push-line
+#     zle accept-line
+# }
+# zle -N fz-zjump-widget
+# ebindkey 'M-c' fz-zjump-widget
 
 # 搜索历史
 function fz-history-widget() {
-    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=index --prompt="cmd> " ${BUFFER:+-q $BUFFER})
+    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=index --prompt="cmd> " ${BUFFER:+-q$BUFFER})
     if [[ "$selected" != "" ]] {
         zle vi-fetch-history -n $selected
     }
@@ -115,23 +115,23 @@ zle -N zce-jump-char
 ebindkey "M-j" zce-jump-char
 
 # 删除到指定字符
-function zce-delete-to-char() {
-    [[ -z $BUFFER ]] && zle up-history
-    local pbuffer=$BUFFER pcursor=$CURSOR
-    local keys=${(j..)$(print {a..z} {A..Z})}
-    zstyle ':zce:*' prompt-char '%B%F{yellow}Delete to character:%F%b '
-    zstyle ':zce:*' prompt-key '%B%F{yellow}Target key:%F%b '
-    zce-raw zce-searchin-read $keys
-
-    if (( $CURSOR < $pcursor ))  {
-        pbuffer[$CURSOR,$pcursor]=$pbuffer[$CURSOR]
-    } else {
-        pbuffer[$pcursor,$CURSOR]=$pbuffer[$pcursor]
-        CURSOR=$pcursor
-    }
-    BUFFER=$pbuffer
-}
-zle -N zce-delete-to-char
+# function zce-delete-to-char() {
+#     [[ -z $BUFFER ]] && zle up-history
+#     local pbuffer=$BUFFER pcursor=$CURSOR
+#     local keys=${(j..)$(print {a..z} {A..Z})}
+#     zstyle ':zce:*' prompt-char '%B%F{yellow}Delete to character:%F%b '
+#     zstyle ':zce:*' prompt-key '%B%F{yellow}Target key:%F%b '
+#     zce-raw zce-searchin-read $keys
+# 
+#     if (( $CURSOR < $pcursor ))  {
+#         pbuffer[$CURSOR,$pcursor]=$pbuffer[$CURSOR]
+#     } else {
+#         pbuffer[$pcursor,$CURSOR]=$pbuffer[$pcursor]
+#         CURSOR=$pcursor
+#     }
+#     BUFFER=$pbuffer
+# }
+# zle -N zce-delete-to-char
 # ebindkey "C-j d" zce-delete-to-char
 
 # }}}2
@@ -159,25 +159,25 @@ ebindkey "." rationalise-dot
 # }}}2
 
 # 记住上一条命令的 CURSOR 位置 {{{2
-function cached-accept-line() {
-    _last_cursor=$CURSOR
-    zle .accept-line
-}
-zle -N accept-line cached-accept-line
-#ebindkey "C-m" accept-line
+# function cached-accept-line() {
+#     _last_cursor=$CURSOR
+#     zle .accept-line
+# }
+# zle -N accept-line cached-accept-line
+# ebindkey "C-m" accept-line
 
-function prev-buffer-or-beginning-search() {
-    local pbuffer=$BUFFER
-    zle up-line-or-beginning-search
-    if [[ -n $_last_cursor && -z $pbuffer ]] {
-        CURSOR=$_last_cursor
-        _last_cursor=
-    }
-}
-zle -N prev-buffer-or-beginning-search
-#连续上翻有问题
-#ebindkey "C-p" prev-buffer-or-beginning-search
-#ebindkey "Up"  prev-buffer-or-beginning-search
+# function prev-buffer-or-beginning-search() {
+#     local pbuffer=$BUFFER
+#     zle up-line-or-beginning-search
+#     if [[ -n $_last_cursor && -z $pbuffer ]] {
+#         CURSOR=$_last_cursor
+#         _last_cursor=
+#     }
+# }
+# zle -N prev-buffer-or-beginning-search
+# 连续上翻有问题
+# ebindkey "C-p" prev-buffer-or-beginning-search
+# ebindkey "Up"  prev-buffer-or-beginning-search
 # }}}2
 
 # 用编辑器编辑当前行 {{{2

@@ -27,10 +27,10 @@ typeset -A ZINIT=(
 source $ZDOTDIR/zinit/bin/zinit.zsh
 
 # ===== 函数 ====
+FPATH=$XDG_CONFIG_HOME/zsh/functions:$XDG_CONFIG_HOME/zsh/completions:$FPATH
+# fpath+=("$XDG_CONFIG_HOME/zsh/functions" "$XDG_CONFIG_HOME/zsh/completions")
 
-fpath+=("$XDG_CONFIG_HOME/zsh/functions" "$XDG_CONFIG_HOME/zsh/completions")
-
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette printc
+autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette printc oomscore pb
 autoload +X zman
 autoload -Uz zcalc zmv
 
@@ -108,6 +108,7 @@ zinit as="completion" for \
     OMZ::plugins/rust/_rust \
     OMZ::plugins/fd/_fd
 
+source /etc/grc.zsh
 source ~/.travis/travis.sh
 source ~/Coding/shell/zvm/zvm.zsh
 
@@ -121,7 +122,7 @@ done
 
 source ~/Coding/shell/fzf-tab/fzf-tab.zsh
 
-zplugin light-mode for \
+zinit light-mode for \
     zdharma/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions
 
@@ -134,12 +135,12 @@ case $THEME in
         PROMPT=$'\n%F{cyan}❯ %f'
         RPROMPT=""
         zstyle ':prompt:pure:prompt:success' color cyan
-        zplugin ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
-        zplugin light Aloxaf/pure
+        zinit ice lucid wait="!0" pick="async.zsh" src="pure.zsh" atload="prompt_pure_precmd"
+        zinit light Aloxaf/pure
         ;;
     p10k)
         source $XDG_CONFIG_HOME/zsh/p10k.zsh
-        zplugin ice depth=1
-        zplugin light romkatv/powerlevel10k
+        zinit ice depth=1
+        zinit light romkatv/powerlevel10k
         ;;
 esac

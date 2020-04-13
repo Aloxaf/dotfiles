@@ -5,18 +5,23 @@ alias -g N='>/dev/null '
 # 文件系统相关
 alias rm='rm -i'   rd='rmdir'   md='mkdir -p'
 alias ls='exa -h'  la='ls -la'  lt='ls --tree'  ll='ls -l'  l='ls'
-alias df='df -h'   dus='du -sh' del='gio trash'
+alias dfh='df -h'  dus='du -sh' del='gio trash' dusa='dus --apparent-size'
 
 # gdb
 alias gdb-peda='gdb -q -ex init-peda' gdb-pwndbg='gdb -q -ex init-pwndbg'
 alias gdb-gef='gdb -q -ex init-gef'   gdb=gdb-pwndbg
 
 # pacman
-alias S='sudo pacman -S'    Syu='sudo pacman -Syu'  Ss='pacman -Ss'
-alias Si='pacman -Si'       Qi='pacman -Qi'         Qs='pacman -Qs'
-alias Ql='pacman -Ql'       Rns='sudo pacman -Rns'  Fx='pacman -Fx'
-alias Fy='sudo pacman -Fy'  U='sudo pacman -U'
+alias S='sudo pacman -S' Syu='sudo pacman -Syu' Rcs='sudo pacman -Rcs'
+alias Si='pacman -Si' Sl='pacman -Sl'  Ss='pacman -Ss'
+alias Qi='pacman -Qi' Qs='pacman -Qs'  Ql='pacman -Ql'
+alias Qo='pacman -Qo' Fy='pacman -Fy'  F='pacman -F'
+alias Fx='pacman -Fx' Fy='sudo pacman -Fy'  U='sudo pacman -U'
 alias pacman='noglob pacman'
+
+alias zmv='noglob zmv'
+alias zcp='zmv -C'
+alias zln='zmv -L'
 
 # wrapper 的 wrapper
 # 用于处理被 wrap 的命令是 alias 的情况
@@ -61,3 +66,30 @@ alias rgc='rg --color=always'
 alias less='less -r'
 alias history='fc -l 1'
 alias locate='noglob locate'
+
+function dsf() {
+    diff -u $@ | diff-so-fancy
+}
+
+# 从爱呼吸老师那里抄的
+# https://github.com/farseerfc/dotfiles/blob/master/zsh/.bashrc#L100-L123
+function G() {
+    git clone https://git.archlinux.org/svntogit/$1.git/ -b packages/$3 --single-branch $3
+    mv "$3"/trunk/* "$3"
+    rm -rf "$3"/{repos,trunk,.git}
+}
+
+function Ge() {
+    [ -z "$@" ] && echo "usage: $0 <core/extra package name>: get core/extra package PKGBUILD" && return 1
+    for i in $@; do
+    	G packages core/extra $i
+    done
+}
+
+function Gc() {
+    [ -z "$@" ] && echo "usage: $0 <community package name>: get community package PKGBUILD" && return 1
+    for i in $@; do
+    	G community community $i
+    done
+}
+
