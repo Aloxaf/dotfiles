@@ -71,3 +71,7 @@ function ptyrun() {
     zpty -r $ptyname
     zpty -d $ptynamez
 }
+
+# https://archive.zhimingwang.org/blog/2015-09-21-zsh-51-and-bracketed-paste.html
+autoload -Uz bracketed-paste-url-magic
+zle -N bracketed-paste bracketed-paste-url-magic

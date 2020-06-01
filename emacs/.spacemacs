@@ -20,7 +20,7 @@ This function should only modify configuration layer settings."
    ;; installation feature and you have to explicitly list a layer in the
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused)
-   dotspacemacs-enable-lazy-installation 'all
+   dotspacemacs-enable-lazy-installation 'unused
 
    ;; If non-nil then Spacemacs will ask for confirmation before installing
    ;; a layer lazily. (default t)
@@ -32,29 +32,59 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(lua
+     javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-help-tooltip 'manual
+                      auto-completion-enable-snippets-in-popup t
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-use-company-box t)
+     (c-c++ :variables
+            c-c++-backend 'lsp-ccls
+            c-c++-lsp-enable-semantic-highlight 't
+            ;; 这个会强行删掉我的 <algorithm> 即使代码中有 std::find_if
+            c++-enable-organize-includes-on-save t
+            c-c++-enable-clang-format-on-save t)
+     (chinese :variables
+              chinese-enable-fcitx t
+              ;; doesn't support fcitx5
+              ;; chinese-fcitx-use-dbus t
+              chinese-enable-avy-pinyin nil)
      ;; better-defaults
      emacs-lisp
      ;; git
+     ;; haskell
      helm
-     ;; lsp
+     javascript
+     lsp
      major-modes
-     ;; markdown
+     markdown
      multiple-cursors
      org
-     shell-scripts
+     (python :variables
+             python-backend 'lsp
+             python-formatter 'black
+             python-format-on-save t
+             python-sort-imports-on-save t)
+     (rust :variables
+             rust-backend 'lsp)
+     (shell-scripts :variables
+                    shell-scripts-backend 'lsp)
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
+     ;; tabnine
      treemacs
+     wakatime
+     yaml
+     org-roam
      ;; version-control
      )
 
@@ -65,7 +95,12 @@ This function should only modify configuration layer settings."
    ;; To use a local version of a package, use the `:location' property:
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages
+   '(
+     edit-indirect ;; for editing codeblock in markdown-mode
+     rmsbolt
+     telega
+     )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -207,8 +242,8 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-colorize-cursor-according-to-state t
 
    ;; Default font or prioritized list of fonts.
-   dotspacemacs-default-font '("Fira Code"
-                               :size 11.0
+   dotspacemacs-default-font '("Sarasa Mono SC"
+                               :size 11.5
                                :weight normal
                                :width normal)
 
@@ -454,14 +489,17 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq configuration-layer-elpa-archives
-        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-          ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+       '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+         ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+         ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
   ;; emacs-custom-settings
   (setq custom-file "~/.cache/emacs/custom.el")
   (when (file-exists-p custom-file)
     (load-file custom-file))
+
+  ;; fcitx
+  (setq fcitx-remote-command "fcitx5-remote")
   )
 
 (defun dotspacemacs/user-load ()
@@ -482,17 +520,62 @@ before packages are loaded."
 
   ;; show numbers for completion
   (setq company-show-numbers t)
+  (setq company-minimum-prefix-length 3)
 
   ;; set chinese font
-  (custom-set-faces
-   '(org-table ((t (:family "Noto Sans Mono CJK SC")))))
+  ;; (custom-set-faces
+  ;;  '(org-table ((t (:family "Noto Sans Mono CJK SC")))))
 
   ;; set column indicator
-  (turn-on-fci-mode)
   (setq fci-rule-column 100)
+  (spacemacs/add-to-hooks 'turn-on-fci-mode '(sh-mode-hook))
 
   ;; always follow symbol link
   (setq vc-follow-symlinks t)
+
+  ;; smooth scrolling
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  (setq scroll-step 1) ;; keyboard scroll one line at a time
+
+  (setq sh-basic-offset 2)
+
+  ;; line number right align
+  (setq display-line-numbers-width-start nil)
+
+  ;; set c code style
+  (add-hook 'c-mode-common-hook
+            '(lambda ()
+               (c-set-style "k&r")
+               (setq c-basic-offset 4)))
+
+  ;; avy
+  (global-unset-key (kbd "M-j"))
+  (global-set-key (kbd "M-j c") 'avy-goto-char)
+  (global-set-key (kbd "M-j l") 'avy-goto-line)
+  (global-set-key (kbd "M-j s") 'avy-goto-char-2)
+
+  ;; https://emacs-china.org/t/inconsolata/7997/35
+  ;; (cnfonts-enable)
+  ;; (cnfonts-set-spacemacs-fallback-fonts)
+  ;; (setq cnfonts-profiles
+  ;;       '("program" "org-mode" "read-book"))
+
+  ;; telega
+  (add-hook 'telega-chat-mode-hook
+            (lambda ()
+              (set (make-local-variable 'company-backends)
+                   (append '(telega-company-emoji
+                             telega-company-username
+                             telega-company-hashtag)
+                           (when (telega-chat-bot-p telega-chatbuf--chat)
+                             '(telega-company-botcmd))))
+              (company-mode 1)))
+
+  ;; org-roam
+  (setq org-roam-directory "~/Documents/org-roam")
+  (add-hook 'after-init-hook 'org-roam-mode)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

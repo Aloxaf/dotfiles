@@ -12,7 +12,7 @@ function max_history_len() {
 
 HISTFILE="$ZDOTDIR/.zsh_history"
 HISTSIZE=50000
-SAVEHIST=50000
+SAVEHIST=100000
 
 # 记录时间戳
 setopt extended_history

@@ -1,0 +1,6 @@
+# DESC: 在 CDDA 文档中搜索指定字符串($1)
+
+str=$1
+shift
+rg "$str" ~/Coding/C++/Cataclysm-DDA/doc -I -N "$@" | mdcat
+ 

@@ -1,0 +1,22 @@
+#compdef bgrep
+
+# zsh completions for 'bgrep'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  {-b,--byte-offset}'[prints the byte offset of each match]'
+  {-l,--files-with-matches}'[prints the name of the matched files (default output mode)]'
+  {-L,--files-without-matches}'[prints the name of non-matched files]'
+  '--help[prints help information]'
+  {-i,--ignore-case}'[case insensitive matching for ASCII alphabetic characters]'
+  {-v,--invert-match}'[invert the sense of matching, to select non matching slices]'
+  {-h,--no-filename}'[suppress the file names on output (default when there is a single file).]'
+  {-o,--only-matching}'[prints the matched bytes of each match]'
+  {-n,--trim-ending-newline}'[if the file ends with a newline, disconsider the last byte]'
+  {-V,--version}'[prints version information]'
+  {-H,--with-filename}'[print the file name for each match (default when there are multiple files).]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

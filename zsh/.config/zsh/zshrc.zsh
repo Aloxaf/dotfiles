@@ -30,9 +30,9 @@ source $ZDOTDIR/zinit/bin/zinit.zsh
 FPATH=$XDG_CONFIG_HOME/zsh/functions:$XDG_CONFIG_HOME/zsh/completions:$FPATH
 # fpath+=("$XDG_CONFIG_HOME/zsh/functions" "$XDG_CONFIG_HOME/zsh/completions")
 
-autoload -Uz rgzh rgsrc rgdata pslist ebindkey expand_alias palette printc oomscore pb
+autoload -Uz rgzh rgsrc rgdata rgdoc pslist ebindkey expand_alias palette printc oomscore pb
 autoload +X zman
-autoload -Uz zcalc zmv
+autoload -Uz zcalc zmv zargs
 
 # ==== 某些插件需要的设置 ====
 
@@ -54,14 +54,17 @@ export AGV_EDITOR='kwrite -l $line -c $col $file'
 
 local extract="
 # trim input
-in=\${\${\"\$(<{f})\"%\$'\0'*}#*\$'\0'}
+local in=\${\${\"\$(<{f})\"%\$'\0'*}#*\$'\0'}
 # get ctxt for current completion
 local -A ctxt=(\"\${(@ps:\2:)CTXT}\")
+# real path
+local realpath=\${ctxt[IPREFIX]}\${ctxt[hpre]}\$in
+realpath=\${(Qe)~realpath}
 "
 zstyle ':fzf-tab:*' single-group ''
 zstyle ':fzf-tab:complete:_zlua:*' query-string input
 zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
-zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
+zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always $realpath'
 
 # ==== 加载插件 ====
 
@@ -144,3 +147,9 @@ case $THEME in
         zinit light romkatv/powerlevel10k
         ;;
 esac
+
+# see https://github.com/ohmyzsh/ohmyzsh/issues/8751
+_systemctl_unit_state() {
+  typeset -gA _sys_unit_state
+  _sys_unit_state=( $(__systemctl list-unit-files "$PREFIX*" | awk '{print $1, $2}') )
+}

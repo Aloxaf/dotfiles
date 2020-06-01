@@ -1,3 +1,5 @@
 .z
 .zcompdump
+.zcompcache
+.zkbd
 .*_history

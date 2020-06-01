@@ -1,6 +1,9 @@
 # global alias
 alias -g H='| head ' T='| tail ' L='| less ' R='| rgc '
+alias -g S='| sort ' U='| uniq '
 alias -g N='>/dev/null '
+# https://roylez.info/2010-03-06-zsh-recent-file-alias/
+alias -g NN="*(oc[1])" NNF="*(oc[1].)" NND="*(oc[1]/)"
 
 # 文件系统相关
 alias rm='rm -i'   rd='rmdir'   md='mkdir -p'
@@ -8,8 +11,10 @@ alias ls='exa -h'  la='ls -la'  lt='ls --tree'  ll='ls -l'  l='ls'
 alias dfh='df -h'  dus='du -sh' del='gio trash' dusa='dus --apparent-size'
 
 # gdb
-alias gdb-peda='gdb -q -ex init-peda' gdb-pwndbg='gdb -q -ex init-pwndbg'
-alias gdb-gef='gdb -q -ex init-gef'   gdb=gdb-pwndbg
+alias gdb-peda='command gdb -q -ex init-peda'
+alias gdb-pwndbg='command gdb -q -ex init-pwndbg'
+alias gdb-gef='command gdb -q -ex init-gef'
+alias gdb=gdb-pwndbg
 
 # pacman
 alias S='sudo pacman -S' Syu='sudo pacman -Syu' Rcs='sudo pacman -Rcs'
@@ -68,7 +73,7 @@ alias history='fc -l 1'
 alias locate='noglob locate'
 
 function dsf() {
-    diff -u $@ | diff-so-fancy
+    diff -u $@ | delta --theme='Dracula'
 }
 
 # 从爱呼吸老师那里抄的

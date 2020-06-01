@@ -1,0 +1,17 @@
+#compdef grc
+
+# zsh completions for 'grc'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  {-e,--stderr}'[redirect stderr. If this option is selected]'
+  {-s,--stdout}'[redirect stdout, even if -e is selected]'
+  {-c,--config=}'[use name as configuration file for grcat]'
+  '--colour=[word is one of: on, off, auto]: :(on off auto)'
+  '--pty[run command in pseudoterminal (experimental)]'
+  '(-)1:command: _command_names -e'
+  '*::arguments: _normal'
+)
+
+_arguments -s -S $arguments

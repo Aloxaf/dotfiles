@@ -12,6 +12,6 @@
 [commit]
 	gpgsign = true
 [core]
-	pager = diff-so-fancy | less --tabs=4 -RFX
-[diff-so-fancy]
-	markEmptyLines = false
+	pager = delta --theme='Dracula'
+[interactive]
+	diffFilter = delta --color-only
