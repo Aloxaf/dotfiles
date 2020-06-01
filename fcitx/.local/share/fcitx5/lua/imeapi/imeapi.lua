@@ -1,0 +1,1 @@
+/usr/share/fcitx5/lua/imeapi/imeapi.lua
