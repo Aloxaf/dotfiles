@@ -48,7 +48,9 @@ function rebuild_cache()
   end
   local size = users:seek("end")
   if size ~= 0 then
-    io.popen(string.format("%s --comp-dict %s %s", "/usr/lib/fcitx5/libexec/comp-spell-dict", dir.."user.txt", dir.."user.fscd"))
+    local p = io.popen(string.format("%s --comp-dict %s %s", "/usr/lib/fcitx5/libexec/comp-spell-dict", dir.."user.txt", dir.."user.fscd"))
+    p:read('*all')
+    p:close()
   end
 end
 
@@ -64,6 +66,6 @@ function restart_fcitx(name)
 end
 
 local fcitx = require("fcitx")
-fcitx.watchEvent("CommitEvent", "commit_logger")
-fcitx.watchEvent("FocusOutEvent", "rebuild_cache")
+fcitx.watchEvent(fcitx.EventType.CommitString, "commit_logger")
+fcitx.watchEvent(fcitx.EventType.FocusOut, "rebuild_cache")
 -- fcitx.watchEvent("InputMethodDeactivatedEvent", "restart_fcitx")
