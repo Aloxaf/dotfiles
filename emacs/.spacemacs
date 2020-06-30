@@ -32,7 +32,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(lua
+   '(
      javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -50,11 +50,6 @@ This function should only modify configuration layer settings."
             ;; 这个会强行删掉我的 <algorithm> 即使代码中有 std::find_if
             c++-enable-organize-includes-on-save t
             c-c++-enable-clang-format-on-save t)
-     (chinese :variables
-              chinese-enable-fcitx t
-              ;; doesn't support fcitx5
-              ;; chinese-fcitx-use-dbus t
-              chinese-enable-avy-pinyin nil)
      ;; better-defaults
      emacs-lisp
      ;; git
@@ -62,10 +57,12 @@ This function should only modify configuration layer settings."
      helm
      javascript
      lsp
+     lua
      major-modes
      markdown
      multiple-cursors
      org
+     smart-input-source
      (python :variables
              python-backend 'lsp
              python-formatter 'black
@@ -489,17 +486,14 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq configuration-layer-elpa-archives
-       '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-         ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-         ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+        '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+          ("org-cn"   . "http://elpa.emacs-china.org/org/")
+          ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
   ;; emacs-custom-settings
   (setq custom-file "~/.cache/emacs/custom.el")
   (when (file-exists-p custom-file)
     (load-file custom-file))
-
-  ;; fcitx
-  (setq fcitx-remote-command "fcitx5-remote")
   )
 
 (defun dotspacemacs/user-load ()
@@ -544,6 +538,19 @@ before packages are loaded."
   ;; line number right align
   (setq display-line-numbers-width-start nil)
 
+  ;; do async native compile when needed
+  ;; can also use (native-compile-async “~/.emacs.d/elpa” 2 t) to compile all elpa packages
+  ;; (setq comp-async-jobs-number 3)
+  ;; (setq comp-deferred-compilation t)
+  (setq comp-deferred-compilation-black-list
+        '(
+          ".*highlight-parentheses.*"
+          ".*yasnippet.*"
+          ".*vala-snippets.*"
+          ".*eval-sexp-fu.*"
+          ))
+
+
   ;; set c code style
   (add-hook 'c-mode-common-hook
             '(lambda ()
@@ -561,6 +568,22 @@ before packages are loaded."
   ;; (cnfonts-set-spacemacs-fallback-fonts)
   ;; (setq cnfonts-profiles
   ;;       '("program" "org-mode" "read-book"))
+  ;; 可以参见 https://manateelazycat.github.io/emacs/2020/04/02/org-font.html 的做法
+  ;; (let ((emacs-font-size 14)
+  ;;       (emacs-font-name "WenQuanYi Micro Hei Mono"))
+  ;;   (set-frame-font (format "%s-%s" (eval emacs-font-name) (eval emacs-font-size)))
+  ;;   (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
+
+  ;; (with-eval-after-load 'org
+  ;;   (defun org-buffer-face-mode-variable ()
+  ;;     (interactive)
+  ;;     (make-face 'width-font-face)
+  ;;     (set-face-attribute 'width-font-face nil :font "等距更纱黑体 SC 15")
+  ;;     (setq buffer-face-mode-face 'width-font-face)
+  ;;     (buffer-face-mode))
+
+  ;;   (add-hook 'org-mode-hook 'org-buffer-face-mode-variable))
+
 
   ;; telega
   (add-hook 'telega-chat-mode-hook
@@ -574,7 +597,6 @@ before packages are loaded."
               (company-mode 1)))
 
   ;; org-roam
-  (setq org-roam-directory "~/Documents/org-roam")
   (add-hook 'after-init-hook 'org-roam-mode)
   )
 

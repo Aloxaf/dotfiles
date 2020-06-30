@@ -1,3 +1,6 @@
+export LANGUAGE=en_US # :zh_CN
+
+
 # 作为嵌入式终端时禁用 tmux
 # https://www.reddit.com/r/tmux/comments/a2e5mn/tmux_on_dolphin_inbuilt_terminal/
 # 上面的方法由于 alacritty 0.4.0 的释出而失效
@@ -27,10 +30,11 @@ typeset -A ZINIT=(
 source $ZDOTDIR/zinit/bin/zinit.zsh
 
 # ===== 函数 ====
+PATH=$XDG_CONFIG_HOME/zsh/commands:$PATH
 FPATH=$XDG_CONFIG_HOME/zsh/functions:$XDG_CONFIG_HOME/zsh/completions:$FPATH
 # fpath+=("$XDG_CONFIG_HOME/zsh/functions" "$XDG_CONFIG_HOME/zsh/completions")
 
-autoload -Uz rgzh rgsrc rgdata rgdoc pslist ebindkey expand_alias palette printc oomscore pb
+autoload -Uz $XDG_CONFIG_HOME/zsh/functions/*(:t)
 autoload +X zman
 autoload -Uz zcalc zmv zargs
 
@@ -85,6 +89,7 @@ zinit light-mode for \
 
 # agkozak/zsh-z \
 # b4b4r07/enhancd \
+# marlonrichert/zsh-autocomplete
 # zinit light Aloxaf/fzf-tab
 
 zinit for \
@@ -107,7 +112,6 @@ zinit svn for \
     OMZ::plugins/pip
 
 zinit as="completion" for \
-    OMZ::plugins/cargo/_cargo \
     OMZ::plugins/rust/_rust \
     OMZ::plugins/fd/_fd
 

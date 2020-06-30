@@ -12,6 +12,7 @@ colors
 SPROMPT="%B%F{yellow}zsh: correct '%R' be '%r' [nyae]?%f%b "
 WORDCHARS=''
 DIRSTACKSIZE=100
+PROMPT_EOL_MARK="⏎"
 
 hash -d target=~/.cache/cargo-build
 hash -d zsh=~/.config/zsh

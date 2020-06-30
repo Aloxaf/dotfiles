@@ -1,3 +1,5 @@
+PB_HOST="https://fars.ee"
+
 pb() {
   emulate -L zsh
   case $1 in
@@ -8,6 +10,15 @@ pb() {
       ;;
     --tmux)
       tmux capture-pane -J -p | pb_core
+      ;;
+    --delete)
+      if [[ ! -f ~/.cache/pb/$2 ]]; then
+        print "$2 doesn't exists!"
+        return 1
+      fi
+      local -A info=(${(@s/: /)${${(f)"$(<~/.cache/pb/$2)"}//$'\n'/: }})
+      local uuid=$info[uuid]
+      curl -X DELETE "$PB_HOST/$uuid"
       ;;
     *)
       pb_core ${*:1}
@@ -24,7 +35,7 @@ pb_core() {
     file=$1
   fi
 
-  local res=${(f)"$(curl -F "c=@-" "https://fars.ee" < $file)"}
+  local res=${(f)"$(curl -F "c=@-" "$PB_HOST" < $file)"}
   local -A info=(${(s/: /)${res//$'\n'/: }})
   local url=$info[url]
 
@@ -41,7 +52,7 @@ pb_core() {
       print "$url/$lang" ;;
     application/json)
       print "$url/json" ;;
-    *) print "$url${(M)file%.*}" ;;
+    *) print "$url${(M)${file:t}%.*}" ;;
   esac
 
   (( $# == 0 )) && rm $file

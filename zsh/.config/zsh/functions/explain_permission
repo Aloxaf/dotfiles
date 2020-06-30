@@ -1,0 +1,16 @@
+local -a permission=(${(s::)${_PMS:-"rwxrwxrwx"}})
+local -a binary=()
+
+for i in ${(s::)1}; do
+  binary+=(${(s::)${(l:3::0:)${"$(( [#2]i ))":2}}})
+done
+
+for i j in ${permission:^binary}; do
+  if (( $j )); then
+    echo -n $i
+  else
+    echo -n _
+  fi
+done
+
+echo

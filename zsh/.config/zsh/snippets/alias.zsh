@@ -6,7 +6,7 @@ alias -g N='>/dev/null '
 alias -g NN="*(oc[1])" NNF="*(oc[1].)" NND="*(oc[1]/)"
 
 # 文件系统相关
-alias rm='rm -i'   rd='rmdir'   md='mkdir -p'
+alias rm='rm -i'   rd='rm -rd'   md='mkdir -p'
 alias ls='exa -h'  la='ls -la'  lt='ls --tree'  ll='ls -l'  l='ls'
 alias dfh='df -h'  dus='du -sh' del='gio trash' dusa='dus --apparent-size'
 
@@ -17,12 +17,18 @@ alias gdb-gef='command gdb -q -ex init-gef'
 alias gdb=gdb-pwndbg
 
 # pacman
-alias S='sudo pacman -S' Syu='sudo pacman -Syu' Rcs='sudo pacman -Rcs'
+alias S='sudo pacman -S' Syu='sudo pacsync && sudo pacman -Su' Rcs='sudo pacman -Rcs'
 alias Si='pacman -Si' Sl='pacman -Sl'  Ss='pacman -Ss'
 alias Qi='pacman -Qi' Qs='pacman -Qs'  Ql='pacman -Ql'
-alias Qo='pacman -Qo' Fy='pacman -Fy'  F='pacman -F'
-alias Fx='pacman -Fx' Fy='sudo pacman -Fy'  U='sudo pacman -U'
+alias Qm='pacman -Qm' Qo='pacman -Qo'
+alias Fl='pacman -Fl' F='pacman -F' Fx='pacman -Fx'
+alias Fy='sudo pacman -Fy'
+alias U='sudo pacman -U'
 alias pacman='noglob pacman'
+
+function Qlt() {
+  pacman -Ql $1 | cut -d' ' -f2 | tree --fromfile=.
+}
 
 alias zmv='noglob zmv'
 alias zcp='zmv -C'
@@ -30,6 +36,7 @@ alias zln='zmv -L'
 
 # wrapper 的 wrapper
 # 用于处理被 wrap 的命令是 alias 的情况
+# UPDATE: 似乎 `alias sudo='sudo '` 就足够了
 function _wwrapper() {
     local -a wrapper=(${(z)1}) cmd
     expand_alias cmd ${(z)2}
@@ -51,15 +58,18 @@ compdef _precommand proxychains_8877
 compdef _precommand proxychains_8080
 
 # wrapper
-alias p="_wwrapper proxychains_8877"
-alias p8080="_wwrapper proxychains_8080"
-alias rlwrap="_wwrapper rlwrap"
+alias p="proxychains_8877 "
+alias p8080="proxychains_8080 "
+alias rlwrap="rlwrap "
+# alias p="_wwrapper proxychains_8877"
+# alias p8080="_wwrapper proxychains_8080"
+# alias rlwrap="_wwrapper rlwrap"
 
 # 乱七八糟的
 alias h="tldr"
 alias ec="emacsclient -n -c -a ''"
 alias ecc="emacsclient -nw -c -a ''"
-alias checksec="checksec --file"
+alias checksec="pwn checksec"
 alias amd="env DRI_PRIME=1"
 alias trid="LC_ALL=C trid"
 alias yafu='command rlwrap yafu'

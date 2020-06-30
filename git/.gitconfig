@@ -4,6 +4,7 @@
 [user]
 	email = aloxafx@gmail.com
 	name = Aloxaf
+	signingkey = A07920B86500DE6C
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
@@ -12,6 +13,21 @@
 [commit]
 	gpgsign = true
 [core]
-	pager = delta --theme='Dracula'
+	pager = delta
 [interactive]
 	diffFilter = delta --color-only
+[help]
+	autocorrect = 1
+[pull]
+	ff = only
+
+[delta]
+	features = decorations line-numbers
+	syntax-theme = Dracula
+[delta "decorations"]
+	commit-decoration-style = bold yellow box
+	file-style = bold 12 ul
+	file-decoration-style = none
+[delta "line-numbers"]
+	line-numbers-left-format = "{nm:>3}┊"
+	line-numbers-right-format = "{np:>3}│ "
