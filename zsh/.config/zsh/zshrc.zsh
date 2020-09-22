@@ -30,7 +30,7 @@ typeset -A ZINIT=(
 source $ZDOTDIR/zinit/bin/zinit.zsh
 
 # ===== 函数 ====
-PATH=$XDG_CONFIG_HOME/zsh/commands:$PATH
+PATH=$XDG_CONFIG_HOME/zsh/commands:$HOME/.emacs.d/bin/doom:$PATH
 FPATH=$XDG_CONFIG_HOME/zsh/functions:$XDG_CONFIG_HOME/zsh/completions:$FPATH
 # fpath+=("$XDG_CONFIG_HOME/zsh/functions" "$XDG_CONFIG_HOME/zsh/completions")
 
@@ -128,6 +128,9 @@ for i in $XDG_CONFIG_HOME/zsh/snippets/*.zsh; do
 done
 
 source ~/Coding/shell/fzf-tab/fzf-tab.zsh
+# https://blog.lilydjwg.me/2015/7/26/a-simple-zsh-module.116403.html
+zmodload aloxaf/subreap
+subreap
 
 zinit light-mode for \
     zdharma/fast-syntax-highlighting \

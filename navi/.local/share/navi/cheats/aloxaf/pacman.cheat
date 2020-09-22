@@ -1,0 +1,4 @@
+% pacman
+
+# List dependencies
+expac -S '%o' <package>

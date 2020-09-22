@@ -1,12 +1,12 @@
 (defconst org-roam-packages
-  '((org-roam :location
-        (recipe :fetcher github :repo "jethrokuan/org-roam" :branch "master"))))
+  '((org-roam)))
+
 (defun org-roam/init-org-roam ()
     (use-package org-roam
         :after org
         :hook
         ((org-mode . org-roam-mode)
-         (after-init . org-roam--build-cache-async) ;; optional!
+         ;; (after-init . org-roam--build-cache-async) ;; optional!
          )
         :custom
         (org-roam-directory "~/Documents/org-roam")

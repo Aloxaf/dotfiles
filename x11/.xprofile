@@ -5,11 +5,27 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
 
+export WAKATIME_HOME=$XDG_CONFIG_HOME/wakatime
+export SQLITE_HISTORY=$XDG_DATA_HOME/sqlite_history
+export MPLAYER_HOME=$XDG_CONFIG_HOME/mplayer
+export TERMINFO=$XDG_DATA_HOME/terminfo
+export TERMINFO_DIRS=$XDG_DATA_HOME/terminfo:/usr/share/terminfo
+export ANDROID_SDK_HOME=$XDG_CONFIG_HOME/android
+export ANDROID_SDK_ROOT=$XDG_DATA_HOME/android
+export ANDROID_AVD_HOME=$XDG_DATA_HOME/android
+export ANDROID_EMULATOR_HOME=$XDG_DATA_HOME/android
+export ADB_VENDOR_KEY=$XDG_CONFIG_HOME/android
+export CARGO_HOME=$XDG_DATA_HOME/cargo
+export CCACHE_CONFIGPATH=$XDG_CONFIG_HOME/ccache.config
+export CCACHE_DIR=$XDG_CACHE_HOME/ccache
+export DOCKER_CONFIG=$XDG_CONFIG_HOME/docker
+
 export XIM=fcitx
 export XIM_PROGRAM=fcitx
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
+# SDL 必须用 fcitx5，否则会套用对 fcitx4 的特殊处理导致 fcitx5 启动失败
 export SDL_IM_MODULE=fcitx5
-export PATH=$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.gem/ruby/2.7.0/bin:$PATH
+export PATH=$HOME/.local/bin:$CARGO_HOME/bin:$HOME/.gem/ruby/2.7.0/bin:$PATH
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'

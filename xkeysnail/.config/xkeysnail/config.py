@@ -3,13 +3,12 @@ import re
 from xkeysnail.transform import *
 
 # [Global modemap] Change modifier keys as in xmodmap
-define_modmap({
-    Key.CAPSLOCK: Key.LEFT_CTRL
-})
+define_modmap({Key.CAPSLOCK: Key.LEFT_CTRL})
 
 # Alt + N to choose completion
 define_keymap(
-    lambda wm_class: wm_class in ("jetbrains-clion", "jetbrains-pycharm", "jetbrains-goland"),
+    lambda wm_class: wm_class
+    in ("jetbrains-clion", "jetbrains-pycharm", "jetbrains-goland"),
     {
         K("LM-Key_2"): [K("down"), K("down"), K("tab")],
         K("LM-Key_3"): [K("down"), K("down"), K("tab")],
@@ -18,7 +17,14 @@ define_keymap(
     "JetBrains",
 )
 
-WHITE_LIST = ("Emacs", "Alacritty", "konsole", "jetbrains-clion", "jetbrains-pycharm", "jetbrains-goland")
+WHITE_LIST = (
+    "Emacs",
+    "Alacritty",
+    "konsole",
+    "jetbrains-clion",
+    "jetbrains-pycharm",
+    "jetbrains-goland",
+)
 
 define_keymap(
     lambda wm_class: wm_class not in WHITE_LIST,
@@ -73,6 +79,8 @@ define_keymap(
         # Cancel
         K("LC-g"): [K("esc"), set_mark(False)],
         # Escape
+        # NOTE: https://github.com/mooz/xkeysnail/issues/74
+        # You need to release C-q before next key
         K("LC-q"): escape_next_key,
         # C-x YYY
         K("LC-x"): {

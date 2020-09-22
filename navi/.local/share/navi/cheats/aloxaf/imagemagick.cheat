@@ -1,0 +1,22 @@
+% imagemagick
+
+# crop image/裁剪图片
+convert (input) -cop WIDTHxHEIGHT+X+Y (output)
+
+# combine image(vertical)/合并图片（垂直）
+convert -append (input) (output)
+
+# combine image(horizontal)/合并图片（水平）
+convert +append (input) (output)
+
+# diff image/对比图片
+convert (first.png) \
+\( -clone 0 (second.png) -compose difference -composite \
+-threshold 5% -fill red -opaque white -transparent black \) \
+-compose over -composite (diff.png)
+
+# diff image/对比图片
+compare -fuzz 5%% (first.png) (second.png) -compose src (diff.png)
+
+# reize image/调整图片大小
+convert (image.png) -resize (size) (output.png)

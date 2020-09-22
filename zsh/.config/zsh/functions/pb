@@ -1,3 +1,5 @@
+#!/hint/zsh
+
 PB_HOST="https://fars.ee"
 
 pb() {

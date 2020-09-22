@@ -12,15 +12,16 @@
 	process = git-lfs filter-process
 [commit]
 	gpgsign = true
-[core]
-	pager = delta
-[interactive]
-	diffFilter = delta --color-only
+	template = ~/.gitmessage
 [help]
 	autocorrect = 1
 [pull]
 	ff = only
 
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
 [delta]
 	features = decorations line-numbers
 	syntax-theme = Dracula
@@ -31,3 +32,6 @@
 [delta "line-numbers"]
 	line-numbers-left-format = "{nm:>3}┊"
 	line-numbers-right-format = "{np:>3}│ "
+	line-numbers-zero-style = "#888888"
+[push]
+	followTags = true

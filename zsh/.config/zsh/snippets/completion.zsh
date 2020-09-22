@@ -59,6 +59,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 
 # 补全当前用户所有进程列表
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm,cmd -w -w"
+zstyle ':completion:*:kill:*' ignored-patterns '0'
 
 # complete manual by their section, from grml
 zstyle ':completion:*:manuals'    separate-sections true

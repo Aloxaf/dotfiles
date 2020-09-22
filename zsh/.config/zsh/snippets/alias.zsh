@@ -81,6 +81,8 @@ alias rgc='rg --color=always'
 alias less='less -r'
 alias history='fc -l 1'
 alias locate='noglob locate'
+alias open='xdg-open'
+alias cataclysm-tiles='LANGUAGE=zh_CN:en_US cataclysm-tiles'
 
 function dsf() {
     diff -u $@ | delta --theme='Dracula'

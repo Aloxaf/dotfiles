@@ -33,7 +33,6 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -52,17 +51,29 @@ This function should only modify configuration layer settings."
             c-c++-enable-clang-format-on-save t)
      ;; better-defaults
      emacs-lisp
-     ;; git
+     (gtags :variables
+            gtags-enable-by-default nil)
+     git
      ;; haskell
-     helm
-     javascript
-     lsp
+     (html :variables
+           css-enable-lsp t
+           html-enable-lsp t
+           web-fmt-tool 'prettier)
+     (helm :variables
+           history-delete-duplicates t)
+     (javascript :variables
+                 javascript-fmt-tool 'prettier
+                 javascript-backend 'lsp)
+     (lsp :variables
+          lsp-rust-server 'rust-analyzer
+          lsp-signature-render-documentation nil
+          lsp-enable-semantic-highlighting t)
      lua
      major-modes
      markdown
      multiple-cursors
      org
-     smart-input-source
+     org-roam
      (python :variables
              python-backend 'lsp
              python-formatter 'black
@@ -72,16 +83,18 @@ This function should only modify configuration layer settings."
              rust-backend 'lsp)
      (shell-scripts :variables
                     shell-scripts-backend 'lsp)
+     smart-input-source
+     telega
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
      ;; tabnine
-     treemacs
+     (treemacs :variables
+               treemacs-use-git-mode 'deferred)
      wakatime
      yaml
-     org-roam
      ;; version-control
      )
 
@@ -94,16 +107,43 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages
    '(
-     edit-indirect ;; for editing codeblock in markdown-mode
+     ;; A light that follows your cursor around so you don't lose it!
+     beacon
+     ;; for editing codeblock in markdown-mode
+     edit-indirect
+     ;; like godbolt
      rmsbolt
-     telega
+     ;; delta diff tool for magit
+     magit-delta
+     ;; for run file easily
+     quickrun
+     ;; tree sitter
+     tree-sitter
+     tree-sitter-langs
+     ;; for org-mode table align
+     (valign :location
+             (recipe :fetcher github :repo "casouri/valign"))
+     ;; for emoji
+     emojify
+     ;; 中英文之间自动添加空格
+     pangu-spacing
      )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages
+   '(org-brain evil-anzu evil-args evil-cleverparens evil-ediff evil-escape
+               evil-exchange evil-goggles evil-iedit-state evil-indent-plus
+               evil-lion evil-lisp-state evil-magit evil-matchit evil-mc
+               evil-nerd-commenter evil-numbers evil-org evil-surround
+               evil-textobj-line evil-tutor evil-unimpaired
+               evil-visual-mark-mode evil-visualstar vala-mode vala-snippets
+               wolfram-mode arduino-mode dotenv-mode matlab-mode scad-mode
+               stan-mode hoon-mode
+               importmagic ;; unable to use, disable it
+               )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -201,8 +241,8 @@ It should only modify the values of Spacemacs settings."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'.
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5)
-                                (projects . 7))
+   dotspacemacs-startup-lists '((recents . 7)
+                                (projects . 9))
 
    ;; True if the home buffer should respond to resize events. (default t)
    dotspacemacs-startup-buffer-responsive t
@@ -239,8 +279,8 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-colorize-cursor-according-to-state t
 
    ;; Default font or prioritized list of fonts.
-   dotspacemacs-default-font '("Sarasa Mono SC"
-                               :size 11.5
+   dotspacemacs-default-font '("等距更纱黑体 SC"
+                               :size 18 ;; 必须是偶数
                                :weight normal
                                :width normal)
 
@@ -488,12 +528,25 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq configuration-layer-elpa-archives
         '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
           ("org-cn"   . "http://elpa.emacs-china.org/org/")
-          ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+          ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")
+          ("ublt"     . "https://elpa.ubolonton.org/packages/")))
 
   ;; emacs-custom-settings
   (setq custom-file "~/.cache/emacs/custom.el")
   (when (file-exists-p custom-file)
     (load-file custom-file))
+
+  ;; do async native compile when needed
+  ;; can also use (native-compile-async "~/.emacs.d/elpa" 2 t) to compile all elpa packages
+  (setq comp-async-jobs-number 3)
+  ;; (setq comp-eln-load-path '("~/.emacs/eln-cache/" "/usr/lib/emacs/28.0.50/native-lisp/"))
+  (setq comp-deferred-compilation-black-list
+        '(
+          "telega-\\(sticker\\|tdlib-events\\|chat\\|util\\|inline\\)"
+          "mwheel"
+          ))
+  ;; 不设置这个的话 C-x f 无法使用
+  (setq browse-url-mosaic-program "firefox")
   )
 
 (defun dotspacemacs/user-load ()
@@ -516,13 +569,11 @@ before packages are loaded."
   (setq company-show-numbers t)
   (setq company-minimum-prefix-length 3)
 
-  ;; set chinese font
-  ;; (custom-set-faces
-  ;;  '(org-table ((t (:family "Noto Sans Mono CJK SC")))))
-
   ;; set column indicator
-  (setq fci-rule-column 100)
-  (spacemacs/add-to-hooks 'turn-on-fci-mode '(sh-mode-hook))
+  (spacemacs/toggle-highlight-long-lines-globally-on)
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              (column-enforce-n 100)))
 
   ;; always follow symbol link
   (setq vc-follow-symlinks t)
@@ -538,19 +589,6 @@ before packages are loaded."
   ;; line number right align
   (setq display-line-numbers-width-start nil)
 
-  ;; do async native compile when needed
-  ;; can also use (native-compile-async “~/.emacs.d/elpa” 2 t) to compile all elpa packages
-  ;; (setq comp-async-jobs-number 3)
-  ;; (setq comp-deferred-compilation t)
-  (setq comp-deferred-compilation-black-list
-        '(
-          ".*highlight-parentheses.*"
-          ".*yasnippet.*"
-          ".*vala-snippets.*"
-          ".*eval-sexp-fu.*"
-          ))
-
-
   ;; set c code style
   (add-hook 'c-mode-common-hook
             '(lambda ()
@@ -563,41 +601,65 @@ before packages are loaded."
   (global-set-key (kbd "M-j l") 'avy-goto-line)
   (global-set-key (kbd "M-j s") 'avy-goto-char-2)
 
-  ;; https://emacs-china.org/t/inconsolata/7997/35
-  ;; (cnfonts-enable)
-  ;; (cnfonts-set-spacemacs-fallback-fonts)
-  ;; (setq cnfonts-profiles
-  ;;       '("program" "org-mode" "read-book"))
-  ;; 可以参见 https://manateelazycat.github.io/emacs/2020/04/02/org-font.html 的做法
-  ;; (let ((emacs-font-size 14)
-  ;;       (emacs-font-name "WenQuanYi Micro Hei Mono"))
-  ;;   (set-frame-font (format "%s-%s" (eval emacs-font-name) (eval emacs-font-size)))
-  ;;   (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
-
-  ;; (with-eval-after-load 'org
-  ;;   (defun org-buffer-face-mode-variable ()
-  ;;     (interactive)
-  ;;     (make-face 'width-font-face)
-  ;;     (set-face-attribute 'width-font-face nil :font "等距更纱黑体 SC 15")
-  ;;     (setq buffer-face-mode-face 'width-font-face)
-  ;;     (buffer-face-mode))
-
-  ;;   (add-hook 'org-mode-hook 'org-buffer-face-mode-variable))
-
-
-  ;; telega
-  (add-hook 'telega-chat-mode-hook
-            (lambda ()
-              (set (make-local-variable 'company-backends)
-                   (append '(telega-company-emoji
-                             telega-company-username
-                             telega-company-hashtag)
-                           (when (telega-chat-bot-p telega-chatbuf--chat)
-                             '(telega-company-botcmd))))
-              (company-mode 1)))
-
   ;; org-roam
   (add-hook 'after-init-hook 'org-roam-mode)
+
+  ;; html
+  (add-hook 'web-mode
+            '(lambda ()
+               (spacemacs/toggle-highlight-long-lines)
+               (smartparens-mode)))
+
+  ;; smartparnes
+  (add-hook 'after-init-hook
+            '(lambda ()
+               (sp-pair "(" ")" :wrap "C-(")
+               (sp-pair "{" "}" :wrap "C-{")
+               (sp-pair "<" ">" :wrap "C-<")
+               (sp-pair "'" "'" :wrap "C-'")
+               (sp-pair "\"" "\"" :wrap "C-\"")))
+
+  ;; valign
+  (use-package valign
+    :hook (org-mode . valign-mode))
+
+  (use-package magit-delta
+    :hook (magit-mode . magit-delta-mode))
+
+  (use-package beacon
+    :config
+    (beacon-mode 1)
+    (setq beacon-color 0.6))
+
+  ;; use tree-sitter for highlighting
+  (use-package tree-sitter
+    :hook
+    ((python-mode js2-mode) . tree-sitter-mode)
+    :config
+    (require 'tree-sitter-langs)
+    (spacemacs|diminish tree-sitter-mode "🅣" "T"))
+  (use-package tree-sitter-hl
+    :hook (tree-sitter-after-on . tree-sitter-hl-mode))
+
+  ;; 显示 emoji
+  (use-package emojify
+    :config
+    (global-emojify-mode)
+    (setq emojify-emoji-set "twemoji-v2-22"))
+
+  ;; telega 配置
+  ;; 使用 markdown，据说用 C-u RET 带上 universal arg 可以临时取消
+  (setq telega-chat-use-markdown-version 2)
+  (setq telega-known-inline-bots '("@lolisetubot" "skrman_bot"))
+  ;; 聊天时关闭自动折行
+  (add-hook 'telega-chat-mode-hook
+            '(lambda () (spacemacs/toggle-truncate-lines-on)))
+
+  (use-package pangu-spacing
+    :hook
+    (telega-chat-mode . pangu-spacing-mode)
+    :config
+    (spacemacs|diminish pangu-spacing-mode "🅟" "P"))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

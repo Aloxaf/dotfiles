@@ -1,0 +1,10 @@
+% ffmpeg
+
+# convert to h265/hevc
+ffmpeg -i (input) -c:v libx265 -c:a copy (output)
+
+# get video info
+ffprobe -v quiet -print_format json -show_format -show_streams (input)
+
+# extract a frame from video
+ffmpeg -ss (time) -i (input) -f image2 -frames:v 1 (output)
