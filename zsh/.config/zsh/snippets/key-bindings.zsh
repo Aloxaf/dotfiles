@@ -24,22 +24,26 @@ autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-ebindkey 'Home'   beginning-of-line
-ebindkey 'End'    end-of-line
-ebindkey 'Delete' delete-char
-ebindkey "Up"     up-line-or-beginning-search
-ebindkey "Down"   down-line-or-beginning-search
+local -A keybindings=(
+    'Home'   beginning-of-line
+    'End'    end-of-line
+    'Delete' delete-char
+    'Up'     up-line-or-beginning-search
+    'Down'   down-line-or-beginning-search
 
-ebindkey "C-Right" forward-word
-ebindkey 'C-Left'  backward-word
-ebindkey "C-Backspace" backward-kill-word
-ebindkey 'Space' magic-space  # 按空格展开历史
-ebindkey 'C-d'   delete-char  # 不需要触发补全的功能
-ebindkey 'C-w'   kill-region
+    'C-Right'     forward-word
+    'C-Left'      backward-word
+    'C-Backspace' backward-kill-word
+    'Space' magic-space  # 按空格展开历史
+    'C-d'   delete-char  # 不需要触发补全的功能
+    'C-w'   kill-region
 
-# 单行模式下将当前内容入栈开启一个临时 prompt
-# 多行模式下允许编辑前面的行
-ebindkey 'M-q' push-line-or-edit
+    # 单行模式下将当前内容入栈开启一个临时 prompt
+    # 多行模式下允许编辑前面的行
+    'M-q' push-line-or-edit
+
+    'C-j' self-insert-unmeta
+)
 
 ebindkey -M command "Backspace" backward-delete-char
 
@@ -54,9 +58,11 @@ ebindkey -M command "Backspace" backward-delete-char
     }
     zstyle ':zle:*-match' word-style shell
 }
-ebindkey 'M-Right' forward-word-match
-ebindkey 'M-Left'  backward-word-match
-ebindkey "C-Backspace" backward-kill-word-match
+keybindings+=(
+    'M-Right' forward-word-match
+    'M-Left'  backward-word-match
+    'C-Backspace' backward-kill-word-match    
+)
 
 # fuzzy 相关绑定 {{{1
 # 快速目录跳转
@@ -79,7 +85,7 @@ function fz-history-widget() {
     }
 }
 zle -N fz-history-widget
-ebindkey 'C-r' fz-history-widget
+keybindings[C-r]=fz-history-widget
 
 # 搜索文件
 # 会将 * 或 ** 替换为搜索结果
@@ -98,7 +104,7 @@ function fz-find() {
     zle end-of-line
 }
 zle -N fz-find
-ebindkey 'M-s' fz-find
+keybindings[M-s]=fz-find
 # }}}1
 
 # ZLE 相关 {{{1
@@ -112,7 +118,7 @@ function zce-jump-char() {
     with-zce zce-raw zce-searchin-read
 }
 zle -N zce-jump-char
-ebindkey "M-j" zce-jump-char
+keybindings[M-j]=zce-jump-char
 
 # 删除到指定字符
 # function zce-delete-to-char() {
@@ -142,7 +148,7 @@ function add-bracket() {
     BUFFER+=')'
 }
 zle -N add-bracket
-ebindkey "M-(" add-bracket
+keybindings[M-\(]=add-bracket
 # }}}2
 
 # 快速跳转到上级目录: ... => ../.. {{{2
@@ -155,7 +161,7 @@ function rationalise-dot() {
     }
 }
 zle -N rationalise-dot
-ebindkey "." rationalise-dot
+keybindings[.]=rationalise-dot
 # }}}2
 
 # 记住上一条命令的 CURSOR 位置 {{{2
@@ -188,7 +194,7 @@ function edit-command-line-as-zsh {
     unset TMPSUFFIX
 }
 zle -N edit-command-line-as-zsh
-ebindkey 'C-x C-e' edit-command-line-as-zsh
+keybindings+=('C-x C-e' edit-command-line-as-zsh)
 # }}}2
 
 # }}}1
@@ -200,4 +206,6 @@ function execute-command() {
     [[ $selected ]] && zle $selected
 }
 zle -N execute-command
-ebindkey "M-x" execute-command
+keybindings[M-x]=execute-command
+
+ebindkey -A keybindings

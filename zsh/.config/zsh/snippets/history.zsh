@@ -10,8 +10,9 @@ function max_history_len() {
     return 0
 }
 
+# FIXME: 历史过多时会导致启动时卡顿
 HISTFILE="$ZDOTDIR/.zsh_history"
-HISTSIZE=50000
+HISTSIZE=1000
 SAVEHIST=100000
 
 # 记录时间戳

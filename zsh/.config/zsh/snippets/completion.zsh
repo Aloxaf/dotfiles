@@ -58,7 +58,8 @@ zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 zstyle ':completion:*:descriptions' format '[%d]'
 
 # 补全当前用户所有进程列表
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm,cmd -w -w"
+# 不要用 pid,user,comm,cmd，zsh 会一直读到 
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':completion:*:kill:*' ignored-patterns '0'
 
 # complete manual by their section, from grml
@@ -73,6 +74,10 @@ zstyle ':completion:*:*:git:*' user-commands ${${(M)${(k)commands}:#git-*}/git-/
 # zstyle ':completion:*:*:*:*'   file-patterns '^*.(zwc|pyc):compiled-files' '*:all-files'
 # zstyle ':completion:*:*:rm:*'  file-patterns '*:all-files'
 # zstyle ':completion:*:*:gio:*' file-patterns '*:all-files'
+
+# 允许 docker 补全时识别 -it 之类的组合命令
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # color
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}

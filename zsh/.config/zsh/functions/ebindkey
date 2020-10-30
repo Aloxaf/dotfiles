@@ -2,12 +2,9 @@
 # C-v + 按键 以查看特殊按键的转义序列
 zmodload zsh/zutil
 
-local remove keymap
+local -a remove keymap array
 
-zparseopts r=remove M:=keymap
-
-[[ $remove ]] && shift
-[[ $keymap ]] && shift 2
+zparseopts -D r=remove M:=keymap A:=array
 
 function escape-single-key() {
     local -A name=(
@@ -47,16 +44,27 @@ function escape-mod-key() {
     }
 }
 
-local escaped ret
-local -a sequence=(${(s: :)1})
+function bind() {
+    local escaped ret
+    local -a sequence=(${(s: :)1})
 
-for i ($sequence) {
-    if [[ $i == *-* ]] {
-        escape-mod-key $i
-    } else {
-        escape-single-key $i
+    for i ($sequence) {
+        if [[ $i == *-* ]] {
+            escape-mod-key $i
+        } else {
+            escape-single-key $i
+        }
+        escaped+=$ret
     }
-    escaped+=$ret
+
+    bindkey $remove $keymap $escaped $2
 }
 
-bindkey $remove ${(kv)keymap} $escaped $2
+if [[ $array ]]; then
+    local k v
+    for k v in ${(Pkv)${array[2]}}; do
+        bind $k $v
+    done
+else
+    bind $1 $2
+fi

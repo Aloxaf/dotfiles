@@ -48,7 +48,8 @@ setopt no_nomatch
 # 开启拼写检查
 setopt correct
 
-export EDITOR="emacsclient -nw -c -a ''"
+# export EDITOR="emacsclient -nw -c -a ''"
+EDITOR=kwrite
 
 # rustup mirror
 export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup

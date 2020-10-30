@@ -56,29 +56,16 @@ export _ZL_DATA=$ZDOTDIR/.z
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'
 
-local extract="
-# trim input
-local in=\${\${\"\$(<{f})\"%\$'\0'*}#*\$'\0'}
-# get ctxt for current completion
-local -A ctxt=(\"\${(@ps:\2:)CTXT}\")
-# real path
-local realpath=\${ctxt[IPREFIX]}\${ctxt[hpre]}\$in
-realpath=\${(Qe)~realpath}
-"
-zstyle ':fzf-tab:*' single-group ''
-zstyle ':fzf-tab:complete:_zlua:*' query-string input
-zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
-zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always $realpath'
-
 # ==== 加载插件 ====
 
-zinit light-mode for \
+zinit wait="1" lucid light-mode for \
+    kevinhwang91/zsh-tmux-capture \
     hlissner/zsh-autopair \
     skywind3000/z.lua \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
     wfxr/forgit
-
+    
 zinit light-mode for \
     blockf \
         zsh-users/zsh-completions \
@@ -87,12 +74,14 @@ zinit light-mode for \
     atclone="dircolors -b LS_COLORS > c.zsh" atpull='%atclone' pick='c.zsh' \
         trapd00r/LS_COLORS
 
+# scfrazer/zsh-jump-target \
+# zinit add-fpath scfrazer/zsh-jump-target functions
 # agkozak/zsh-z \
 # b4b4r07/enhancd \
 # marlonrichert/zsh-autocomplete
 # zinit light Aloxaf/fzf-tab
 
-zinit for \
+zinit wait="1" lucid for \
     OMZ::lib/clipboard.zsh \
     OMZ::lib/git.zsh \
     OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh \
@@ -112,6 +101,7 @@ zinit svn for \
     OMZ::plugins/pip
 
 zinit as="completion" for \
+    OMZ::plugins/docker/_docker \
     OMZ::plugins/rust/_rust \
     OMZ::plugins/fd/_fd
 
@@ -127,7 +117,22 @@ for i in $XDG_CONFIG_HOME/zsh/snippets/*.zsh; do
     source $i
 done
 
+# ==== 加载并配置 fzf-tab ====
+
 source ~/Coding/shell/fzf-tab/fzf-tab.zsh
+
+zstyle ':fzf-tab:complete:_zlua:*' query-string input
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+
+# ==== ====
+
 # https://blog.lilydjwg.me/2015/7/26/a-simple-zsh-module.116403.html
 zmodload aloxaf/subreap
 subreap

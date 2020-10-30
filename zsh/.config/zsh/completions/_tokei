@@ -1,0 +1,26 @@
+#compdef tokei
+
+# zsh completions for 'tokei'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  {-f,--files}'[will print out statistics on individual files.]'
+  {-h,--help}'[prints help information]'
+  '--hidden[count hidden files.]'
+  {-l,--languages}'[prints out supported languages and their extensions.]'
+  '--no-ignore[dont respect ignore files.]'
+  '--no-ignore-parent[dont respect ignore files in parent directories.]'
+  '--no-ignore-vcs[dont respect VCS (.gitignore, .hgignore, etc) ignore files.]'
+  {-V,--version}'[prints version information]'
+  {-v,--verbose}'[set log output level:]'
+  {-c,--columns}'[sets a strict column width of the output, only available for terminal output.]'
+  {-e,--exclude}'[...    Ignore all files & directories matching the pattern.]'
+  {-i,--input}'[gives statistics from a previous tokei run. Can be given a file path, or "stdin" to]'
+  {-o,--output}'[outputs Tokei in a specific format. Compile with additional features for more format]'
+  {-s,--sort}'[sort languages based on column \[possible values: files, lines, blanks, code, comments\]]'
+  {-t,--type}'[filters output by language type, seperated by a comma. i.e. -t=Rust,Markdown]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments
