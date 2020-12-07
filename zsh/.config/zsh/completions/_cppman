@@ -1,0 +1,30 @@
+#compdef cppman
+
+# A function calling _arguments with at least one action containing a ‘->string’
+# must therefore declare appropriate local parameters to prevent _arguments
+# from altering the global environment.
+local context state state_descr line
+typeset -A opt_args
+
+_arguments \
+        {-s,--source}'[Select source, either '"'"'cppreference. com'"'"' or '"'"'cplusplus. com'"'"'.]' \
+        {-c,--cache-all}'[cache all available man pages from cplusplus. com to enable offline browsing.]' \
+        {-C,--clear-cache}'[clear all cached files.]' \
+        {-f,--find-page}'[find man page.]' \
+        {-o,--force-update}'[force cppman to update existing cache when '"'"'--cache-all'"'"' or browsing man page…]' \
+        {-m,--use-mandb}'[Accepts '"'"'true'"'"' or '"'"'false'"'"'.]' \
+        {-p,--pager}'[Select pager to use, accepts '"'"'vim'"'"', '"'"'nvim'"'"' or '"'"'less'"'"'.]' \
+        {-r,--rebuild-index}'[rebuild index database from cplusplus. com.]' \
+        {-v,--version}'[show version information.]' \
+        {-h,--help}'[show this help message and exit NOTE All contents should be cached by the use…]' \
+        '*::: :->keywords' \
+
+case $state in;
+    keywords)
+        if [[ -z $words[CURRENT] ]] then;
+            compadd -x "%F{yellow}[Please provide a keyword]%f"
+            return 0
+        fi
+        local -a descr=(${${${(f)"$(command cppman -f $words[CURRENT])"}//:/\\:}/ - /:})
+        _describe "keywords" descr
+esac

@@ -1,0 +1,5 @@
+#!hint/zsh
+if [[ -n $ALIAS_TIPS_BUFFER ]] {
+    print -P "%B%F{yellow}Tips: you can use %f%K{011}%F{016}\$ALIAS_TIPS_BUFFER%f%k%b"
+}
+ALIAS_TIPS_BUFFER=

@@ -49,7 +49,7 @@ setopt no_nomatch
 setopt correct
 
 # export EDITOR="emacsclient -nw -c -a ''"
-EDITOR=kwrite
+EDITOR=vim
 
 # rustup mirror
 export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup

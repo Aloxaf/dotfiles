@@ -1,3 +1,4 @@
+#!/hint/zsh
 # DESC: expand alias
 # expand_alias result gcmsg "abc" => reuslt=git commit -m "abc"
 

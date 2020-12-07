@@ -34,19 +34,6 @@ alias zmv='noglob zmv'
 alias zcp='zmv -C'
 alias zln='zmv -L'
 
-# wrapper 的 wrapper
-# 用于处理被 wrap 的命令是 alias 的情况
-# UPDATE: 似乎 `alias sudo='sudo '` 就足够了
-function _wwrapper() {
-    local -a wrapper=(${(z)1}) cmd
-    expand_alias cmd ${(z)2}
-    if (( ! $+commands[$cmd[1]] )) && [[ ! -f $cmd[1] ]] {
-        print -P "%F{red}%B$cmd[1] is not an executable file%b%f" && return
-    }
-    $wrapper ${(e)cmd} $argv[3,-1]
-}
-compdef _precommand _wwrapper
-
 # 写成函数方便定义补全
 function proxychains_8877() {
     proxychains -q -f ~/.config/proxychains/8877.conf $@
@@ -61,9 +48,6 @@ compdef _precommand proxychains_8080
 alias p="proxychains_8877 "
 alias p8080="proxychains_8080 "
 alias rlwrap="rlwrap "
-# alias p="_wwrapper proxychains_8877"
-# alias p8080="_wwrapper proxychains_8080"
-# alias rlwrap="_wwrapper rlwrap"
 
 # 乱七八糟的
 alias h="tldr"

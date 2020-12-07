@@ -4,15 +4,14 @@
 autoload -Uz add-zsh-hook
 add-zsh-hook zshaddhistory max_history_len
 function max_history_len() {
-    if (($#1 > 160)) {
+    if (($#1 > 240)) {
         return 2
     }
     return 0
 }
 
-# FIXME: 历史过多时会导致启动时卡顿
 HISTFILE="$ZDOTDIR/.zsh_history"
-HISTSIZE=1000
+HISTSIZE=50000
 SAVEHIST=100000
 
 # 记录时间戳
@@ -20,7 +19,9 @@ setopt extended_history
 # 首先移除重复历史
 setopt hist_expire_dups_first
 # 忽略重复
+setopt hist_ignore_all_dups
 setopt hist_ignore_dups
+setopt hist_save_no_dups
 # 忽略空格开头的命令
 setopt hist_ignore_space
 # 展开历史时不执行

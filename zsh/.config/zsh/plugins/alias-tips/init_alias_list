@@ -1,0 +1,10 @@
+#!/hint/zsh
+
+typeset -g -A alias_list
+(( $#alias_list != 0 )) && return
+
+local k v cmds
+for k v (${(kv)aliases}) {
+    expand_alias cmds ${(z)v}
+    alias_list[$k]=$cmds
+}

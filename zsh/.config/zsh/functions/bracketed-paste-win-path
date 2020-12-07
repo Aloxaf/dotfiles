@@ -1,0 +1,16 @@
+#!/hint/zsh
+# usage:
+#   autoload -Uz bracketed-paste-win-path
+#   zle -N bracketed-paste bracketed-paste-win-path
+
+local content
+
+zle .$WIDGET -N content
+
+if [[ $content =~ '^([A-Z]:\\)?[^/\\*?<>|"]+(\\[^/\\*?<>|"]+)*\\?$' ]]; then
+  LBUFFER+=${content//\\/\/}
+fi
+
+YANK_START=$start
+YANK_END=$#LBUFFER
+zle -f yank 

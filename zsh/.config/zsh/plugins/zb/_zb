@@ -1,0 +1,2 @@
+#!/hint/zsh
+compadd -- ${(s:/:)PWD}

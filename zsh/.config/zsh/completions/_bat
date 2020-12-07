@@ -63,8 +63,9 @@ _bat() {
           ;;
         "")
           _alternative \
-            'command:bat commands:((cache\:"Modify the syntax-definition and theme cache"))' \
             'files:FILE -- File(s) to print / concatenate. Use '-' for standard input.:_files' \
+            || _alternative \
+              'command:bat commands:((cache\:"Modify the syntax-definition and theme cache"))' \
             && ret=0
           ;;
         *)
@@ -75,6 +76,8 @@ _bat() {
       esac
       ;;
   esac
+
+  return ret
 }
 
 _bat_themes() {

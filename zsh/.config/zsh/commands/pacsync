@@ -2,6 +2,7 @@
 
 # 百合仙子：
 # 在 /etc/pacman.d/*.sync 中指定同步数据库用的镜像，然后不带 .sync 里指定下包的镜像。这样就可以和最新的镜像同步，同时优先使用本地最快最好的镜像，404的时候再 fallback
+# https://blog.lilydjwg.me/2020/10/29/pacsync.215578.html
 
 unshare -m bash <<'EOF'
 mount --make-rprivate /

@@ -1,12 +1,15 @@
 export LANGUAGE=en_US # :zh_CN
 
-
 # 作为嵌入式终端时禁用 tmux
-# https://www.reddit.com/r/tmux/comments/a2e5mn/tmux_on_dolphin_inbuilt_terminal/
-# 上面的方法由于 alacritty 0.4.0 的释出而失效
-if [[ "$TMUX" == "" && $- == *i* ]]; then
-    if [[ ! "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)" ]]; then
+if [[ -z $TMUX && $- == *i* ]]; then
+    if [[ ! "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)|visual-studio-code" ]]; then
         exec tmux -f "$XDG_CONFIG_HOME/tmux/tmux.conf"
+    fi
+else
+    # 如果当前 shell 是由 konsole 启动的，则 unset 相关变量
+    # 免作为子进程的 konsole 继承相关变量导致 fzf-tab 误判为 tmux 环境
+    if [[ "$(</proc/$PPID/cmdline)" =~ "konsole" ]]; then
+        unset TMUX TMUX_PANE
     fi
 fi
 
@@ -52,7 +55,7 @@ forgit_add=gai
 forgit_diff=gdi
 forgit_log=glgi
 
-export _ZL_DATA=$ZDOTDIR/.z
+ZSHZ_DATA=$ZDOTDIR/.z
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'
 
@@ -61,9 +64,9 @@ export AGV_EDITOR='kwrite -l $line -c $col $file'
 zinit wait="1" lucid light-mode for \
     kevinhwang91/zsh-tmux-capture \
     hlissner/zsh-autopair \
-    skywind3000/z.lua \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
+    agkozak/zsh-z \
     wfxr/forgit
     
 zinit light-mode for \
@@ -72,7 +75,9 @@ zinit light-mode for \
     as="program" atclone="rm -f ^(rgg|agv)" \
         lilydjwg/search-and-view \
     atclone="dircolors -b LS_COLORS > c.zsh" atpull='%atclone' pick='c.zsh' \
-        trapd00r/LS_COLORS
+        trapd00r/LS_COLORS \
+    src="etc/git-extras-completion.zsh" \
+        tj/git-extras
 
 # scfrazer/zsh-jump-target \
 # zinit add-fpath scfrazer/zsh-jump-target functions
@@ -81,11 +86,12 @@ zinit light-mode for \
 # marlonrichert/zsh-autocomplete
 # zinit light Aloxaf/fzf-tab
 
+# export _ZL_DATA=$ZDOTDIR/.z
+# skywind3000/z.lua
+
 zinit wait="1" lucid for \
     OMZ::lib/clipboard.zsh \
     OMZ::lib/git.zsh \
-    OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh \
-    OMZ::plugins/git-extras/git-extras.plugin.zsh \
     OMZ::plugins/systemd/systemd.plugin.zsh \
     OMZ::plugins/sudo/sudo.plugin.zsh \
     OMZ::plugins/git/git.plugin.zsh
@@ -117,6 +123,10 @@ for i in $XDG_CONFIG_HOME/zsh/snippets/*.zsh; do
     source $i
 done
 
+for i in $XDG_CONFIG_HOME/zsh/plugins/*/*.plugin.zsh; do
+    source $i
+done
+
 # ==== 加载并配置 fzf-tab ====
 
 source ~/Coding/shell/fzf-tab/fzf-tab.zsh
@@ -128,7 +138,9 @@ zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
 zstyle ":completion:*:git-checkout:*" sort false
-zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
+zstyle ':completion:*:exa' file-sort modification
+zstyle ':completion:*:exa' sort false
+zstyle ":fzf-tab:*" fzf-flags --color=bg+:23
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 # ==== ====
@@ -159,9 +171,3 @@ case $THEME in
         zinit light romkatv/powerlevel10k
         ;;
 esac
-
-# see https://github.com/ohmyzsh/ohmyzsh/issues/8751
-_systemctl_unit_state() {
-  typeset -gA _sys_unit_state
-  _sys_unit_state=( $(__systemctl list-unit-files "$PREFIX*" | awk '{print $1, $2}') )
-}

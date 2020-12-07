@@ -1,0 +1,20 @@
+#!/hint/zsh
+
+local expand="${(z)3}"
+local result tmp k v
+
+init_alias_list
+
+for k v (${(kv)alias_list}) {
+    if [[ $expand == "$v "* || $expand == $v ]] {
+        tmp=${expand/$v/$k}
+        if (( $#tmp < $#result || ! $#result )) {
+            result=$tmp
+        }
+    }
+}
+
+# 清除多余空格的干扰
+if (( ${#${(j: :)${(z)1}}} > $#result )) {
+    ALIAS_TIPS_BUFFER=$result
+}

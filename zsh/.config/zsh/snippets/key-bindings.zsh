@@ -79,7 +79,9 @@ keybindings+=(
 
 # 搜索历史
 function fz-history-widget() {
-    local selected=$(fc -rl 1 | fzf -n "2.." --tiebreak=index --prompt="cmd> " ${BUFFER:+-q$BUFFER})
+    # 保证搜索的是全部历史
+    # NOTE: 此处依赖 fzf-tab
+    local selected=$(fc -rl 1 | ftb-tmux-popup -n "2.." --tiebreak=index --prompt="cmd> " ${BUFFER:+-q$BUFFER})
     if [[ "$selected" != "" ]] {
         zle vi-fetch-history -n $selected
     }
@@ -95,9 +97,9 @@ function fz-find() {
     cut=$(grep -oP '[^* ]+(?=\*{1,2}$)' <<< $BUFFER)
     eval "dir=${cut:-.}"
     if [[ $BUFFER == *"**"* ]] {
-        selected=$(fd -H . $dir | fzf --tiebreak=end,length --prompt="cd> ")
+        selected=$(fd -H . $dir | ftb-tmux-popup --tiebreak=end,length --prompt="cd> ")
     } elif [[ $BUFFER == *"*"* ]] {
-        selected=$(fd -d 1 . $dir | fzf --tiebreak=end --prompt="cd> ")
+        selected=$(fd -d 1 . $dir | ftb-tmux-popup --tiebreak=end --prompt="cd> ")
     }
     BUFFER=${BUFFER/%'*'*/}
     BUFFER=${BUFFER/%$cut/$selected}
@@ -201,7 +203,7 @@ keybindings+=('C-x C-e' edit-command-line-as-zsh)
 
 # 棒棒 M-x
 function execute-command() {
-    local selected=$(printf "%s\n" ${(k)widgets} | fzf --reverse --prompt="cmd> " --height=10 )
+    local selected=$(printf "%s\n" ${(k)widgets} | ftb-tmux-popup --reverse --prompt="cmd> " --height=10 )
     zle redisplay
     [[ $selected ]] && zle $selected
 }

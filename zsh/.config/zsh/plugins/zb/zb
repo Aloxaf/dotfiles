@@ -1,0 +1,11 @@
+#!/hint/zsh 
+local -a pwd=("${(@s:/:)PWD}")
+local dir
+
+for i in $pwd; do
+  dir+=/$i
+  if [[ ${(SM)i#$1} ]]; then
+    cd $dir
+    return
+  fi
+done
