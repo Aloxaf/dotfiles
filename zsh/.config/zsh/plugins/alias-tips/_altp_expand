@@ -1,0 +1,17 @@
+#!/hint/zsh
+# DESC: expand alias
+# _altp_expand gcmsg "abc" => reply=git commit -m "abc"
+
+local command=$1
+local -a result=($@) used tmp
+
+while (( $+aliases[$command] )) {
+    tmp=(${(z)aliases[$command]})
+    # avoid infinite loop
+    (( $used[(I)$tmp[1]] != 0 )) && break
+    result[1]=($tmp)
+    command=$result[1]
+    used+=($command)
+}
+
+typeset -g reply="$result"

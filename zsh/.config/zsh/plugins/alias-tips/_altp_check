@@ -1,0 +1,24 @@
+#!/hint/zsh
+
+local result reply i
+
+# init once
+(( $#_altp_aliases != 0 )) || _altp_init
+
+[[ -n $2 ]] || return
+
+# find longest aviable alias
+local -a alias
+for i in ${_altp_aliases[(K)$2]}; do
+  _altp_expand ${(z)aliases[$i]}
+  if (( $#alias == 0 || $#reply > $#alias[2] )); then
+    alias=($i $reply)
+  fi
+done
+
+result=${2/$alias[2]/$alias[1]}
+
+# strip whitespace and detect whether this alias will make command shorter
+if (( ${#${1/# #}/% #} > $#result )) {
+    ALIAS_TIPS_BUFFER=$result
+}

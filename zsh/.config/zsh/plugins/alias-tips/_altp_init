@@ -1,0 +1,11 @@
+#!/hint/zsh
+
+typeset -g -A _altp_aliases
+
+local k v reply
+
+for k v (${(kv)aliases}) {
+    _altp_expand ${(z)v}
+    # `alias gru=git reset --` shouldn't match `git reset --soft`
+    _altp_aliases[${reply}( *|)]=$k
+}
