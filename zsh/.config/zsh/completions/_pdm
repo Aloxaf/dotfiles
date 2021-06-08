@@ -12,6 +12,7 @@ _pdm() {
   local -a arguments=(
     {-h,--help}'[Show help message and exit]'
     {-v,--verbose}'[Show detailed output]'
+    {-p,--project}'=[Specify another path as the project root]:directory:_files -/'
     '-vv[Show more detailed output]'
   )
   local sub_commands=(
@@ -39,7 +40,8 @@ _pdm() {
   _arguments -s -C -A '-*' \
     $arguments \
     {-V,--version}'[Show the version and exit]' \
-    '--pep582=[Print the command line to be eval by the shell]:shell:(zsh bash fish powershell cmd tcsh csh)' \
+    {-I,--ignore-python}'[Ignore the Python path saved in the pdm.toml config]' \
+    '--pep582=[Print the command line to be eval by the shell]:shell:(zsh bash fish tcsh csh)' \
     '*:: :->_subcmds' \
     && return 0
 
@@ -75,8 +77,32 @@ _pdm() {
       )
       ;;
     cache)
-      local -a actions=("clear:Clean all the files under cache directory")
-      _describe -t command 'pdm cache actions' actions && return 0
+      _arguments -C \
+        $arguments \
+        ': :->command' \
+        '*:: :->args' && ret=0
+      case $state in
+        command)
+          local -a actions=(
+            "clear:Clean all the files under cache directory"
+            "remove:Remove files matching the given pattern"
+            "list:List the built wheels stored in the cache"
+            "info:Show the info and current size of caches"
+          )
+          _describe -t command 'pdm cache actions' actions && ret=0
+          ;;
+        args)
+          case $words[1] in
+            clear)
+              compadd -X type 'hashes' 'http' 'wheels' 'metadata' && ret=0
+              ;;
+            *)
+              _message "pattern" && ret=0
+              ;;
+          esac
+          ;;
+      esac
+      return $ret
       ;;
     config)
       _arguments -s  \
@@ -230,22 +256,13 @@ _pdm_sections() {
 }
 
 _pdm_packages() {
+  setopt local_options re_match_pcre
   if [[ ! -f pyproject.toml ]]; then
     _message "not a pdm project"
     return 1
   fi
-  local l packages=() in_dependencies=0
-  while IFS= read -r l; do
-    case $l in
-      "["tool.pdm.*dependencies"]") in_dependencies=1 ;;
-      "["*"]") in_dependencies=0 ;;
-      *"="*)
-        if (( in_dependencies )); then
-          packages+=$l[(w)1]
-        fi
-        ;;
-    esac
-  done <pyproject.toml
+  [[ $(<pyproject.toml) =~ 'dependencies *= *\[((.|\n)*?)\]' ]]
+  packages=(${=${(Q)match//,/}})
   compadd -X packages -a packages
 }
 

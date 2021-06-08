@@ -93,3 +93,4 @@ zstyle ':completion:*:jobs' numbers true
 
 # 单词中也进行补全
 setopt complete_in_word
+setopt no_beep

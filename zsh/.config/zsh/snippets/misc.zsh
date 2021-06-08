@@ -60,20 +60,6 @@ export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
 # removed because all cache has be placed in ~/.cache/cargo-build
 # export RUSTC_WRAPPER=sccache
 
-# Thanks https://blog.lilydjwg.me/2011/6/29/using-zpty-module-of-zsh.27677.html
-function ptyrun() {
-    zmodload zsh/zpty
-    local ptyname=pty-$$ cmds
-    expand_alias cmds $@
-    zpty $ptyname $cmds
-    if [[ ! -t 1 ]] {
-        setopt local_traps
-        trap '' INT
-    }
-    zpty -r $ptyname
-    zpty -d $ptynamez
-}
-
 # https://archive.zhimingwang.org/blog/2015-09-21-zsh-51-and-bracketed-paste.html
 autoload -Uz bracketed-paste-url-magic
 zle -N bracketed-paste bracketed-paste-url-magic

@@ -2,7 +2,9 @@
 
 local arguments
 
-_pacman 2>/dev/null
+(( $+functions[_pacman_completions_installed_packages] )) || {
+  _pacman 2>/dev/null
+}
 
 arguments=(
   {-a,--ascii}'[use ASCII characters for tree formatting]'

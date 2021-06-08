@@ -6,9 +6,12 @@ alias -g N='>/dev/null '
 alias -g NN="*(oc[1])" NNF="*(oc[1].)" NND="*(oc[1]/)"
 
 # 文件系统相关
-alias rm='rm -i'   rd='rm -rd'   md='mkdir -p'
-alias ls='exa -h'  la='ls -la'  lt='ls --tree'  ll='ls -l'  l='ls'
+alias rd='rm -rd'   md='mkdir -p'
+alias rm='rm -i --one-file-system'
+alias ls='exa -bh' la='ls -la'  lt='ls --tree'  ll='ls -l'  l='ls'
 alias dfh='df -h'  dus='du -sh' del='gio trash' dusa='dus --apparent-size'
+alias cp='cp --reflink=auto'
+alias bdu='btrfs fi du' bdus='bdu -s'
 
 # gdb
 alias gdb-peda='command gdb -q -ex init-peda'
@@ -18,17 +21,36 @@ alias gdb=gdb-pwndbg
 
 # pacman
 alias S='sudo pacman -S' Syu='sudo pacsync && sudo pacman -Su' Rcs='sudo pacman -Rcs'
-alias Si='pacman -Si' Sl='pacman -Sl'  Ss='pacman -Ss'
-alias Qi='pacman -Qi' Qs='pacman -Qs'  Ql='pacman -Ql'
+alias Si='pacman -Si' Sl='pacman -Sl' Ss='noglob pacman -Ss'
+alias Qi='pacman -Qi' Ql='pacman -Ql' Qs='noglob pacman -Qs'
 alias Qm='pacman -Qm' Qo='pacman -Qo'
 alias Fl='pacman -Fl' F='pacman -F' Fx='pacman -Fx'
 alias Fy='sudo pacman -Fy'
 alias U='sudo pacman -U'
-alias pacman='noglob pacman'
+alias pikaur='p pikaur'
+
+# git
+# https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
+alias gclt='git clone --filter=tree:0'
+alias gclb='git clone --filter=blob:none'
+alias gcld='git clone --depth=1'
 
 function Qlt() {
   pacman -Ql $1 | cut -d' ' -f2 | tree --fromfile=.
 }
+
+function compsize-package {
+  sudo compsize $(pacman -Ql $1 | cut -d' ' -f2 | grep -v '/$')
+}
+
+function _pacman_packages {
+  (( $+functions[_pacman_completions_installed_packages] )) || {
+    _pacman 2>/dev/null
+  }
+  _pacman_completions_installed_packages
+}
+
+compdef _pacman_packages Qlt compsize-package
 
 alias zmv='noglob zmv'
 alias zcp='zmv -C'
@@ -41,6 +63,17 @@ function proxychains_8877() {
 function proxychains_8080() {
     proxychains -q -f ~/.config/proxychains/8080.conf $@
 }
+function pp() {
+    # aria2 只吃 http[s]_proxy 并且只支持 http
+    #env HTTP_PROXY="socks5h://127.0.0.1:8877" \
+    #    HTTPS_PROXY="socks5h://127.0.0.1:8877" \
+    #    http_proxy="http://127.0.0.1:1080" \
+    #    https_proxy="http://127.0.0.1:1080" $*
+    env HTTP_PROXY="http://127.0.0.1:1080" \
+        HTTPS_PROXY="http://127.0.0.1:1080" \
+        http_proxy="http://127.0.0.1:1080" \
+        https_proxy="http://127.0.0.1:1080" $*
+}
 compdef _precommand proxychains_8877
 compdef _precommand proxychains_8080
 
@@ -48,6 +81,7 @@ compdef _precommand proxychains_8080
 alias p="proxychains_8877 "
 alias p8080="proxychains_8080 "
 alias rlwrap="rlwrap "
+alias sudo='sudo '
 
 # 乱七八糟的
 alias h="tldr"
@@ -64,9 +98,12 @@ alias wtf='wtf -f ~/.local/share/wtf/acronyms'
 alias rgc='rg --color=always'
 alias less='less -r'
 alias history='fc -l 1'
-alias locate='noglob locate'
 alias open='xdg-open'
 alias cataclysm-tiles='LANGUAGE=zh_CN:en_US cataclysm-tiles'
+alias locate="lolcate"
+alias wine32="WINEPREFIX=~/.wine32 WINEARCH=win32 wine"
+alias wine32cfg="WINEPREFIX=~/.wine32 WINEARCH=win32 winecfg"
+alias wine32tricks="WINEPREFIX=~/.wine32 WINEARCH=win32 winetricks"
 
 function dsf() {
     diff -u $@ | delta --theme='Dracula'
@@ -76,8 +113,8 @@ function dsf() {
 # https://github.com/farseerfc/dotfiles/blob/master/zsh/.bashrc#L100-L123
 function G() {
     git clone https://git.archlinux.org/svntogit/$1.git/ -b packages/$3 --single-branch $3
-    mv "$3"/trunk/* "$3"
-    rm -rf "$3"/{repos,trunk,.git}
+    #mv "$3"/trunk/* "$3"
+    #rm -rf "$3"/{repos,trunk,.git}
 }
 
 function Ge() {

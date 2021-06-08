@@ -2,7 +2,8 @@ _call_navi() {
    local -r buff="$BUFFER"
    local -r r="$(printf "$(navi --print </dev/tty)")"
    zle kill-whole-line
-   zle -U "${buff}${r}"
+   BUFFER=${buff}${r}
+   CURSOR=$#BUFFER
 }
 
 # 跳转到下一个 (*) 的位置

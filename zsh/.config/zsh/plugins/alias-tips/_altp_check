@@ -16,9 +16,11 @@ for i in ${_altp_aliases[(K)$2]}; do
   fi
 done
 
-result=${2/$alias[2]/$alias[1]}
+(( $#alias != 0 )) || return
+
+result=${3/$alias[2]/$alias[1]}
 
 # strip whitespace and detect whether this alias will make command shorter
 if (( ${#${1/# #}/% #} > $#result )) {
-    ALIAS_TIPS_BUFFER=$result
+  ALIAS_TIPS_BUFFER=$result
 }

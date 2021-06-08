@@ -79,6 +79,18 @@ keybindings+=(
 
 # 搜索历史
 function fz-history-widget() {
+    local query="
+SELECT commands.argv
+FROM   history
+    LEFT JOIN commands
+        ON history.command_id = commands.rowid
+    LEFT JOIN places
+        ON history.place_id = places.rowid
+GROUP BY commands.argv
+ORDER BY places.dir != '${PWD//'/''}',
+    commands.argv LIKE '${BUFFER//'/''}%' DESC,
+    Count(*) DESC
+"
     # 保证搜索的是全部历史
     # NOTE: 此处依赖 fzf-tab
     local selected=$(fc -rl 1 | ftb-tmux-popup -n "2.." --tiebreak=index --prompt="cmd> " ${BUFFER:+-q$BUFFER})
@@ -118,6 +130,7 @@ function zce-jump-char() {
     zstyle ':zce:*' prompt-char '%B%F{green}Jump to character:%F%b '
     zstyle ':zce:*' prompt-key '%B%F{green}Target key:%F%b '
     with-zce zce-raw zce-searchin-read
+    CURSOR+=1
 }
 zle -N zce-jump-char
 keybindings[M-j]=zce-jump-char
@@ -144,13 +157,15 @@ keybindings[M-j]=zce-jump-char
 
 # }}}2
 
-# 快速添加括号 {{{2
+# 快速添加成对括号 {{{2
 function add-bracket() {
-    BUFFER[$CURSOR+1]="($BUFFER[$CURSOR+1]"
-    BUFFER+=')'
+    local -A keys=('(' ')' '{' '}' '[' ']')
+    BUFFER[$CURSOR+1]=${KEYS[-1]}${BUFFER[$CURSOR+1]}
+    BUFFER+=$keys[$KEYS[-1]]
 }
 zle -N add-bracket
 keybindings[M-\(]=add-bracket
+keybindings[M-\{]=add-bracket
 # }}}2
 
 # 快速跳转到上级目录: ... => ../.. {{{2

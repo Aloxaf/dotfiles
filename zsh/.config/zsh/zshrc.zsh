@@ -1,5 +1,3 @@
-export LANGUAGE=en_US # :zh_CN
-
 # 作为嵌入式终端时禁用 tmux
 if [[ -z $TMUX && $- == *i* ]]; then
     if [[ ! "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)|visual-studio-code" ]]; then
@@ -43,11 +41,33 @@ autoload -Uz zcalc zmv zargs
 
 # ==== 某些插件需要的设置 ====
 
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+HISTDB_FILE=$ZDOTDIR/.zsh-history.db
+# return the latest used command in the current directory
+_zsh_autosuggest_strategy_histdb_top_here() {
+    (( $+functions[_histdb_query] )) || return
+    local query="
+SELECT commands.argv
+FROM   history
+    LEFT JOIN commands
+        ON history.command_id = commands.rowid
+    LEFT JOIN places
+        ON history.place_id = places.rowid
+WHERE commands.argv LIKE '${1//'/''}%'
+-- GROUP BY 会导致旧命令的新记录不生效
+-- GROUP BY commands.argv
+ORDER BY places.dir != '${PWD//'/''}',
+	history.start_time DESC
+LIMIT 1  
+"
+    typeset -g suggestion=$(_histdb_query "$query")
+}
+
+ZSH_AUTOSUGGEST_STRATEGY=(histdb_top_here match_prev_cmd completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 ZSH_AUTOSUGGEST_COMPLETION_IGNORE='( |man |pikaur -S )*'
+ZSH_AUTOSUGGEST_HISTORY_IGNORE='?(#c50,)'
 
 GENCOMP_DIR=$XDG_CONFIG_HOME/zsh/completions
 
@@ -59,15 +79,21 @@ ZSHZ_DATA=$ZDOTDIR/.z
 
 export AGV_EDITOR='kwrite -l $line -c $col $file'
 
+# for python-better-expections
+export FORCE_COLOR=1
+
 # ==== 加载插件 ====
 
-zinit wait="1" lucid light-mode for \
-    kevinhwang91/zsh-tmux-capture \
+zinit wait="0" lucid light-mode for \
     hlissner/zsh-autopair \
+    Aloxaf/zsh-histdb \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
-    agkozak/zsh-z \
     wfxr/forgit
+
+# the first call of zsh-z is slow in HDD, so call it in advance
+zinit ice wait="0" lucid atload="zshz >/dev/null"
+zinit light agkozak/zsh-z
     
 zinit light-mode for \
     blockf \
@@ -90,11 +116,11 @@ zinit light-mode for \
 # skywind3000/z.lua
 
 zinit wait="1" lucid for \
-    OMZ::lib/clipboard.zsh \
-    OMZ::lib/git.zsh \
-    OMZ::plugins/systemd/systemd.plugin.zsh \
-    OMZ::plugins/sudo/sudo.plugin.zsh \
-    OMZ::plugins/git/git.plugin.zsh
+    OMZL::clipboard.zsh \
+    OMZL::git.zsh \
+    OMZP::systemd/systemd.plugin.zsh \
+    OMZP::sudo/sudo.plugin.zsh \
+    OMZP::git/git.plugin.zsh
 
 zinit ice mv=":cht.sh -> cht.sh" atclone="chmod +x cht.sh" as="program"
 zinit snippet https://cht.sh/:cht.sh
@@ -103,17 +129,19 @@ zinit ice mv=":zsh -> _cht" as="completion"
 zinit snippet https://cheat.sh/:zsh
 
 zinit svn for \
-    OMZ::plugins/extract \
-    OMZ::plugins/pip
+    OMZP::extract \
+    OMZP::pip
 
 zinit as="completion" for \
-    OMZ::plugins/docker/_docker \
-    OMZ::plugins/rust/_rust \
-    OMZ::plugins/fd/_fd
+    OMZP::docker/_docker \
+    OMZP::rust/_rust \
+    OMZP::fd/_fd
 
 source /etc/grc.zsh
 source ~/.travis/travis.sh
 source ~/Coding/shell/zvm/zvm.zsh
+
+zstyle ':zce:*' keys 'asdghklqwertyuiopzxcvbnmfj;23456789'
 
 # ==== 某些比较特殊的插件 ====
 
@@ -137,11 +165,32 @@ zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
-zstyle ":completion:*:git-checkout:*" sort false
-zstyle ':completion:*:exa' file-sort modification
-zstyle ':completion:*:exa' sort false
 zstyle ":fzf-tab:*" fzf-flags --color=bg+:23
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ':completion:*' file-sort modification
+zstyle ':completion:*:exa' sort false
+zstyle ':completion:files' sort false
+zstyle ':fzf-tab:*:*argument-rest*' popup-pad 100 0
+# zstyle ':fzf-tab:*:*argument-rest*' fzf-preview '
+# echo desc: $desc
+# echo word: $word
+# echo group: $group
+# echo realpath: $realpath
+# if [[ -z $realpath ]]; then
+#   return
+# fi
+# # 用 exa 展示目录内容
+# if [[ -d $realpath ]]; then
+#   exa -1 --color=always $realpath
+#   return
+# fi
+# local type=${$(file --mime-type $realpath)[(w)2]}
+# case $type in;
+#   text*) bat -p --color=always $realpath;;
+# esac
+# '
 
 # ==== ====
 
@@ -149,8 +198,16 @@ zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zmodload aloxaf/subreap
 subreap
 
+set_fast_theme() {
+    FAST_HIGHLIGHT_STYLES[${FAST_THEME_NAME}alias]='fg=blue'
+    FAST_HIGHLIGHT_STYLES[${FAST_THEME_NAME}function]='fg=blue'
+    # 对 man 的高亮会卡住上下翻历史的动作
+    # FAST_HIGHLIGHT[chroma-man]=
+}
+
 zinit light-mode for \
-    zdharma/fast-syntax-highlighting \
+    atload="set_fast_theme" \
+        zdharma/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions
 
 # ==== 加载主题 ====
