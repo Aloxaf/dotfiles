@@ -20,6 +20,9 @@ export CCACHE_CONFIGPATH=$XDG_CONFIG_HOME/ccache.config
 export CCACHE_DIR=$XDG_CACHE_HOME/ccache
 export DOCKER_CONFIG=$XDG_CONFIG_HOME/docker
 
+# 让 firefox 启用硬件加速
+# export MOZ_X11_EGL=1
+
 export XIM=fcitx
 export XIM_PROGRAM=fcitx
 export GTK_IM_MODULE=fcitx
@@ -27,5 +30,10 @@ export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 # SDL 必须用 fcitx5，否则会套用对 fcitx4 的特殊处理导致 fcitx5 启动失败
 export SDL_IM_MODULE=fcitx5
-export PATH=$HOME/.local/bin:$CARGO_HOME/bin:$HOME/.gem/ruby/2.7.0/bin:$PATH
+export PATH=$HOME/.local/bin:$CARGO_HOME/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/go/bin:$PATH
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
+
+# https://goproxy.io/zh/
+export GOPROXY=https://goproxy.io,direct
+# 不走 proxy 的私有仓库或组，多个用逗号相隔
+# export GOPRIVATE=git.mycompany.com,github.com/my/private
