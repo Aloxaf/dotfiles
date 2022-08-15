@@ -1,12 +1,10 @@
-# 作为嵌入式终端时禁用 tmux
-if [[ -z $TMUX && $- == *i* ]]; then
-    if [[ ! "$(</proc/$PPID/cmdline)" =~ "/usr/bin/(dolphin|emacs|kate)|visual-studio-code" ]]; then
+# 作为非 tmux 启动的交互式终端，考虑启动 tmux
+if [[ ( ! "$(</proc/$PPID/cmdline)" =~ "tmux" ) && $- == *i* ]]; then
+    # 非嵌入式终端，启动 tmux
+    if [[ ! "$(</proc/$PPID/cmdline)" =~ "dolphin|emacs|kate|visual-studio-code|SCREEN" ]]; then
         exec tmux -f "$XDG_CONFIG_HOME/tmux/tmux.conf"
-    fi
-else
-    # 如果当前 shell 是由 konsole 启动的，则 unset 相关变量
-    # 免作为子进程的 konsole 继承相关变量导致 fzf-tab 误判为 tmux 环境
-    if [[ "$(</proc/$PPID/cmdline)" =~ "konsole" ]]; then
+    # 非 SCREEN 窗口，unset 相关环境变量，避免被识别为 TMUX 环境
+    elif [[ ! "$(</proc/$PPID/cmdline)" =~ "SCREEN" ]]; then
         unset TMUX TMUX_PANE
     fi
 fi
