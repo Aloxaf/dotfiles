@@ -7,5 +7,5 @@ Before=shutdown.target
 
 [Service]
 Type=oneshot
-ExecStart=cargo sweep --maxsize 25600 /home/aloxaf/Coding/Rust/tmp2 -r
+ExecStart=cargo sweep --maxsize 10240 /home/aloxaf/Coding/Rust/tmp2 -r
 IOSchedulingClass=idle

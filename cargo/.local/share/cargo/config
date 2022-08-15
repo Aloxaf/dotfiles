@@ -9,9 +9,18 @@
 linker = "/usr/bin/x86_64-w64-mingw32-gcc"
 ar = "/usr/x86_64-w64-mingw32/bin/ar"
 
-[build]
-target-dir = "/home/aloxaf/.cache/cargo-build"
-rustflags = [ "-Clink-arg=-fuse-ld=lld" ] # "-Ctarget-cpu=native"
+[target.x86_64-unknown-linux-gnu]
+linker = "/usr/bin/clang"
+rustflags = [
+  "-C", "link-arg=-fuse-ld=lld",
+  "-C", "link-arg=-Xlinker",
+  "-C", "link-arg=--no-mmap-output-file",
+  "-C", "target-cpu=native"
+]
 
-[http]
+[build]
+#rustc-wrapper = "sccache"
+target-dir = "/home/aloxaf/.cache/cargo-build"
+
+#[http]
 #proxy = "socks5h://localhost:8877"

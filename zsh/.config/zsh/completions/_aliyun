@@ -1,0 +1,5 @@
+#compdef aliyun
+
+autoload -U +X bashcompinit && bashcompinit -i
+complete -o nospace -F /home/aloxaf/.local/bin/aliyun aliyun
+ 
