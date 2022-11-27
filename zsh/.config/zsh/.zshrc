@@ -1,4 +1,4 @@
-module_path+=( "$ZDOTDIR/zinit/bin/zmodules/Src" )
-zmodload zdharma/zplugin
+module_path+=( "$ZDOTDIR/zinit/module/Src" )
+zmodload zdharma_continuum/zinit
 
 source $ZDOTDIR/zshrc.zsh

@@ -43,7 +43,10 @@ HISTDB_FILE=$ZDOTDIR/.zsh-history.db
 # return the latest used command in the current directory
 _zsh_autosuggest_strategy_histdb_top_here() {
     (( $+functions[_histdb_query] )) || return
-    local query="
+    (( $+builtins[zsqlite_exec] )) || return
+    (( $+_HISTDB )) || zsqlite_open _HISTDB ${HISTDB_FILE}
+    local reply reply_argv
+    zsqlite_exec _HISTDB reply "
 SELECT commands.argv
 FROM   history
     LEFT JOIN commands
@@ -54,10 +57,10 @@ WHERE commands.argv LIKE '${1//'/''}%'
 -- GROUP BY 会导致旧命令的新记录不生效
 -- GROUP BY commands.argv
 ORDER BY places.dir != '${PWD//'/''}',
-	history.start_time DESC
+    history.start_time DESC
 LIMIT 1  
 "
-    typeset -g suggestion=$(_histdb_query "$query")
+    typeset -g suggestion=$reply_argv
 }
 
 ZSH_AUTOSUGGEST_STRATEGY=(histdb_top_here match_prev_cmd completion)
@@ -84,9 +87,10 @@ export FORCE_COLOR=1
 
 zinit wait="0" lucid light-mode for \
     hlissner/zsh-autopair \
-    Aloxaf/zsh-histdb \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
+    Aloxaf/zsh-sqlite \
+    Aloxaf/zsh-histdb \
     wfxr/forgit
 
 # the first call of zsh-z is slow in HDD, so call it in advance
@@ -138,6 +142,7 @@ zinit as="completion" for \
 source /etc/grc.zsh
 source ~/.travis/travis.sh
 source ~/Coding/shell/zvm/zvm.zsh
+source /opt/miniconda/etc/profile.d/conda.sh
 
 zstyle ':zce:*' keys 'asdghklqwertyuiopzxcvbnmfj;23456789'
 
