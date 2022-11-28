@@ -114,7 +114,7 @@ zinit wait="0" lucid light-mode for \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
     Aloxaf/zsh-sqlite \
-    Aloxaf/zsh-histdb \
+    cloneopts="--branch zsqlite" Aloxaf/zsh-histdb \
     wfxr/forgit
 
 # the first call of zsh-z is slow in HDD, so call it in advance
@@ -138,12 +138,6 @@ zinit wait="1" lucid for \
     OMZP::sudo/sudo.plugin.zsh \
     OMZP::git/git.plugin.zsh
 
-zinit ice mv=":cht.sh -> cht.sh" atclone="chmod +x cht.sh" as="program"
-zinit snippet https://cht.sh/:cht.sh
-
-zinit ice mv=":zsh -> _cht" as="completion"
-zinit snippet https://cheat.sh/:zsh
-
 zinit svn for \
     OMZP::extract \
     OMZP::pip
@@ -153,7 +147,9 @@ zinit as="completion" for \
     OMZP::rust/_rust \
     OMZP::fd/_fd
 
-source /usr/share/nvm/init-nvm.sh
+zinit ice wait="0" lucid
+zinit snippet /usr/share/nvm/init-nvm.sh
+
 source /etc/grc.zsh
 
 # ==== 某些比较特殊的插件 ====
