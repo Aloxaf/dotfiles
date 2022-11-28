@@ -39,7 +39,7 @@ autoload -Uz zcalc zmv zargs
 # ==== 配置插件 ====
 
 # == zsh-histdb
-HISTDB_FILE=$ZDOTDIR/.zsh-history.db
+HISTDB_FILE=$ZDOTDIR/history/zsh-history.db
 
 # == zsh-zsh-autosuggestions
 # return the latest used command in the current directory
@@ -59,7 +59,9 @@ FROM   history
 WHERE commands.argv LIKE '${1//'/''}%'
 -- GROUP BY 会导致旧命令的新记录不生效
 -- GROUP BY commands.argv
-ORDER BY places.dir != '${PWD//'/''}',
+ORDER BY
+    places.dir != '${PWD//'/''}',
+    history.session != $HISTDB_SESSION,
     history.start_time DESC
 LIMIT 1
 "
