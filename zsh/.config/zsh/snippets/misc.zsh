@@ -52,9 +52,15 @@ setopt correct
 EDITOR=vim
 
 # rustup mirror
-export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
-# export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
-# export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+export RUSTUP_DIST_SERVER="https://rsproxy.cn"
+export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+
+# for python-better-expections
+export FORCE_COLOR=1
+# 配置 GOPROXY 环境变量
+export GOPROXY=https://goproxy.io,direct
+# 还可以设置不走 proxy 的私有仓库或组，多个用逗号相隔（可选）
+export GOPRIVATE=git.mycompany.com,github.com/my/private
 
 # speed up rustc compile
 # removed because all cache has be placed in ~/.cache/cargo-build
