@@ -50,56 +50,24 @@ _zsh_autosuggest_strategy_histdb_top_here() {
     local cmd="$(sql_escape $1)"
     local pwd="$(sql_escape $PWD)"
     local reply=$(zsqlite_exec _HISTDB "
--- 利用 COALESCE 的短路求值，在有结果时迅速返回，避免进行后续比较耗时的更模糊的查询
-SELECT COALESCE((
--- 如果上次在当前目录下执行了同样的两命令，按这个顺序进行推荐
-	SELECT c1.argv
+SELECT argv FROM (SELECT * FROM (
+	SELECT c1.argv, p1.dir, h1.session, h1.start_time, 1 AS priority
 	FROM history h1, history h2
 		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
 		LEFT JOIN commands c2 ON h2.command_id = c2.ROWID
 		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
 	WHERE h1.ROWID = h2.ROWID + 1
-		AND h1.place_id = h2.place_id
 		AND c1.argv LIKE '$cmd%'
 		AND c2.argv = '$last_cmd'
-		AND p1.dir = '$pwd'
-	GROUP BY c1.argv
-	ORDER BY COUNT(c1.argv) DESC, h1.session != $HISTDB_SESSION, h1.start_time DESC
-	LIMIT 1
-),(
--- 推荐上次在当前目录下执行过的类似的命令
-	SELECT c1.argv
+) UNION SELECT * FROM (
+	SELECT c1.argv, p1.dir, h1.session, h1.start_time, 0 AS priority
 	FROM history h1
 		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
 		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
 	WHERE c1.argv LIKE '$cmd%'
-		AND p1.dir = '$pwd'
-	ORDER BY h1.session != $HISTDB_SESSION, h1.start_time DESC
-	LIMIT 1
-),(
--- 如果上次执行过同样的两条命令，按这个顺序进行推荐（没有了相同目录的要求）
-	SELECT c1.argv
-	FROM history h1, history h2
-		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
-		LEFT JOIN commands c2 ON h2.command_id = c2.ROWID
-		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
-	WHERE h1.ROWID = h2.ROWID + 1
-		AND h1.place_id = h2.place_id
-		AND c1.argv LIKE '$cmd%'
-		AND c2.argv = '$last_cmd'
-	GROUP BY c1.argv
-	ORDER BY COUNT(c1.argv) DESC, h1.session != $HISTDB_SESSION, h1.start_time DESC
-	LIMIT 1
-),(
--- 推荐上次执行过的类似的命令
-	SELECT c1.argv
-	FROM history h1
-		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
-		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
-	WHERE c1.argv LIKE '$cmd%'
-	ORDER BY p1.dir != '$pwd', h1.session != $HISTDB_SESSION, h1.start_time DESC
-	LIMIT 1
-)) as T
+))
+ORDER BY dir != '$pwd', priority DESC, session != $HISTDB_SESSION, start_time DESC
+LIMIT 1
 ")
     typeset -g suggestion=$reply
 }
