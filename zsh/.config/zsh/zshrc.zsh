@@ -50,7 +50,7 @@ _zsh_autosuggest_strategy_histdb_top_here() {
     local cmd="$(sql_escape $1)"
     local pwd="$(sql_escape $PWD)"
     local reply=$(zsqlite_exec _HISTDB "
-SELECT argv FROM (SELECT * FROM (
+SELECT argv FROM (
 	SELECT c1.argv, p1.dir, h1.session, h1.start_time, 1 AS priority
 	FROM history h1, history h2
 		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
@@ -59,13 +59,14 @@ SELECT argv FROM (SELECT * FROM (
 	WHERE h1.ROWID = h2.ROWID + 1
 		AND c1.argv LIKE '$cmd%'
 		AND c2.argv = '$last_cmd'
-) UNION SELECT * FROM (
+		AND h1.exit_status = 0
+    UNION
 	SELECT c1.argv, p1.dir, h1.session, h1.start_time, 0 AS priority
 	FROM history h1
 		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
 		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
 	WHERE c1.argv LIKE '$cmd%'
-))
+)
 ORDER BY dir != '$pwd', priority DESC, session != $HISTDB_SESSION, start_time DESC
 LIMIT 1
 ")
