@@ -17,7 +17,8 @@ SAVEHIST=100000
 # 记录时间戳
 setopt extended_history
 # 首先移除重复历史
-setopt hist_expire_dups_first
+# NOTE: 此选项有时会严重影响 zsh 启动速度
+#setopt hist_expire_dups_first
 # 忽略重复
 setopt hist_ignore_all_dups
 setopt hist_ignore_dups
