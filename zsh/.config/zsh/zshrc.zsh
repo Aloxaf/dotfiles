@@ -38,42 +38,7 @@ autoload -Uz zcalc zmv zargs
 
 # ==== 配置插件 ====
 
-# == zsh-histdb
-HISTDB_FILE=$ZDOTDIR/history/zsh-history.db
-
-# == zsh-zsh-autosuggestions
-_zsh_autosuggest_strategy_histdb_top_here() {
-    emulate -L zsh
-    (( $+functions[_histdb_query] && $+builtins[zsqlite_exec] )) || return
-    _histdb_init
-    local last_cmd="$(sql_escape ${history[$((HISTCMD-1))]})"
-    local cmd="$(sql_escape $1)"
-    local pwd="$(sql_escape $PWD)"
-    local reply=$(zsqlite_exec _HISTDB "
-SELECT argv FROM (
-	SELECT c1.argv, p1.dir, h1.session, h1.start_time, 1 AS priority
-	FROM history h1, history h2
-		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
-		LEFT JOIN commands c2 ON h2.command_id = c2.ROWID
-		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
-	WHERE h1.ROWID = h2.ROWID + 1
-		AND c1.argv LIKE '$cmd%'
-		AND c2.argv = '$last_cmd'
-		AND h1.exit_status = 0
-    UNION
-	SELECT c1.argv, p1.dir, h1.session, h1.start_time, 0 AS priority
-	FROM history h1
-		LEFT JOIN commands c1 ON h1.command_id = c1.ROWID
-		LEFT JOIN places p1   ON h1.place_id = p1.ROWID
-	WHERE c1.argv LIKE '$cmd%'
-)
-ORDER BY dir != '$pwd', priority DESC, session != $HISTDB_SESSION, start_time DESC
-LIMIT 1
-")
-    typeset -g suggestion=$reply
-}
-
-ZSH_AUTOSUGGEST_STRATEGY=(histdb_top_here match_prev_cmd completion)
+ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
@@ -118,8 +83,6 @@ zinit wait="0" lucid light-mode for \
     hlissner/zsh-autopair \
     hchbaw/zce.zsh \
     Aloxaf/gencomp \
-    Aloxaf/zsh-sqlite \
-    cloneopts="--branch zsqlite" Aloxaf/zsh-histdb \
     wfxr/forgit
 
 # the first call of zsh-z is slow in HDD, so call it in advance
@@ -141,7 +104,8 @@ zinit wait="1" lucid for \
     OMZL::git.zsh \
     OMZP::systemd/systemd.plugin.zsh \
     OMZP::sudo/sudo.plugin.zsh \
-    OMZP::git/git.plugin.zsh
+    OMZP::git/git.plugin.zsh \
+    OMZP::ansible/ansible.plugin.zsh
 
 zinit svn for \
     OMZP::extract \

@@ -1,7 +1,21 @@
 #compdef cargo-add
 
+_cargo-edit-curl() {
+  if (( $+commands[curl] )); then
+    curl -s $1
+  fi
+  # TODO: wget
+}
+
 _cargo-add() {
-  _arguments \
+  emulate -L zsh -o extended_glob
+
+  typeset -A opt_args
+  local context state state_descr line
+
+  local curcontext=$curcontext ret=1
+
+  _arguments -s -C \
     '--allow-prerelease[Include prerelease versions when fetching from crates.io]' \
     {-B,--build}'[Add crate as build dependency]' \
     {-D,--dev}'[Add crate as development dependency]' \
@@ -22,8 +36,19 @@ _cargo-add() {
     {-r,--rename=}'[Rename a dependency in Cargo.toml]' \
     '--targe=t[Add as dependency to the given target platform]:targets:_cargo-edit_targets' \
     '--upgrade=[Choose method of semantic version upgrade (default: default)]:method:(none patch minor all default)' \
-    '--vers=[Specify the version to grab from the registry(crates.io)]' \
-    '*:crate:_cargo-edit_cached_crates'
+    '--vers=[Specify the version to grab from the registry(crates.io)]:crate version:->version' \
+    '*:crate:_cargo-edit_cached_crates' \
+    && return 0
+
+  case $state in
+    version)
+      local package=${${words/-*/}[2]}
+      local -a versions=($(_cargo-edit-curl "https://crates.io/api/v1/crates/$package" | jq --raw-output '.versions[] | .num'))
+      # TODO: don't sort
+      _describe -t version 'crate version' -a versions
+      ;;
+  esac
+
 }
 
 _cargo-edit_cached_crates() {
