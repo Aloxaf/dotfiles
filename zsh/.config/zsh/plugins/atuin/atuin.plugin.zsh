@@ -67,7 +67,6 @@ _atuin_search() {
         if [[ $LBUFFER == __atuin_accept__:* ]]
         then
             LBUFFER=${LBUFFER#__atuin_accept__:}
-            zle accept-line
         fi
     fi
 }
