@@ -11,11 +11,49 @@ autoload -U add-zsh-hook
 
 zmodload zsh/datetime 2>/dev/null
 
+typeset -g _autin_histdb
+
+_atuin_sql_escape() {
+    print -r -- ${${@//\'/\'\'}//$'\x00'}
+}
+
+_atuin_histdb_init() {
+    if $(( $+_autin_histdb )); then
+        zsqlite_open -r _autin_histdb ~/.local/share/atuin/history.db
+    fi
+}
+
 # If zsh-autosuggestions is installed, configure it to use Atuin's search. If
 # you'd like to override this, then add your config after the $(atuin init zsh)
 # in your .zshrc
 _zsh_autosuggest_strategy_atuin() {
-    suggestion=$(atuin search --cwd $PWD --cmd-only --limit 1 --search-mode prefix -- "$1")
+    emulate -L zsh
+    local last_cmd="$(_atuin_sql_escape ${history[$((HISTCMD-1))]})"
+    local cmd="$(_atuin_sql_escape $1)"
+    local pwd="$(_atuin_sql_escape $PWD)"
+    local reply=$(zsqlite_exec _autin_histdb "
+SELECT command FROM (
+    SELECT h1.*
+    FROM history h1, history h2
+    WHERE h1.ROWID = h2.ROWID + 1
+        AND h1.session = h2.session
+        AND h2.exit = 0
+        AND h1.command LIKE '$cmd%'
+        AND h2.command = '$last_cmd'
+    ORDER BY h1.cwd = '$pwd' DESC, timestamp DESC
+    LIMIT 1
+)
+UNION ALL
+SELECT command FROM (
+    SELECT * FROM history WHERE cwd = '$pwd' AND command LIKE '$cmd%' ORDER BY timestamp DESC LIMIT 1
+)
+UNION ALL
+SELECT command FROM (
+    SELECT * FROM history WHERE command LIKE '$cmd%' ORDER BY timestamp DESC LIMIT 1
+)
+LIMIT 1
+")
+    typeset -g suggestion=$reply
 }
 
 if [ -n "${ZSH_AUTOSUGGEST_STRATEGY:-}" ]; then
