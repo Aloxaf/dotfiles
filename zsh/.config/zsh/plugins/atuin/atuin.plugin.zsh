@@ -18,7 +18,7 @@ _atuin_sql_escape() {
 }
 
 _atuin_histdb_init() {
-    if $(( $+_autin_histdb )); then
+    if (( $+_autin_histdb )); then
         zsqlite_open -r _autin_histdb ~/.local/share/atuin/history.db
     fi
 }
@@ -28,6 +28,7 @@ _atuin_histdb_init() {
 # in your .zshrc
 _zsh_autosuggest_strategy_atuin() {
     emulate -L zsh
+    _atuin_histdb_init
     local last_cmd="$(_atuin_sql_escape ${history[$((HISTCMD-1))]})"
     local cmd="$(_atuin_sql_escape $1)"
     local pwd="$(_atuin_sql_escape $PWD)"
@@ -89,24 +90,22 @@ _atuin_precmd() {
 _atuin_search() {
     emulate -L zsh
     zle -I
+    
+    _atuin_histdb_init
 
-    # swap stderr and stdout, so that the tui stuff works
-    # TODO: not this
-    local output
-    # shellcheck disable=SC2048
-    output=$(ATUIN_SHELL_ZSH=t ATUIN_LOG=error atuin search $* -i -- $BUFFER 3>&1 1>&2 2>&3)
+    local cmd="$(_atuin_sql_escape $LBUFFER)"
+    local pwd="$(_atuin_sql_escape $PWD)"
+    local query="
+SELECT DISTINCT command
+FROM history
+WHERE command LIKE '$cmd%'
+ORDER BY cwd = '$pwd' DESC, timestamp DESC
+"
 
-    zle reset-prompt
+    output=$(zsqlite_exec -q _autin_histdb $query | ftb-tmux-popup --tiebreak=index --prompt="cmd> " ${LBUFFER:+-q$LBUFFER})
 
-    if [[ -n $output ]]; then
-        RBUFFER=""
-        LBUFFER=$output
-
-        if [[ $LBUFFER == __atuin_accept__:* ]]
-        then
-            LBUFFER=${LBUFFER#__atuin_accept__:}
-        fi
-    fi
+    BUFFER=$(echo $output)
+    CURSOR=$#BUFFER
 }
 
 
