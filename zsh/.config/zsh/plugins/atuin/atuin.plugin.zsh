@@ -13,10 +13,6 @@ zmodload zsh/datetime 2>/dev/null
 
 typeset -g _autin_histdb
 
-_atuin_sql_escape() {
-    print -r -- ${${@//\'/\'\'}//$'\x00'}
-}
-
 _atuin_histdb_init() {
     if (( $+_autin_histdb )); then
         zsqlite_open -r _autin_histdb ~/.local/share/atuin/history.db
@@ -29,9 +25,6 @@ _atuin_histdb_init() {
 _zsh_autosuggest_strategy_atuin() {
     emulate -L zsh
     _atuin_histdb_init
-    local last_cmd="$(_atuin_sql_escape ${history[$((HISTCMD-1))]})"
-    local cmd="$(_atuin_sql_escape $1)"
-    local pwd="$(_atuin_sql_escape $PWD)"
     local reply=$(zsqlite_exec _autin_histdb "
 SELECT command FROM (
     SELECT h1.*
@@ -39,21 +32,21 @@ SELECT command FROM (
     WHERE h1.ROWID = h2.ROWID + 1
         AND h1.session = h2.session
         AND h2.exit = 0
-        AND h1.command LIKE '$cmd%'
-        AND h2.command = '$last_cmd'
-    ORDER BY h1.cwd = '$pwd' DESC, timestamp DESC
+        AND h1.command LIKE ?1
+        AND h2.command = ?2
+    ORDER BY h1.cwd = ?3 DESC, timestamp DESC
     LIMIT 1
 )
 UNION ALL
 SELECT command FROM (
-    SELECT * FROM history WHERE cwd = '$pwd' AND command LIKE '$cmd%' ORDER BY timestamp DESC LIMIT 1
+    SELECT * FROM history WHERE cwd = ?3 AND command LIKE ?1 ORDER BY timestamp DESC LIMIT 1
 )
 UNION ALL
 SELECT command FROM (
-    SELECT * FROM history WHERE command LIKE '$cmd%' ORDER BY timestamp DESC LIMIT 1
+    SELECT * FROM history WHERE command LIKE ?1 ORDER BY timestamp DESC LIMIT 1
 )
 LIMIT 1
-")
+" ${1}% ${history[$((HISTCMD-1))]} $PWD )
     typeset -g suggestion=$reply
 }
 
@@ -89,20 +82,17 @@ _atuin_precmd() {
 
 _atuin_search() {
     emulate -L zsh
-    zle -I
     
     _atuin_histdb_init
 
-    local cmd="$(_atuin_sql_escape $LBUFFER)"
-    local pwd="$(_atuin_sql_escape $PWD)"
     local query="
 SELECT DISTINCT command
 FROM history
-WHERE command LIKE '$cmd%'
-ORDER BY cwd = '$pwd' DESC, timestamp DESC
+WHERE command LIKE ?
+ORDER BY cwd = ? DESC, timestamp DESC
 "
 
-    output=$(zsqlite_exec -q _autin_histdb $query | ftb-tmux-popup --tiebreak=index --prompt="cmd> " ${LBUFFER:+-q$LBUFFER})
+    output=$(zsqlite_exec -q _autin_histdb $query ${LBUFFER}% $PWD | ftb-tmux-popup --tiebreak=index --prompt="cmd> " ${LBUFFER:+-q$LBUFFER})
 
     BUFFER=$(echo $output)
     CURSOR=$#BUFFER
