@@ -34,7 +34,8 @@ SELECT command FROM (
         AND h2.exit = 0
         AND h1.command LIKE ?1
         AND h2.command = ?2
-    ORDER BY h1.cwd = ?3 DESC, timestamp DESC
+        AND h1.cwd = ?3
+    ORDER BY timestamp DESC
     LIMIT 1
 )
 UNION ALL
