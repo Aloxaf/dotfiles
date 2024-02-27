@@ -51,7 +51,7 @@ zstyle ':completion:*:(argument-rest|files):*' matcher-list '' \
 zstyle ':completion:*' regular false
 
 # 结果样式
-zstyle ':completion:*' menu yes select # search
+zstyle ':completion:*' menu no
 zstyle ':completion:*' list-grouped false
 zstyle ':completion:*' list-separator ''
 zstyle ':completion:*' group-name ''

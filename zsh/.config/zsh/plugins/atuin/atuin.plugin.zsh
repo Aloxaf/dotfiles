@@ -93,10 +93,12 @@ WHERE command LIKE ?
 ORDER BY cwd = ? DESC, timestamp DESC
 "
 
-    output=$(zsqlite_exec -q _autin_histdb $query ${LBUFFER}% $PWD | ftb-tmux-popup --tiebreak=index --prompt="cmd> " ${LBUFFER:+-q$LBUFFER})
+    local output=$(zsqlite_exec -q _autin_histdb $query ${LBUFFER}% $PWD | ftb-tmux-popup --tiebreak=index --prompt="cmd> " ${LBUFFER:+-q$LBUFFER})
 
-    BUFFER=$(echo $output)
-    CURSOR=$#BUFFER
+    if [[ $output != "" ]]; then
+        BUFFER=$(echo $output)
+        CURSOR=$#BUFFER
+    fi
 }
 
 

@@ -61,7 +61,7 @@ ebindkey -M command "Backspace" backward-delete-char
 keybindings+=(
     'M-Right' forward-word-match
     'M-Left'  backward-word-match
-    'C-Backspace' backward-kill-word-match    
+    'C-Backspace' backward-kill-word-match
 )
 
 # fuzzy 相关绑定 {{{1
@@ -127,6 +127,7 @@ keybindings[M-s]=fz-find
 # 快速跳转到指定字符
 function zce-jump-char() {
     [[ -z $BUFFER ]] && zle up-history
+    zstyle ':zce:*' keys 'asdghklqwertyuiopzxcvbnmfj;23456789'
     zstyle ':zce:*' prompt-char '%B%F{green}Jump to character:%F%b '
     zstyle ':zce:*' prompt-key '%B%F{green}Target key:%F%b '
     with-zce zce-raw zce-searchin-read
