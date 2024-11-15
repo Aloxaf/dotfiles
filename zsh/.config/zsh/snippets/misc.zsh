@@ -62,8 +62,8 @@ export GOPROXY=https://goproxy.io,direct
 # 还可以设置不走 proxy 的私有仓库或组，多个用逗号相隔（可选）
 export GOPRIVATE=git.mycompany.com,github.com/my/private
 # 使用 bat 作为 man 的语法高亮
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export MANROFFOPT='-c'
+#export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+#export MANROFFOPT='-c'
 
 # speed up rustc compile
 # removed because all cache has be placed in ~/.cache/cargo-build

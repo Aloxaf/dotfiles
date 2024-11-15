@@ -4,9 +4,13 @@ export XDG_DATA_HOME=$HOME/.local/share
 
 export LANGUAGE=en_US # :zh_CN
 
+export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
-export IPYTHONDIR=$XDG_CONFIG_HOME/ipython
-export JUPYTER_CONFIG_DIR=$XDG_CONFIG_HOME/jupyter
-export NPM_CONFIG_USERCONFIG=$XDG_CONFIG_HOME/npm/config
-export GTAGSLABEL=pygments
+path+=(
+  ~/.local/bin
+  ~/go/bin
+  ~/.cargo/bin
+  ~/.pub-cache/bin
+)

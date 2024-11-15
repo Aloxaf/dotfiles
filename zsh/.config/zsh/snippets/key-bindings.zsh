@@ -64,19 +64,6 @@ keybindings+=(
     'C-Backspace' backward-kill-word-match
 )
 
-# fuzzy 相关绑定 {{{1
-# 快速目录跳转
-# function fz-zjump-widget() {
-#     local selected=$(z -l | fzf -n "2.." --tiebreak=end,index --tac --prompt="jump> ")
-#     if [[ "$selected" != "" ]] {
-#         builtin cd "${selected[(w)2]}"
-#     }
-#     zle push-line
-#     zle accept-line
-# }
-# zle -N fz-zjump-widget
-# ebindkey 'M-c' fz-zjump-widget
-
 # 搜索历史
 function fz-history-widget() {
     local query="
@@ -119,11 +106,8 @@ function fz-find() {
 }
 zle -N fz-find
 keybindings[M-s]=fz-find
-# }}}1
 
-# ZLE 相关 {{{1
 
-# zce {{{2
 # 快速跳转到指定字符
 function zce-jump-char() {
     [[ -z $BUFFER ]] && zle up-history
@@ -136,40 +120,7 @@ function zce-jump-char() {
 zle -N zce-jump-char
 keybindings[M-j]=zce-jump-char
 
-# 删除到指定字符
-# function zce-delete-to-char() {
-#     [[ -z $BUFFER ]] && zle up-history
-#     local pbuffer=$BUFFER pcursor=$CURSOR
-#     local keys=${(j..)$(print {a..z} {A..Z})}
-#     zstyle ':zce:*' prompt-char '%B%F{yellow}Delete to character:%F%b '
-#     zstyle ':zce:*' prompt-key '%B%F{yellow}Target key:%F%b '
-#     zce-raw zce-searchin-read $keys
-# 
-#     if (( $CURSOR < $pcursor ))  {
-#         pbuffer[$CURSOR,$pcursor]=$pbuffer[$CURSOR]
-#     } else {
-#         pbuffer[$pcursor,$CURSOR]=$pbuffer[$pcursor]
-#         CURSOR=$pcursor
-#     }
-#     BUFFER=$pbuffer
-# }
-# zle -N zce-delete-to-char
-# ebindkey "C-j d" zce-delete-to-char
-
-# }}}2
-
-# 快速添加成对括号 {{{2
-function add-bracket() {
-    local -A keys=('(' ')' '{' '}' '[' ']')
-    BUFFER[$CURSOR+1]=${KEYS[-1]}${BUFFER[$CURSOR+1]}
-    BUFFER+=$keys[$KEYS[-1]]
-}
-zle -N add-bracket
-keybindings[M-\(]=add-bracket
-keybindings[M-\{]=add-bracket
-# }}}2
-
-# 快速跳转到上级目录: ... => ../.. {{{2
+# 快速跳转到上级目录: ... => ../..
 # https://grml.org/zsh/zsh-lovers.html
 function rationalise-dot() {
     if [[ $LBUFFER = *.. ]] {
@@ -180,31 +131,8 @@ function rationalise-dot() {
 }
 zle -N rationalise-dot
 keybindings[.]=rationalise-dot
-# }}}2
 
-# 记住上一条命令的 CURSOR 位置 {{{2
-# function cached-accept-line() {
-#     _last_cursor=$CURSOR
-#     zle .accept-line
-# }
-# zle -N accept-line cached-accept-line
-# ebindkey "C-m" accept-line
-
-# function prev-buffer-or-beginning-search() {
-#     local pbuffer=$BUFFER
-#     zle up-line-or-beginning-search
-#     if [[ -n $_last_cursor && -z $pbuffer ]] {
-#         CURSOR=$_last_cursor
-#         _last_cursor=
-#     }
-# }
-# zle -N prev-buffer-or-beginning-search
-# 连续上翻有问题
-# ebindkey "C-p" prev-buffer-or-beginning-search
-# ebindkey "Up"  prev-buffer-or-beginning-search
-# }}}2
-
-# 用编辑器编辑当前行 {{{2
+# 用编辑器编辑当前行
 autoload -U edit-command-line
 function edit-command-line-as-zsh {
     TMPSUFFIX=.zsh
@@ -213,9 +141,6 @@ function edit-command-line-as-zsh {
 }
 zle -N edit-command-line-as-zsh
 keybindings+=('C-x C-e' edit-command-line-as-zsh)
-# }}}2
-
-# }}}1
 
 # 棒棒 M-x
 function execute-command() {

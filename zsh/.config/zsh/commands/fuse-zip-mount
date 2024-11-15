@@ -1,6 +1,0 @@
-#!/bin/zsh
-
-if [[ ! -d ${1:r} ]]; then
-  mkdir ${1:r}
-  fuse-zip $1 ${1:r}
-fi

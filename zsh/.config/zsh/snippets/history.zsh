@@ -34,3 +34,5 @@ setopt hist_fcntl_lock
 # 实例之间即时共享历史
 # setopt share_history
 # 使用 fc -IR 读取历史  fc -IA 保存历史
+# 感叹号总是莫名其妙被展开太烦了
+setopt no_hist_expand

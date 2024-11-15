@@ -35,7 +35,7 @@ zstyle -e ':completion:*' completer '
     _last_try="$HISTNO$BUFFER$CURSOR"
     reply=(_expand_alias _complete _extensions _match _files)
   else
-    reply=(_complete _ignored _correct _approximate)
+    reply=(_complete _ignored _correct)
   fi'
 
 # 增强版文件名补全
@@ -52,7 +52,6 @@ zstyle ':completion:*' regular false
 
 # 结果样式
 zstyle ':completion:*' menu no
-zstyle ':completion:*' list-grouped false
 zstyle ':completion:*' list-separator ''
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' verbose yes
@@ -90,6 +89,11 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # fg/bg 补全时使用 jobs id
 zstyle ':completion:*:jobs' verbose true
 zstyle ':completion:*:jobs' numbers true
+
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ':completion:*' file-sort modification
+zstyle ':completion:*:exa' sort false
+zstyle ':completion:files' sort false
 
 # 单词中也进行补全
 setopt complete_in_word

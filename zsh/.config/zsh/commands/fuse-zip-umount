@@ -1,6 +1,0 @@
-#!/bin/zsh
-
-if [[ -d ${1:r} ]]; then
-  fusermount -u ${1:r}
-  rm -d ${1:r}
-fi
