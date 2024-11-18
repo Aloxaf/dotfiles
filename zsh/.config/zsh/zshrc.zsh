@@ -30,7 +30,6 @@ zinit wait="0" lucid light-mode for \
   hchbaw/zce.zsh \
   atinit="GENCOMP_DIR=$ZDOTDIR/completions" \
     Aloxaf/gencomp \
-  Aloxaf/zsh-sqlite
 
 # zsh-z 首次加载在 HDD 上较慢，所以提前调用一次
 zinit ice wait="0" lucid atload="zshz >/dev/null" atinit="ZSHZ_DATA=$ZDOTDIR/.z"
@@ -65,7 +64,23 @@ zinit snippet /etc/grc.zsh
 # 加载下面的插件之前，先加载补全
 zpcompinit; zpcdreplay
 
+# 自己的小脚本
+# 自己的那堆玩意儿
+fpath+=($ZDOTDIR/functions $ZDOTDIR/completions)
+autoload -Uz $ZDOTDIR/functions/*(:t)
+autoload +X zman
+autoload -Uz zcalc zmv zargs
+for i in $ZDOTDIR/snippets/*.zsh; do
+  source $i
+done
+for i in $ZDOTDIR/plugins/*/*.plugin.zsh; do
+  source $i
+done
+
+# 最好不延迟加载，免得出问题
+# 同时由于这些插件包裹了 zle，需要放在最后加载
 zinit light-mode for \
+  Aloxaf/zsh-sqlite \
   Aloxaf/fzf-tab \
   zdharma/fast-syntax-highlighting \
   zsh-users/zsh-autosuggestions
@@ -102,17 +117,3 @@ FAST_HIGHLIGHT_STYLES[${FAST_THEME_NAME}function]='fg=cyan'
 # 对 man 的高亮会卡住上下翻历史的动作
 # FAST_HIGHLIGHT[chroma-man]=
 
-# 自己的那堆玩意儿
-fpath+=($ZDOTDIR/functions $ZDOTDIR/completions)
-
-autoload -Uz $ZDOTDIR/functions/*(:t)
-autoload +X zman
-autoload -Uz zcalc zmv zargs
-
-for i in $ZDOTDIR/snippets/*.zsh; do
-  source $i
-done
-
-for i in $ZDOTDIR/plugins/*/*.plugin.zsh; do
-  source $i
-done
