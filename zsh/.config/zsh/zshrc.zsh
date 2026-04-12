@@ -1,7 +1,7 @@
 # 如果是非 tmux 启动的交互式终端，考虑启动 tmux
 if [[ ( ! "$(</proc/$PPID/cmdline)" =~ "tmux" ) && $- == *i* ]]; then
   # 非嵌入式终端，启动 tmux
-  if [[ ! "$(</proc/$PPID/cmdline)" =~ "dolphin|emacs|kate|visual-studio-code|SCREEN|zsh" ]]; then
+  if [[ ! "$(</proc/$PPID/cmdline)" =~ "dolphin|emacs|kate|visual-studio-code|SCREEN|zsh|cursor|code" ]]; then
     exec tmux -f "$XDG_CONFIG_HOME/tmux/tmux.conf"
   # 非 SCREEN 窗口，unset 相关环境变量，避免被识别为 TMUX 环境
   elif [[ ! "$(</proc/$PPID/cmdline)" =~ "SCREEN" ]]; then
@@ -47,6 +47,7 @@ zinit light-mode for \
 # OMZ 里的不错玩意儿
 zinit wait="1" lucid for \
   OMZL::clipboard.zsh \
+  OMZL::git.zsh \
   OMZP::systemd/systemd.plugin.zsh \
   OMZP::sudo/sudo.plugin.zsh \
   OMZP::git/git.plugin.zsh \
@@ -96,7 +97,8 @@ ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 ZSH_AUTOSUGGEST_COMPLETION_IGNORE='( |man |pikaur -S )*'
-ZSH_AUTOSUGGEST_HISTORY_IGNORE='?(#c50,)'
+# 太长的行不用触发建议
+ZSH_AUTOSUGGEST_HISTORY_IGNORE='?(#c80,)'
 
 # 更换 zce.zsh 使用的按键序列
 zstyle ':zce:*' keys 'asdghklqwertyuiopzxcvbnmfj;23456789'
