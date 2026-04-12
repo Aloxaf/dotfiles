@@ -1,9 +1,18 @@
 #[source.crates-io]
-#registry = "https://github.com/rust-lang/crates.io-index"
-#replace-with = "ustc"
+#replace-with = 'rsproxy'
 
-#[source.ustc]
-#registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+#[source.rsproxy]
+#registry = "https://rsproxy.cn/crates.io-index"
+
+#[registries.rsproxy]
+#index = "https://rsproxy.cn/crates.io-index"
+#protocol = "sparse"
+
+[registeries.crates-io]
+protocol = "sparse"
+
+#[net]
+#git-fetch-with-cli = true
 
 [target.x86_64-pc-windows-gnu]
 linker = "/usr/bin/x86_64-w64-mingw32-gcc"
@@ -15,7 +24,7 @@ rustflags = [
   "-C", "link-arg=-fuse-ld=lld",
   "-C", "link-arg=-Xlinker",
   "-C", "link-arg=--no-mmap-output-file",
-  "-C", "target-cpu=native"
+  "-C", "target-cpu=x86-64-v3"
 ]
 
 [build]
