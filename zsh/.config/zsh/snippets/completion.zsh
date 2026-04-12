@@ -35,7 +35,7 @@ zstyle -e ':completion:*' completer '
     _last_try="$HISTNO$BUFFER$CURSOR"
     reply=(_expand_alias _complete _extensions _match _files)
   else
-    reply=(_complete _ignored _correct)
+    reply=(_complete _ignored _correct _approximate)
   fi'
 
 # 增强版文件名补全

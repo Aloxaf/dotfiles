@@ -58,7 +58,7 @@ export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 # for python-better-expections
 export FORCE_COLOR=1
 # 配置 GOPROXY 环境变量
-export GOPROXY=https://goproxy.io,direct
+export GOPROXY=https://goproxy.cn,direct
 # 还可以设置不走 proxy 的私有仓库或组，多个用逗号相隔（可选）
 export GOPRIVATE=git.mycompany.com,github.com/my/private
 # 使用 bat 作为 man 的语法高亮
